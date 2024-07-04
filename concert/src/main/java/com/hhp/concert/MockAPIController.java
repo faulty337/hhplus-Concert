@@ -1,10 +1,7 @@
 package com.hhp.concert;
 
 
-import com.hhp.concert.Presentation.dto.GetSessionSeatResponseDto;
-import com.hhp.concert.Presentation.dto.GetWaitingTokenResponseDto;
-import com.hhp.concert.Presentation.dto.GetSessionDateResponseDto;
-import com.hhp.concert.Presentation.dto.SeatInfoDto;
+import com.hhp.concert.Presentation.dto.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +36,11 @@ public class MockAPIController {
             seatList.add(new SeatInfoDto(i, false));
         }
         return new GetSessionSeatResponseDto(LocalDate.now(), seatList);
+    }
+
+    @GetMapping("/charge")
+    public GetChargeResponseDto chargePoint() {
+        return new GetChargeResponseDto(1, 300);
     }
     
 }
