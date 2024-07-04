@@ -16,3 +16,10 @@
   </div>
 </details>
 
+### ERD 다이어그램
+<details>
+  <summary>그림</summary>
+  <div markdown="1">
+    <img src="./image/erdDiagram.png">
+  </div>
+</details>
