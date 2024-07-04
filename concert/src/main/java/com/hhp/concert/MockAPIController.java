@@ -2,10 +2,7 @@ package com.hhp.concert;
 
 
 import com.hhp.concert.Presentation.dto.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,9 +35,17 @@ public class MockAPIController {
         return new GetSessionSeatResponseDto(LocalDate.now(), seatList);
     }
 
-    @GetMapping("/charge")
+    @PatchMapping("/charge")
     public GetChargeResponseDto chargePoint() {
         return new GetChargeResponseDto(1, 300);
     }
+
+    @PostMapping("/reservation")
+    public GetReservationResponseDto reservation(
+            @RequestBody GetReservationRequestDto request
+    ){
+        return new GetReservationResponseDto(3);
+    }
+
     
 }
