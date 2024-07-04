@@ -23,3 +23,6 @@
     <img src="./image/erdDiagram.png">
   </div>
 </details>
+
+### API 문서
+[API 문서](./apiBlueprint.md)
