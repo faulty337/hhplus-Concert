@@ -1,8 +1,10 @@
 package com.hhp.concert;
 
 
+import com.hhp.concert.Presentation.dto.GetSessionSeatResponseDto;
 import com.hhp.concert.Presentation.dto.GetWaitingTokenResponseDto;
 import com.hhp.concert.Presentation.dto.GetSessionDateResponseDto;
+import com.hhp.concert.Presentation.dto.SeatInfoDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +32,13 @@ public class MockAPIController {
         return response;
     }
 
-
+    @GetMapping("/seat/{sessionId}")
+    public GetSessionSeatResponseDto getSessionSeat(@PathVariable String sessionId){
+        List<SeatInfoDto> seatList = new ArrayList<>();
+        for(int i = 1; i <= 50; i++){
+            seatList.add(new SeatInfoDto(i, false));
+        }
+        return new GetSessionSeatResponseDto(LocalDate.now(), seatList);
+    }
+    
 }
