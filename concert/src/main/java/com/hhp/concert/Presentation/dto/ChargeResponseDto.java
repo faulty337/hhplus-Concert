@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public class GetReservationRequestDto {
+public class ChargeResponseDto {
+    private long userId;
+    private int balance;
 }

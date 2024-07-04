@@ -36,16 +36,21 @@ public class MockAPIController {
     }
 
     @PatchMapping("/charge")
-    public GetChargeResponseDto chargePoint() {
-        return new GetChargeResponseDto(1, 300);
+    public ChargeResponseDto chargePoint() {
+        return new ChargeResponseDto(1, 300);
     }
 
     @PostMapping("/reservation")
-    public GetReservationResponseDto reservation(
-            @RequestBody GetReservationRequestDto request
+    public ReservationResponseDto reservation(
+            @RequestBody ReservationRequestDto request
     ){
-        return new GetReservationResponseDto(3);
+        return new ReservationResponseDto(3);
     }
 
-    
+    @PostMapping("/payment")
+    public PaymentResponseDto payment(
+            @RequestBody PaymentRequestDto request
+    ){
+        return new PaymentResponseDto(1, LocalDate.now(), 33);
+    }
 }

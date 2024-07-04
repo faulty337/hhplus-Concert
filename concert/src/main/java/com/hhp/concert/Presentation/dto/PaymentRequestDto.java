@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
-public class GetChargeResponseDto {
-    private long userId;
-    private int balance;
+public class PaymentRequestDto {
+    private int reservationId;
 }
