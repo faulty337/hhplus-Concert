@@ -26,3 +26,7 @@
 
 ### API 문서
 [API 문서](./apiBlueprint.md)
+
+## 계획
+### Milestone
+[milestone](https://github.com/faulty337/hhplus-Concert/milestones)
