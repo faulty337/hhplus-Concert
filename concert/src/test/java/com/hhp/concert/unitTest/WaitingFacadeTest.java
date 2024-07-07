@@ -49,7 +49,6 @@ public class WaitingFacadeTest {
     @Test
     @DisplayName("새로운 토큰 발급 성공 테스트")
     public void getNewTokenTest(){
-        Long queueId = 1L;
         Long userId = 1L;
         String token = "token";
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
@@ -68,8 +67,8 @@ public class WaitingFacadeTest {
         Long queueId = 1L;
         String token = "token";
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(waitingService.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(queueId, userId, LocalDateTime.now())));
-        given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, token, 0, LocalDateTime.now())));
+        given(waitingService.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(queueId, userId)));
+        given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, token, 0)));
 //        given(jwtUtil.generateWaitingToken(QueueType.WAITING.getStr(), data)).willReturn(token);
 
         GetTokenResponseDto response = waitingFacade.getToken(userId);

@@ -37,7 +37,7 @@ public class WaitingServiceTest {
     public void getWaitingQueueTest(){
         Long waitingId = 1L;
         Long userId = 1L;
-        given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId, LocalDateTime.now())));
+        given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId)));
 
         WaitingQueue returnData = waitingService.findByUserId(userId).get();
 
@@ -67,8 +67,8 @@ public class WaitingServiceTest {
         Long waitingId = 64L;
         Long userId = 64L;
 
-        given(waitingRepository.getFirst()).willReturn(Optional.of(new WaitingQueue(firstWaitingId, firstUserId, LocalDateTime.now())));
-        given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId, LocalDateTime.now())));
+        given(waitingRepository.getFirst()).willReturn(Optional.of(new WaitingQueue(firstWaitingId, firstUserId)));
+        given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId)));
 
         Long waitingNumber = waitingService.getWaitingNumber(userId);
 
