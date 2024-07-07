@@ -18,4 +18,13 @@ public class WaitingFacade {
         return new GetTokenResponseDto(token);
     }
 
+    public GetWaitingTokenResponseDto getWaitingInfo(String token){
+        Long userId = Long.valueOf(jwtUtil.extractSign(token));
+
+        Long waitingNumber = waitingService.getWaitingNumber(userId);
+        boolean isProcessing = waitingNumber == 0;
+
+        return new GetWaitingTokenResponseDto(waitingNumber, isProcessing);
+    }
+
 }

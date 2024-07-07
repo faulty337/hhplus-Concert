@@ -5,4 +5,6 @@ import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 
 public interface WaitingService {
     public WaitingQueue findByUserId(Long userId);
+
+    public Long getWaitingNumber(Long userId);
 }

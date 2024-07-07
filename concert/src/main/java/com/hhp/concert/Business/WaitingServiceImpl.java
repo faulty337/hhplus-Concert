@@ -22,4 +22,15 @@ public class WaitingServiceImpl implements WaitingService{
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
     }
+
+    public Long getWaitingNumber(Long userId){
+        WaitingQueue user = findByUserId(userId);
+        Optional<WaitingQueue> first = waitingRepository.getFirst();
+        Long firstNumber = user.getId();
+        if(first.isPresent()){
+            return firstNumber -= first.get().getId();
+        }else{
+            return firstNumber;
+        }
+    }
 }

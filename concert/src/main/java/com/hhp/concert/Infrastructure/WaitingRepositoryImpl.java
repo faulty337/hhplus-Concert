@@ -18,4 +18,10 @@ public class WaitingRepositoryImpl implements WaitingRepository {
         return waitingQueueJpaRepository.findByUserId(userId);
     }
 
+    @Override
+    public Optional<WaitingQueue> getFirst() {
+        return waitingQueueJpaRepository.findFirstByOrderByCreatedAtAsc();
+    }
+
+
 }

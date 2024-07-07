@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface WaitingQueueJpaRepository extends JpaRepository<WaitingQueue, Long> {
     Optional<WaitingQueue> findByUserId(Long userId);
-    
+
+    Optional<WaitingQueue> findFirstByOrderByCreatedAtAsc();
 }
