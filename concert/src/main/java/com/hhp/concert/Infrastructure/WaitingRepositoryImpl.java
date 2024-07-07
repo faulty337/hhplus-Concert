@@ -23,5 +23,10 @@ public class WaitingRepositoryImpl implements WaitingRepository {
         return waitingQueueJpaRepository.findFirstByOrderByCreatedAtAsc();
     }
 
+    @Override
+    public WaitingQueue save(WaitingQueue waitingQueue) {
+        return waitingQueueJpaRepository.save(waitingQueue);
+    }
+
 
 }

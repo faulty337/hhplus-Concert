@@ -1,12 +1,10 @@
 package com.hhp.concert.Business.Domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +12,9 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@Setter
+@Table(name = "concert_user")
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -23,5 +23,12 @@ public class User {
 
     private int balance;
 
-    private LocalDateTime createdAt;
+    public User(String waitingToken, int balance) {
+        this.waitingToken = waitingToken;
+        this.balance = balance;
+    }
+
+    public void updateWaitingToken(String waitingToken){
+        this.waitingToken = waitingToken;
+    }
 }

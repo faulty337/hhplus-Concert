@@ -8,4 +8,6 @@ public interface WaitingRepository {
     public Optional<WaitingQueue> findByUserId(Long userId);
 
     public Optional<WaitingQueue> getFirst();
+
+    WaitingQueue save(WaitingQueue waitingQueue);
 }

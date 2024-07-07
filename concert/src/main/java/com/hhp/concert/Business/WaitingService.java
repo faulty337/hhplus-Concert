@@ -9,4 +9,6 @@ public interface WaitingService {
     public Optional<WaitingQueue> findByUserId(Long userId);
 
     public Long getWaitingNumber(Long userId);
+
+    public WaitingQueue add(WaitingQueue waitingQueue);
 }

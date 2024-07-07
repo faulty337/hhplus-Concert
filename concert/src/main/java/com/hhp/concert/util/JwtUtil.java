@@ -1,41 +1,48 @@
 package com.hhp.concert.util;
 
+import com.hhp.concert.util.enums.QueueKey;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private String secret; // 변경 필요
+    private String secret;
+
+    private Key getSigningKey() {
+        byte[] keyBytes = secret.getBytes();
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     public String generateWaitingToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
         return generateWaitingToken(userId, claims);
     }
 
-    // data 파라미터를 사용하여 토큰 생성
     public String generateWaitingToken(String sign, Map<String, Object> claims) {
+        Map<String, Object> mutableClaims = new HashMap<>(claims);
         return Jwts.builder()
                 .setSubject(sign)
-                .setClaims(claims)
+                .setClaims(mutableClaims)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 30분 유효
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-
     public Claims extractClaims(String token) {
         try {
-            return Jwts.parser()
-                    .setSigningKey(secret)
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
@@ -53,7 +60,8 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
-    public String extractData(String token, String key){
-        return (String) extractClaims(token).get(key);
+    public Object extractData(String token, String key) {
+        System.out.println(token + " " + key + " " + extractClaims(token).get(key));
+        return extractClaims(token).get(key);
     }
 }

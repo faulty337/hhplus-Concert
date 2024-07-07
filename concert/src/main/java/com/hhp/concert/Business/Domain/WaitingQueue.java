@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WaitingQueue {
+public class WaitingQueue extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private Long userId;
 
-    private LocalDateTime createdAt;
+    public WaitingQueue(Long userId) {
+        this.userId = userId;
+    }
 }

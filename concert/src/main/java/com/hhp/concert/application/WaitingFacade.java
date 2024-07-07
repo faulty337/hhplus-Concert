@@ -13,6 +13,7 @@ import com.hhp.concert.util.enums.QueueKey;
 import com.hhp.concert.util.enums.QueueType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Optional;
@@ -20,11 +21,12 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class WaitingFacade {
-    private JwtUtil jwtUtil;
-    private WaitingService waitingService;
-    private UserService userService;
+    private final JwtUtil jwtUtil;
+    private final WaitingService waitingService;
+    private final UserService userService;
 
 
+    @Transactional
     public GetTokenResponseDto getToken(Long userId){
         Optional<WaitingQueue> waitingQueue = waitingService.findByUserId(userId);
         if(waitingQueue.isPresent()){
@@ -35,11 +37,17 @@ public class WaitingFacade {
         }
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
         String token = jwtUtil.generateWaitingToken(QueueType.WAITING.getStr(), data);
+
+
+        userService.updateToken(userId, token);
+        waitingService.add(new WaitingQueue(userId));
+
         return new GetTokenResponseDto(token);
     }
 
+    @Transactional
     public GetWaitingTokenResponseDto getWaitingInfo(String token){
-        Long userId = Long.valueOf(jwtUtil.extractData(token, QueueKey.USER_ID.getStr()));
+        Long userId = ((Number) jwtUtil.extractData(token, QueueKey.USER_ID.getStr())).longValue();
 
         Long waitingNumber = waitingService.getWaitingNumber(userId);
         boolean isProcessing = waitingNumber == 0;

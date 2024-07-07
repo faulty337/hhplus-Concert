@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WaitingServiceImpl implements WaitingService{
 
-    private WaitingRepository waitingRepository;
+    private final WaitingRepository waitingRepository;
 
     @Override
     public Optional<WaitingQueue> findByUserId(Long userId) {
@@ -29,7 +29,12 @@ public class WaitingServiceImpl implements WaitingService{
 
         Long firstNumber = user.getId();
 
-        return first.map(waitingQueue -> firstNumber - waitingQueue.getId()).orElse(firstNumber);
+        return first.map(waitingQueue -> firstNumber - waitingQueue.getId()).orElse(0L);
+    }
+
+    @Override
+    public WaitingQueue add(WaitingQueue waitingQueue) {
+        return waitingRepository.save(waitingQueue);
     }
 
 
