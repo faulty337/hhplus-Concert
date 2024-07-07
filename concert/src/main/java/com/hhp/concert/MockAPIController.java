@@ -1,6 +1,7 @@
 package com.hhp.concert;
 
 
+import com.hhp.concert.Business.dto.*;
 import com.hhp.concert.Presentation.dto.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class MockAPIController {
 
     @GetMapping("/waiting")
     public GetWaitingTokenResponseDto getWaitingToken(){
-        return new GetWaitingTokenResponseDto(999, "token", false);
+        return new GetWaitingTokenResponseDto(999, false);
     }
 
     @GetMapping("/session/{concertId}")

@@ -1,4 +1,4 @@
-package com.hhp.concert.Presentation.dto;
+package com.hhp.concert.Business.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetWaitingTokenResponseDto {
-    private int waitingNumber;
-    private String token;
+    private long waitingNumber;
     private boolean isProcessing;
 }
