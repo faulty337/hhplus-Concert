@@ -15,13 +15,13 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret; // 변경 필요
 
-    public String generateToken(String userId) {
+    public String generateWaitingToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
-        return generateToken(userId, claims);
+        return generateWaitingToken(userId, claims);
     }
 
     // data 파라미터를 사용하여 토큰 생성
-    public String generateToken(String sign, Map<String, Object> claims) {
+    public String generateWaitingToken(String sign, Map<String, Object> claims) {
         return Jwts.builder()
                 .setSubject(sign)
                 .setClaims(claims)

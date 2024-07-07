@@ -17,20 +17,20 @@ public class WaitingServiceImpl implements WaitingService{
     private WaitingRepository waitingRepository;
 
     @Override
-    public WaitingQueue findByUserId(Long userId) {
-        return waitingRepository.findByUserId(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );
+    public Optional<WaitingQueue> findByUserId(Long userId) {
+        return waitingRepository.findByUserId(userId);
     }
 
     public Long getWaitingNumber(Long userId){
-        WaitingQueue user = findByUserId(userId);
+        WaitingQueue user = findByUserId(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );;
         Optional<WaitingQueue> first = waitingRepository.getFirst();
+
         Long firstNumber = user.getId();
-        if(first.isPresent()){
-            return firstNumber -= first.get().getId();
-        }else{
-            return firstNumber;
-        }
+
+        return first.map(waitingQueue -> firstNumber - waitingQueue.getId()).orElse(firstNumber);
     }
+
+
 }
