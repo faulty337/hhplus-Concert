@@ -5,6 +5,7 @@ import com.hhp.concert.Business.dto.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class MockAPIController {
     public List<GetSessionDateResponseDto> getSessionDate(@PathVariable String concertId){
         List<GetSessionDateResponseDto> response = new ArrayList<>();
         for(int i = 1; i < 24; i++){
-            response.add(new GetSessionDateResponseDto(i, LocalDate.now(), 23));
+            response.add(new GetSessionDateResponseDto(i, LocalDateTime.now()));
         }
         return response;
     }
