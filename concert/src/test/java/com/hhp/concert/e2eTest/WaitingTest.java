@@ -150,6 +150,7 @@ public class WaitingTest {
         boolean processing2 = jsonObject2.getBoolean("processing");
 
         assertTrue(processing1);
+        assertFalse(processing2);
 
     }
 
