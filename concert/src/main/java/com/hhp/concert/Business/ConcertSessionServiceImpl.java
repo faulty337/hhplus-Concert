@@ -14,7 +14,7 @@ public class ConcertSessionServiceImpl implements ConcertSessionService{
     private final ConcertSessionRepository concertSessionRepository;
 
     @Override
-    public List<ConcertSession> getSessionByOpen(Long concertId) {
+    public List<ConcertSession> getSessionListByOpen(Long concertId) {
         return concertSessionRepository.findAllByConcertId(concertId);
     }
 }

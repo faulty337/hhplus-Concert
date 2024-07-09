@@ -29,6 +29,9 @@ public class ConcertFacadeTest {
     private ConcertSessionService sessionService;
 
     @Mock
+    private ConcertSeatService concertSeatService;
+
+    @Mock
     private ConcertService concertService;
 
     @BeforeEach

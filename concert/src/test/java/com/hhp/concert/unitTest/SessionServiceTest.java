@@ -35,6 +35,7 @@ public class SessionServiceTest {
     @Test
     @DisplayName("날짜 조회 성공 테스트")
     public void getDateList(){
+    public void getDateListTest(){
         Long concertId = 1L;
         int listSize = 5;
         Concert concert = new Concert(concertId, "test");

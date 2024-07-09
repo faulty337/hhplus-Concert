@@ -18,7 +18,7 @@ public class ConcertFacade {
     public List<GetSessionDateResponseDto> getSessionDate(Long concertId){
         Concert concert = concertService.getConcert(concertId);
 
-        return concertSessionService.getSessionByOpen(concert.getId()).stream().map(session->new GetSessionDateResponseDto(session.getId(), session.getSessionTime())).toList();
+        return concertSessionService.getSessionListByOpen(concert.getId()).stream().map(session->new GetSessionDateResponseDto(session.getId(), session.getSessionTime())).toList();
     }
 
 }
