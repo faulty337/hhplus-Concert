@@ -1,4 +1,4 @@
-package com.hhp.concert.e2eTest;
+package com.hhp.concert.integrationTest;
 
 import com.hhp.concert.Business.Domain.Concert;
 import com.hhp.concert.Business.Domain.ConcertSession;
