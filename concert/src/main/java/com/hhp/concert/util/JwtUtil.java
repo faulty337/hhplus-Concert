@@ -1,12 +1,10 @@
 package com.hhp.concert.util;
 
-import com.hhp.concert.util.enums.QueueKey;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;

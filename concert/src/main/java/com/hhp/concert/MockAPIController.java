@@ -31,9 +31,9 @@ public class MockAPIController {
     public GetSessionSeatResponseDto getSessionSeat(@PathVariable String sessionId){
         List<SeatInfoDto> seatList = new ArrayList<>();
         for(int i = 1; i <= 50; i++){
-            seatList.add(new SeatInfoDto(i, false));
+            seatList.add(new SeatInfoDto(i, false, 1000));
         }
-        return new GetSessionSeatResponseDto(LocalDate.now(), seatList);
+        return new GetSessionSeatResponseDto(LocalDateTime.now(), seatList);
     }
 
     @PatchMapping("/charge")

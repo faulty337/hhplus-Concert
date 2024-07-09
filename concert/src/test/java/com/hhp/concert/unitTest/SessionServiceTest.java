@@ -4,6 +4,8 @@ import com.hhp.concert.Business.ConcertSessionServiceImpl;
 import com.hhp.concert.Business.Domain.Concert;
 import com.hhp.concert.Business.Domain.ConcertSession;
 import com.hhp.concert.Infrastructure.ConcertSessionRepositoryImpl;
+import com.hhp.concert.util.CustomException;
+import com.hhp.concert.util.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +37,7 @@ public class SessionServiceTest {
 
     @Test
     @DisplayName("날짜 조회 성공 테스트")
-    public void getDateList(){
+    public void getDateListTest(){
         Long concertId = 1L;
         int listSize = 5;
         Concert concert = new Concert(concertId, "test");
@@ -45,8 +48,43 @@ public class SessionServiceTest {
 
         given(concertSessionRepository.findAllByConcertId(concertId)).willReturn(sessionList);
 
-        List<ConcertSession> list = sessionService.getSessionByOpen(concertId);
+        List<ConcertSession> list = sessionService.getSessionListByOpen(concertId);
 
         assertEquals(list.size(), listSize);
     }
+
+    @Test
+    @DisplayName("concertId session 유효 조회 테스트")
+    public void getConcertIdBySessionTest(){
+        Long concertId = 23L;
+        Long sessionId = 124L;
+
+        Concert concert = new Concert(concertId, "test");
+
+        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.of(new ConcertSession(sessionId, LocalDateTime.now(), concert)));
+
+        ConcertSession response = sessionService.getSessionByOpenAndConcertId(sessionId, concertId);
+
+        assertEquals(response.getId(), sessionId);
+        assertEquals(response.getConcert().getId(), concertId);
+
+    }
+
+    @Test
+    @DisplayName("concertId session 예외 테스트")
+    public void getConcertIdBySessionConcertIdExceptionTest(){
+        Long concertId = 23L;
+        Long sessionId = 124L;
+
+        Concert concert = new Concert(concertId, "test");
+
+        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.empty());
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            sessionService.getSessionByOpenAndConcertId(sessionId, concertId);
+        });
+
+        assertEquals(exception.getMsg(), ErrorCode.INVALID_SESSION_ID.getMsg());
+    }
+
 }

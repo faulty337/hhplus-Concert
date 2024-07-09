@@ -1,9 +1,7 @@
-package com.hhp.concert.e2eTest;
+package com.hhp.concert.integrationTest;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.User;
-import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Infrastructure.UserJpaRepository;
 import com.hhp.concert.Infrastructure.WaitingQueueJpaRepository;
 import com.hhp.concert.util.JwtUtil;
