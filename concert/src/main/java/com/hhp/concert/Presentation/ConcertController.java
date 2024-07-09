@@ -3,6 +3,8 @@ package com.hhp.concert.Presentation;
 
 import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
+import com.hhp.concert.Business.dto.ReservationRequestDto;
+import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.application.ConcertFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +31,20 @@ public class ConcertController {
             @RequestParam Long sessionId
     ){
         return concertFacade.getSessionSeat(concertId, sessionId);
+    }
+
+
+    @PostMapping("/{concertId}/reservation")
+    public ReservationResponseDto reservationConcert(
+            @PathVariable Long concertId,
+            @RequestBody ReservationRequestDto requestDto
+    ){
+        return concertFacade.reservation(
+                concertId,
+                requestDto.getSessionId(),
+                requestDto.getSeatId(),
+                requestDto.getUserId(),
+                requestDto.getToken()
+        );
     }
 }

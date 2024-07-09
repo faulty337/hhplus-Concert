@@ -20,6 +20,8 @@ public class ConcertFacade {
     private final ConcertService concertService;
     private final SessionService sessionService;
     private final SeatService seatService;
+    private final UserService userService;
+    private final ReservationService reservationService;
 
 
 
@@ -40,5 +42,21 @@ public class ConcertFacade {
 
         return new GetSessionSeatResponseDto(session.getSessionTime(), seatList.stream().map(seat -> new SeatInfoDto(seat.getSeatNumber(), seat.isAvailable(), seat.getPrice())).toList());
     }
+
+    @Transactional
+    public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, Long userId, String token) {
+        User user = userService.getUser(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
+        Concert concert = concertService.getConcert(concertId);
+
+        Session session = sessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
+
+        Seat seat = seatService.getSeatsForConcertSessionAndAvailable(session.getId(), seatId);
+
+        Reservation reservation = reservationService.addReservation(new Reservation(user, session, seat, seat.getPrice()));
+
+
+        return new ReservationResponseDto(reservation.getId(), reservation.getReservationPrice());
     }
 }

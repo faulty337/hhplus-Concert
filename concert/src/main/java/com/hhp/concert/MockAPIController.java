@@ -45,7 +45,7 @@ public class MockAPIController {
     public ReservationResponseDto reservation(
             @RequestBody ReservationRequestDto request
     ){
-        return new ReservationResponseDto(3);
+        return new ReservationResponseDto(3, 1000);
     }
 
     @PostMapping("/payment")

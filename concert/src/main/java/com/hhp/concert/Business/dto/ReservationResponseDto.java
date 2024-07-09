@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReservationResponseDto {
     private long reservationId;
+    private int price;
 }
