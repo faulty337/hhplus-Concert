@@ -26,12 +26,30 @@ public class JwtUtil {
         return generateWaitingToken(userId, claims);
     }
 
+    public String generateProcessToken(String userId) {
+        Map<String, Object> claims = new HashMap<>();
+        return generateWaitingToken(userId, claims);
+    }
+
+
     public String generateWaitingToken(String sign, Map<String, Object> claims) {
         Map<String, Object> mutableClaims = new HashMap<>(claims);
         return Jwts.builder()
                 .setSubject(sign)
                 .setClaims(mutableClaims)
                 .setIssuedAt(new Date())
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+
+    public String generateProcessToken(String sign, Map<String, Object> claims) {
+        Map<String, Object> mutableClaims = new HashMap<>(claims);
+        return Jwts.builder()
+                .setSubject(sign)
+                .setClaims(mutableClaims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
