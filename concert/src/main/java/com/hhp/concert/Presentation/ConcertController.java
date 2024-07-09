@@ -2,6 +2,7 @@ package com.hhp.concert.Presentation;
 
 
 import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
+import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
 import com.hhp.concert.application.ConcertFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,5 +21,13 @@ public class ConcertController {
             @PathVariable Long concertId
     ){
         return concertFacade.getSessionDate(concertId);
+    }
+
+    @GetMapping("/{concertId}/seat")
+    public GetSessionSeatResponseDto getSessionSeat(
+            @PathVariable Long concertId,
+            @RequestParam Long sessionId
+    ){
+        return concertFacade.getSessionSeat(concertId, sessionId);
     }
 }
