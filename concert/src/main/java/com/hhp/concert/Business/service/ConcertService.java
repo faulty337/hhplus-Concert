@@ -1,4 +1,4 @@
-package com.hhp.concert.Business;
+package com.hhp.concert.Business.service;
 
 import com.hhp.concert.Business.Domain.Concert;
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ConcertRepositoryImpl implements ConcertRepository {
+public class RepositoryImpl implements ConcertRepository {
     private final ConcertJpaRepository jpaRepository;
 
     public boolean existsConcertId(Long concertId){

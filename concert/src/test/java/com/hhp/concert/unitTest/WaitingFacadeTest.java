@@ -3,9 +3,9 @@ package com.hhp.concert.unitTest;
 
 import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.UserService;
+import com.hhp.concert.Business.service.UserService;
 import com.hhp.concert.application.WaitingFacade;
-import com.hhp.concert.Business.WaitingService;
+import com.hhp.concert.Business.service.WaitingService;
 import com.hhp.concert.Business.dto.GetTokenResponseDto;
 import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 import com.hhp.concert.util.CustomException;

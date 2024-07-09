@@ -2,8 +2,7 @@ package com.hhp.concert.unitTest;
 
 
 import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.WaitingService;
-import com.hhp.concert.Business.WaitingServiceImpl;
+import com.hhp.concert.Business.service.WaitingServiceImpl;
 import com.hhp.concert.Infrastructure.WaitingRepositoryImpl;
 import com.hhp.concert.util.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;

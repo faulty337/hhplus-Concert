@@ -1,13 +1,11 @@
 package com.hhp.concert.unitTest;
 
-import com.hhp.concert.Business.ConcertSeatService;
-import com.hhp.concert.Business.ConcertService;
-import com.hhp.concert.Business.ConcertSessionService;
-import com.hhp.concert.Business.Domain.Concert;
-import com.hhp.concert.Business.Domain.ConcertSeat;
-import com.hhp.concert.Business.Domain.ConcertSession;
+import com.hhp.concert.Business.Domain.*;
+import com.hhp.concert.Business.Domain.enums.ReservationStatus;
+import com.hhp.concert.Business.service.*;
 import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
+import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.application.ConcertFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,10 +28,10 @@ public class ConcertFacadeTest {
     private ConcertFacade concertFacade;
 
     @Mock
-    private ConcertSessionService sessionService;
+    private SessionService sessionService;
 
     @Mock
-    private ConcertSeatService concertSeatService;
+    private SeatService seatService;
 
     @Mock
     private ConcertService concertService;
@@ -49,9 +48,9 @@ public class ConcertFacadeTest {
         Long concertId = 1L;
         int listSize = 5;
         Concert concert = new Concert(concertId, "test");
-        List<ConcertSession> sessionList = new ArrayList<>();
+        List<Session> sessionList = new ArrayList<>();
         for(long i = 1; i <= listSize; i++){
-            sessionList.add(new ConcertSession(i, LocalDateTime.now().minusDays(i), concert));
+            sessionList.add(new Session(i, LocalDateTime.now().minusDays(i), concert));
         }
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(sessionService.getSessionListByOpen(concertId)).willReturn(sessionList);
@@ -68,17 +67,17 @@ public class ConcertFacadeTest {
         Long concertId = 1L;
         Long sessionId = 1L;
         int listSize = 5;
-        List<ConcertSeat> seatList = new ArrayList<>();
+        List<Seat> seatList = new ArrayList<>();
         Concert concert = new Concert(concertId, "test");
-        ConcertSession session = new ConcertSession(sessionId, LocalDateTime.now(), concert);
+        Session session = new Session(sessionId, LocalDateTime.now(), concert);
         for(int i = 1; i<= 5; i++){
-            seatList.add(new ConcertSeat((long)i, i, 1000, false, session));
+            seatList.add(new Seat((long)i, i, 1000, false, session));
         }
 
 
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(session);
-        given(concertSeatService.getSessionBySeatList(sessionId)).willReturn(seatList);
+        given(seatService.getSessionBySeatList(sessionId)).willReturn(seatList);
 
         GetSessionSeatResponseDto response = concertFacade.getSessionSeat(concertId, sessionId);
 

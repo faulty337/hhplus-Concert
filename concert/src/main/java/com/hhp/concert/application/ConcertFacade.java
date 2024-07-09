@@ -1,18 +1,16 @@
 package com.hhp.concert.application;
 
-import com.hhp.concert.Business.ConcertSeatService;
-import com.hhp.concert.Business.ConcertService;
-import com.hhp.concert.Business.ConcertSessionService;
-import com.hhp.concert.Business.Domain.Concert;
-import com.hhp.concert.Business.Domain.ConcertSeat;
-import com.hhp.concert.Business.Domain.ConcertSession;
+import com.hhp.concert.Business.Domain.*;
+import com.hhp.concert.Business.service.*;
 import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
+import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.Business.dto.SeatInfoDto;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,23 +18,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConcertFacade {
     private final ConcertService concertService;
-    private final ConcertSessionService concertSessionService;
-    private final ConcertSeatService concertSeatService;
+    private final SessionService sessionService;
+    private final SeatService seatService;
 
 
+
+    @Transactional(readOnly = true)
     public List<GetSessionDateResponseDto> getSessionDate(Long concertId){
         Concert concert = concertService.getConcert(concertId);
 
-        return concertSessionService.getSessionListByOpen(concert.getId()).stream().map(session->new GetSessionDateResponseDto(session.getId(), session.getSessionTime())).toList();
+        return sessionService.getSessionListByOpen(concert.getId()).stream().map(session->new GetSessionDateResponseDto(session.getId(), session.getSessionTime())).toList();
     }
 
+    @Transactional(readOnly = true)
     public GetSessionSeatResponseDto getSessionSeat(Long concertId, Long sessionId) {
         Concert concert = concertService.getConcert(concertId);
 
-        ConcertSession concertSession = concertSessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
+        Session session = sessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
 
-        List<ConcertSeat> concertSeatList = concertSeatService.getSessionBySeatList(concertSession.getId());
+        List<Seat> seatList = seatService.getSessionBySeatList(session.getId());
 
-        return new GetSessionSeatResponseDto(concertSession.getSessionTime(), concertSeatList.stream().map(seat -> new SeatInfoDto(seat.getSeatNumber(), seat.isAvailable(), seat.getPrice())).toList());
+        return new GetSessionSeatResponseDto(session.getSessionTime(), seatList.stream().map(seat -> new SeatInfoDto(seat.getSeatNumber(), seat.isAvailable(), seat.getPrice())).toList());
+    }
     }
 }

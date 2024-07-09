@@ -1,10 +1,11 @@
 package com.hhp.concert.unitTest;
 
-import com.hhp.concert.Business.ConcertSeatService;
-import com.hhp.concert.Business.ConcertSeatServiceImpl;
-import com.hhp.concert.Business.Domain.ConcertSeat;
-import com.hhp.concert.Business.Domain.ConcertSession;
-import com.hhp.concert.Infrastructure.ConcertSeatRepositoryImpl;
+import com.hhp.concert.Business.service.SeatServiceImpl;
+import com.hhp.concert.Business.Domain.Seat;
+import com.hhp.concert.Business.Domain.Session;
+import com.hhp.concert.Infrastructure.SeatRepositoryImpl;
+import com.hhp.concert.util.CustomException;
+import com.hhp.concert.util.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SeatServiceTest {
 
     @Mock
-    private ConcertSeatRepositoryImpl concertSeatRepository;
+    private SeatRepositoryImpl seatRepository;
 
     @InjectMocks
-    private ConcertSeatServiceImpl concertSeatService;
+    private SeatServiceImpl seatService;
 
     @BeforeEach
     public void setUp() {
@@ -37,17 +38,17 @@ public class SeatServiceTest {
     public void getSeatListTest(){
         Long sessionId = 1L;
 
-        List<ConcertSeat> sessionList = new ArrayList<>();
+        List<Seat> sessionList = new ArrayList<>();
         int listSize = 5;
-        ConcertSession concertSession = new ConcertSession();
+        Session concertSession = new Session();
 
         for(int i = 1; i <= listSize; i++){
-          sessionList.add(new ConcertSeat((long)i, i, 1000, false, concertSession));
+          sessionList.add(new Seat((long)i, i, 1000, false, concertSession));
         }
 
-        given(concertSeatRepository.findAllByConcertSessionId(sessionId)).willReturn(sessionList);
+        given(seatRepository.findAllBySessionId(sessionId)).willReturn(sessionList);
 
-        List<ConcertSeat> response = concertSeatService.getSessionBySeatList(sessionId);
+        List<Seat> response = seatService.getSessionBySeatList(sessionId);
 
         assertEquals(response.size(), listSize);
         assertFalse(response.get(0).isAvailable());
