@@ -36,6 +36,12 @@ public class ConcertFacadeTest {
     @Mock
     private ConcertService concertService;
 
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private ReservationService reservationService;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);  // Mock 객체 초기화
@@ -83,6 +89,33 @@ public class ConcertFacadeTest {
 
         assertEquals(response.getDate(), session.getSessionTime());
         assertEquals(response.getSeatList().size(), listSize);
+
+    }
+
+    @Test
+    @DisplayName("예약 테스트")
+    public void getReservationTest(){
+        long userId = 1L;
+        Long concertId = 1L;
+        Long sessionId = 1L;
+        Long seatId = 2L;
+        Long reservationId = 23L;
+        User user = new User(userId, null, 1000);
+        Concert concert = new Concert(concertId, "test");
+        Session session = new Session(sessionId, LocalDateTime.now(), concert);
+        Seat seat = new Seat(seatId, 1, 1000, false, session);
+        Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), ReservationStatus.PENDING);
+
+        given(concertService.getConcert(concertId)).willReturn(concert);
+        given(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(session);
+        given(seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId)).willReturn(seat);
+        given(userService.getUser(userId)).willReturn(Optional.of(user));
+        given(reservationService.addReservation(any(Reservation.class))).willReturn(reservation);
+
+        ReservationResponseDto response = concertFacade.reservation(concertId, sessionId, seatId, userId);
+
+        assertEquals(response.getReservationId(), reservation.getId());
+        assertEquals(response.getPrice(), seat.getPrice());
 
     }
 
