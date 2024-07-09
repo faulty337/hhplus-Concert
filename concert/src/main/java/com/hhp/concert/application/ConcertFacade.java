@@ -33,7 +33,7 @@ public class ConcertFacade {
     public GetSessionSeatResponseDto getSessionSeat(Long concertId, Long sessionId) {
         Concert concert = concertService.getConcert(concertId);
 
-        ConcertSession concertSession = concertSessionService.getSessionByOpenAndConcertId(sessionId, concert.getId());
+        ConcertSession concertSession = concertSessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
 
         List<ConcertSeat> concertSeatList = concertSeatService.getSessionBySeatList(concertSession.getId());
 

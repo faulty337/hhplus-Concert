@@ -23,5 +23,12 @@ public class ConcertSeat {
 
     @ManyToOne
     private ConcertSession concertSession;
+
+    public ConcertSeat(int seatNumber, int price, boolean available, ConcertSession concertSession) {
+        this.seatNumber = seatNumber;
+        this.price = price;
+        this.available = available;
+        this.concertSession = concertSession;
+    }
 }
 
