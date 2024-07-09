@@ -34,7 +34,6 @@ public class SessionServiceTest {
 
     @Test
     @DisplayName("날짜 조회 성공 테스트")
-    public void getDateList(){
     public void getDateListTest(){
         Long concertId = 1L;
         int listSize = 5;
@@ -46,7 +45,7 @@ public class SessionServiceTest {
 
         given(concertSessionRepository.findAllByConcertId(concertId)).willReturn(sessionList);
 
-        List<ConcertSession> list = sessionService.getSessionByOpen(concertId);
+        List<ConcertSession> list = sessionService.getSessionListByOpen(concertId);
 
         assertEquals(list.size(), listSize);
     }

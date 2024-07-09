@@ -51,7 +51,7 @@ public class ConcertFacadeTest {
             sessionList.add(new ConcertSession(i, LocalDateTime.now().minusDays(i), concert));
         }
         given(concertService.getConcert(concertId)).willReturn(concert);
-        given(sessionService.getSessionByOpen(concertId)).willReturn(sessionList);
+        given(sessionService.getSessionListByOpen(concertId)).willReturn(sessionList);
 
         List<GetSessionDateResponseDto> response = concertFacade.getSessionDate(concertId);
 

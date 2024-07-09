@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SeatInfoDto {
     private int seatNumber;
-    private boolean isReservation;
+    private boolean isAvailable;
+    private int price;
 }
