@@ -25,7 +25,20 @@ public class UserServiceImpl implements UserService{
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
         user.updateWaitingToken(token);
-        userRepository.save(user);
         return userRepository.save(user);
+    }
+
+    @Override
+    public User chargePoint(Long userId, int amount) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
+        if(amount < 1){
+            throw new CustomException(ErrorCode.INVALID_AMOUNT);
+        }
+
+        user.chargeBalance(amount);
+        user = userRepository.save(user);
+        return user;
     }
 }
