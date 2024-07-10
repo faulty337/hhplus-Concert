@@ -37,8 +37,8 @@ public class MockAPIController {
     }
 
     @PatchMapping("/charge")
-    public ChargeResponseDto chargePoint() {
-        return new ChargeResponseDto(1, 300);
+    public UserBalanceResponseDto chargePoint() {
+        return new UserBalanceResponseDto(1, 300);
     }
 
     @PostMapping("/reservation")

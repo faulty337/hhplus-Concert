@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class ChargeResponseDto {
+public class UserBalanceResponseDto {
     private long userId;
     private int balance;
 }
