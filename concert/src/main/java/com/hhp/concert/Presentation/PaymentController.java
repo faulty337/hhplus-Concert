@@ -28,7 +28,7 @@ public class PaymentController {
         return paymentFacade.getBalance(userId);
     }
 
-    @PostMapping
+    @PostMapping("/payment")
     public PaymentResponseDto concertPayment(
             @RequestBody PaymentRequestDto request
     ){
