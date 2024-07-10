@@ -21,17 +21,33 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateWaitingToken(String userId) {
+    public String generateNotExpirationToken(String sign) {
         Map<String, Object> claims = new HashMap<>();
-        return generateWaitingToken(userId, claims);
+        return generateNotExpirationToken(sign, claims);
     }
 
-    public String generateWaitingToken(String sign, Map<String, Object> claims) {
+    public String generateProcessToken(String userId) {
+        Map<String, Object> claims = new HashMap<>();
+        return generateNotExpirationToken(userId, claims);
+    }
+
+    public String generateNotExpirationToken(String sign, Map<String, Object> claims) {
         Map<String, Object> mutableClaims = new HashMap<>(claims);
         return Jwts.builder()
                 .setSubject(sign)
                 .setClaims(mutableClaims)
                 .setIssuedAt(new Date())
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateToken(String sign, Map<String, Object> claims, Date expiration) {
+        Map<String, Object> mutableClaims = new HashMap<>(claims);
+        return Jwts.builder()
+                .setSubject(sign)
+                .setClaims(mutableClaims)
+                .setIssuedAt(new Date())
+                .setExpiration(expiration)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -59,7 +75,6 @@ public class JwtUtil {
     }
 
     public Object extractData(String token, String key) {
-        System.out.println(token + " " + key + " " + extractClaims(token).get(key));
         return extractClaims(token).get(key);
     }
 }

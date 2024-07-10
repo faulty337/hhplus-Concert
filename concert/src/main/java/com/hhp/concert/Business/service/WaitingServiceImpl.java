@@ -1,8 +1,7 @@
-package com.hhp.concert.Business;
+package com.hhp.concert.Business.service;
 
 import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Business.Repository.WaitingRepository;
-import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
 import lombok.RequiredArgsConstructor;

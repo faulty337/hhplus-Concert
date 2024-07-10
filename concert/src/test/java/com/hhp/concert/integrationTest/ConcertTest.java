@@ -1,11 +1,11 @@
 package com.hhp.concert.integrationTest;
 
 import com.hhp.concert.Business.Domain.Concert;
-import com.hhp.concert.Business.Domain.ConcertSeat;
-import com.hhp.concert.Business.Domain.ConcertSession;
+import com.hhp.concert.Business.Domain.Seat;
+import com.hhp.concert.Business.Domain.Session;
 import com.hhp.concert.Infrastructure.ConcertJpaRepository;
-import com.hhp.concert.Infrastructure.ConcertSeatJpaRepository;
-import com.hhp.concert.Infrastructure.ConcertSessionJpaRepository;
+import com.hhp.concert.Infrastructure.SeatJpaRepository;
+import com.hhp.concert.Infrastructure.SessionJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,18 +35,19 @@ public class ConcertTest {
     private ConcertJpaRepository concertJpaRepository;
 
     @Autowired
-    private ConcertSessionJpaRepository concertSessionJpaRepository;
+    private SessionJpaRepository sessionJpaRepository;
     @Autowired
-    private ConcertSeatJpaRepository concertSeatJpaRepository;
+    private SeatJpaRepository seatJpaRepository;
 
     @Autowired
     private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp(){
+        seatJpaRepository.deleteAll();
+        sessionJpaRepository.deleteAll();
         concertJpaRepository.deleteAll();
-        concertSessionJpaRepository.deleteAll();
-        concertSeatJpaRepository.deleteAll();
+
     }
 
     @Test
@@ -54,13 +55,13 @@ public class ConcertTest {
     public void getSessionDateTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
         long listSize = 5L;
-        List<ConcertSession> sessionList = new ArrayList<>();
+        List<Session> sessionList = new ArrayList<>();
         for(int i = 1; i <= listSize; i++){
-            sessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert));
+            sessionList.add(new Session(LocalDateTime.now().plusDays(i), concert));
         }
-        sessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert));
+        sessionList.add(new Session(LocalDateTime.now().minusDays(1), concert));
 
-        concertSessionJpaRepository.saveAll(sessionList);
+        sessionJpaRepository.saveAll(sessionList);
 
         mockMvc.perform(get("/concert/{concertId}/session", concert.getId()))
                 .andExpect(status().isOk())
@@ -74,16 +75,16 @@ public class ConcertTest {
     @DisplayName("날짜 반환")
     public void getSessionSeatTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().minusDays(1), concert));
+        Session concertSession = sessionJpaRepository.save(new Session(LocalDateTime.now().minusDays(1), concert));
 
-        List<ConcertSeat> concertSeatList = new ArrayList<>();
+        List<Seat> seatList = new ArrayList<>();
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            seatList.add(new Seat( i, 1000, false, concertSession));
         }
 
-        concertSeatJpaRepository.saveAll(concertSeatList);
+        seatJpaRepository.saveAll(seatList);
 
         mockMvc.perform(get("/concert/{concertId}/seat", concert.getId()).param("sessionId", String.valueOf(concertSession.getId())))
                 .andExpect(status().isOk())

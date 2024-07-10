@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ReservationRequestDto {
     private long sessionId;
-    private long seatNumber;
+    private long seatId;
+    private String token;
 }

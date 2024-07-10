@@ -3,9 +3,10 @@ package com.hhp.concert.unitTest;
 
 import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.UserService;
+import com.hhp.concert.Business.service.JwtService;
+import com.hhp.concert.Business.service.UserService;
 import com.hhp.concert.application.WaitingFacade;
-import com.hhp.concert.Business.WaitingService;
+import com.hhp.concert.Business.service.WaitingService;
 import com.hhp.concert.Business.dto.GetTokenResponseDto;
 import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 import com.hhp.concert.util.CustomException;
@@ -34,8 +35,9 @@ public class WaitingFacadeTest {
     @Mock
     private UserService userService;
 
+
     @Mock
-    private JwtUtil jwtUtil;
+    private JwtService jwtService;
 
     @InjectMocks
     private WaitingFacade waitingFacade;
@@ -52,7 +54,7 @@ public class WaitingFacadeTest {
         String token = "token";
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
         given(waitingService.findByUserId(userId)).willReturn(Optional.empty());
-        given(jwtUtil.generateWaitingToken(QueueType.WAITING.getStr(), data)).willReturn(token);
+        given(jwtService.createWaitingToken(userId)).willReturn(token);
 
         GetTokenResponseDto response = waitingFacade.getToken(userId);
 
@@ -79,9 +81,8 @@ public class WaitingFacadeTest {
     @DisplayName("토큰 발급 예외 테스트")
     public void getTokenExceptionTest(){
         Long userId = 1L;
-        String token = "token";
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(jwtUtil.generateWaitingToken(QueueType.WAITING.getStr(), data)).willThrow(new CustomException(ErrorCode.INVALID_JWT));
+        given(jwtService.createWaitingToken(userId)).willThrow(new CustomException(ErrorCode.INVALID_JWT));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             waitingFacade.getToken(userId);
@@ -91,13 +92,13 @@ public class WaitingFacadeTest {
     }
     
     @Test
-    @DisplayName("대기번호 발급 테스트 - 대기열")
+    @DisplayName("대기 번호 발급 테스트 - 대기열")
     public void getWaitingNumberWaitingStatusTest(){
         Long userId = 1L;
         String token = "token";
         Long waitingNumber = 5L;
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(jwtUtil.extractData(token, QueueKey.USER_ID.getStr())).willReturn(String.valueOf(userId));
+        given(jwtService.extractUserId(token)).willReturn(userId);
         given(waitingService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
         GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(token);
@@ -107,13 +108,13 @@ public class WaitingFacadeTest {
     }
 
     @Test
-    @DisplayName("대기번호 발급 테스트 - 처리열")
+    @DisplayName("대기 번호 발급 테스트 - 처리열")
     public void getWaitingNumberProcessingStatusTest(){
         Long userId = 1L;
         String token = "token";
         Long waitingNumber = 0L;
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(jwtUtil.extractData(token, QueueKey.USER_ID.getStr())).willReturn(String.valueOf(userId));
+        given(jwtService.extractUserId(token)).willReturn(userId);
         given(waitingService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
         GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(token);

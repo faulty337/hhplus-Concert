@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConcertSeat {
+public class Seat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,13 +22,13 @@ public class ConcertSeat {
     private boolean available;
 
     @ManyToOne
-    private ConcertSession concertSession;
+    private Session session;
 
-    public ConcertSeat(int seatNumber, int price, boolean available, ConcertSession concertSession) {
+    public Seat(int seatNumber, int price, boolean available, Session session) {
         this.seatNumber = seatNumber;
         this.price = price;
         this.available = available;
-        this.concertSession = concertSession;
+        this.session = session;
     }
 }
 
