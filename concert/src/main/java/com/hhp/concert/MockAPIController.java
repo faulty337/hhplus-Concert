@@ -52,6 +52,6 @@ public class MockAPIController {
     public PaymentResponseDto payment(
             @RequestBody PaymentRequestDto request
     ){
-        return new PaymentResponseDto(1, LocalDate.now(), 33);
+        return new PaymentResponseDto(1, LocalDateTime.now(), 33, 10000);
     }
 }

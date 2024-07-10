@@ -4,4 +4,7 @@ import com.hhp.concert.Business.Domain.Reservation;
 
 public interface ReservationService {
     Reservation addReservation(Reservation reservation);
+
+
+    Reservation getReservationByUserId(long userId, long reservationId);
 }

@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class PaymentRequestDto {
-    private int reservationId;
+    private long userId;
+    private long reservationId;
 }
