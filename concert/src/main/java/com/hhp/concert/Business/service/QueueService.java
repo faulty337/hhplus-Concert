@@ -4,10 +4,10 @@ import com.hhp.concert.Business.Domain.WaitingQueue;
 
 import java.util.Optional;
 
-public interface WaitingService {
-    public Optional<WaitingQueue> findByUserId(Long userId);
+public interface QueueService {
+    public Optional<WaitingQueue> waitingQueueByUserId(Long userId);
 
     public Long getWaitingNumber(Long userId);
 
-    public WaitingQueue add(WaitingQueue waitingQueue);
+    public WaitingQueue addWaiting(WaitingQueue waitingQueue);
 }

@@ -6,14 +6,12 @@ import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.UserService;
 import com.hhp.concert.application.WaitingFacade;
-import com.hhp.concert.Business.service.WaitingService;
+import com.hhp.concert.Business.service.QueueService;
 import com.hhp.concert.Business.dto.GetTokenResponseDto;
 import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
-import com.hhp.concert.util.JwtUtil;
 import com.hhp.concert.util.enums.QueueKey;
-import com.hhp.concert.util.enums.QueueType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WaitingFacadeTest {
 
     @Mock
-    private WaitingService waitingService;
+    private QueueService queueService;
 
     @Mock
     private UserService userService;
@@ -53,7 +51,7 @@ public class WaitingFacadeTest {
         Long userId = 1L;
         String token = "token";
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(waitingService.findByUserId(userId)).willReturn(Optional.empty());
+        given(queueService.waitingQueueByUserId(userId)).willReturn(Optional.empty());
         given(jwtService.createWaitingToken(userId)).willReturn(token);
 
         GetTokenResponseDto response = waitingFacade.getToken(userId);
@@ -68,7 +66,7 @@ public class WaitingFacadeTest {
         Long queueId = 1L;
         String token = "token";
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(waitingService.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(queueId, userId)));
+        given(queueService.waitingQueueByUserId(userId)).willReturn(Optional.of(new WaitingQueue(queueId, userId)));
         given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, token, 0)));
 //        given(jwtUtil.generateWaitingToken(QueueType.WAITING.getStr(), data)).willReturn(token);
 
@@ -99,7 +97,7 @@ public class WaitingFacadeTest {
         Long waitingNumber = 5L;
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
         given(jwtService.extractUserId(token)).willReturn(userId);
-        given(waitingService.getWaitingNumber(userId)).willReturn(waitingNumber);
+        given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
         GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(token);
 
@@ -115,7 +113,7 @@ public class WaitingFacadeTest {
         Long waitingNumber = 0L;
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
         given(jwtService.extractUserId(token)).willReturn(userId);
-        given(waitingService.getWaitingNumber(userId)).willReturn(waitingNumber);
+        given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
         GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(token);
 

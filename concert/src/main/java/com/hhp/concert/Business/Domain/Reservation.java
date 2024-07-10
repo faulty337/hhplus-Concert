@@ -15,13 +15,13 @@ public class Reservation extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
-    @OneToOne
+    @ManyToOne
     private Session session;
 
-    @OneToOne
+    @ManyToOne
     private Seat seat;
 
     private int reservationPrice;
