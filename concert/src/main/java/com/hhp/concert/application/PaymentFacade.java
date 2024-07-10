@@ -36,10 +36,15 @@ public class PaymentFacade {
     }
 
     @Transactional
-    public PaymentResponseDto payment(long userId, long reservationId){
+    public PaymentResponseDto payment(long userId, long reservationId, String token){
+
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
+        if(!jwtService.isProcessing(token, userId)){
+            throw new CustomException(ErrorCode.INVALID_TOKEN_STATE);
+        };
+
 
         Reservation reservation = reservationService.getReservationByUserId(user.getId(), reservationId);
 

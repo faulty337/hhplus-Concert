@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class PaymentRequestDto {
     private long userId;
     private long reservationId;
+    private String token;
 }

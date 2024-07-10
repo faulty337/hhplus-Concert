@@ -47,10 +47,12 @@ public class ConcertFacade {
     @Transactional
     public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, String token) {
         Long userId = jwtService.extractUserId(token);
+        User user = userService.getUser(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
         if(!jwtService.isProcessing(token, userId)){
             throw new CustomException(ErrorCode.INVALID_TOKEN_STATE);
         };
-
 
 
         Concert concert = concertService.getConcert(concertId);
