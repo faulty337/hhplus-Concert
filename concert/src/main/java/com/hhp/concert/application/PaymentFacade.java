@@ -1,6 +1,7 @@
 package com.hhp.concert.application;
 
 import com.hhp.concert.Business.Domain.*;
+import com.hhp.concert.Business.Domain.enums.ReservationStatus;
 import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.Business.service.*;
@@ -38,6 +39,8 @@ public class PaymentFacade {
     @Transactional
     public PaymentResponseDto payment(long userId, long reservationId, String token){
 
+
+
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
@@ -55,9 +58,8 @@ public class PaymentFacade {
 
         PaymentHistory paymentHistory = paymentService.addPaymentHistory(new PaymentHistory(seat.getPrice(), user, reservation));
 
+        reservation.setStatus(ReservationStatus.CONFIRMED);
         Session session = reservation.getSession();
-
-
 
 
         return new PaymentResponseDto(session.getId(), session.getSessionTime(), seat.getSeatNumber(), paymentHistory.getAmount());
