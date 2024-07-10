@@ -30,3 +30,12 @@
 ## 계획
 ### Milestone
 [milestone](https://github.com/faulty337/hhplus-Concert/milestones)
+
+### Swagger API
+<details>
+  <summary>그림</summary>
+  <div markdown="1">
+    <img src="https://github.com/faulty337/hhplus-Concert/assets/37091532/2f7999d8-cbfd-444d-b69d-6c27371f28e4">
+  </div>
+</details>
+
