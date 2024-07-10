@@ -7,6 +7,8 @@ import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
 import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.application.ConcertFacade;
+import com.hhp.concert.util.CustomException;
+import com.hhp.concert.util.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,9 @@ public class ConcertFacadeTest {
 
     @Mock
     private ReservationService reservationService;
+
+    @Mock
+    private JwtService jwtService;
 
     @BeforeEach
     public void setUp() {
@@ -105,20 +110,46 @@ public class ConcertFacadeTest {
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
         Seat seat = new Seat(seatId, 1, 1000, false, session);
         Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), ReservationStatus.PENDING);
+        String successToken = "successToken";
 
+        given(jwtService.isProcessingToken(successToken)).willReturn(true);
+        given(jwtService.extractUserId(successToken)).willReturn(userId);
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(session);
         given(seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId)).willReturn(seat);
         given(userService.getUser(userId)).willReturn(Optional.of(user));
         given(reservationService.addReservation(any(Reservation.class))).willReturn(reservation);
 
-        ReservationResponseDto response = concertFacade.reservation(concertId, sessionId, seatId, userId);
+        ReservationResponseDto response = concertFacade.reservation(concertId, sessionId, seatId, successToken);
 
         assertEquals(response.getReservationId(), reservation.getId());
         assertEquals(response.getPrice(), seat.getPrice());
 
     }
 
+
+    @Test
+    @DisplayName("예약 토큰 예외 테스트")
+    public void getReservationTokenExceptionTest(){
+        long userId = 1L;
+        Long concertId = 1L;
+        Long sessionId = 1L;
+        Long seatId = 2L;
+        Long reservationId = 23L;
+        User user = new User(userId, null, 1000);
+        Concert concert = new Concert(concertId, "test");
+        Session session = new Session(sessionId, LocalDateTime.now(), concert);
+        Seat seat = new Seat(seatId, 1, 1000, false, session);
+        String successToken = "successToken";
+
+        given(jwtService.isProcessingToken(successToken)).willReturn(false);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            concertFacade.reservation(concertId, sessionId, seatId, successToken);
+        });
+
+        assertEquals(exception.getMsg(), ErrorCode.INVALID_TOKEN_STATE.getMsg());
+
+    }
 
 
 

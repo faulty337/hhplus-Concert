@@ -8,6 +8,7 @@ import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.Business.dto.SeatInfoDto;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
+import com.hhp.concert.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class ConcertFacade {
     private final SeatService seatService;
     private final UserService userService;
     private final ReservationService reservationService;
-
+    private final JwtService jwtService;
 
 
     @Transactional(readOnly = true)
@@ -44,7 +45,13 @@ public class ConcertFacade {
     }
 
     @Transactional
-    public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, Long userId, String token) {
+    public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, String token) {
+
+        if(!jwtService.isProcessingToken(token)){
+            throw new CustomException(ErrorCode.INVALID_TOKEN_STATE);
+        };
+
+        Long userId = jwtService.extractUserId(token);
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );

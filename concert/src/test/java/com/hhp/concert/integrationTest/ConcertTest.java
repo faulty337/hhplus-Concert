@@ -44,9 +44,10 @@ public class ConcertTest {
 
     @BeforeEach
     public void setUp(){
-        concertJpaRepository.deleteAll();
-        sessionJpaRepository.deleteAll();
         seatJpaRepository.deleteAll();
+        sessionJpaRepository.deleteAll();
+        concertJpaRepository.deleteAll();
+
     }
 
     @Test

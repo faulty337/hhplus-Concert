@@ -2,6 +2,7 @@ package com.hhp.concert.application;
 
 import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Business.Domain.WaitingQueue;
+import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.UserService;
 import com.hhp.concert.Business.service.WaitingService;
 import com.hhp.concert.Business.dto.GetTokenResponseDto;
@@ -21,7 +22,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class WaitingFacade {
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final WaitingService waitingService;
     private final UserService userService;
 
@@ -35,8 +36,8 @@ public class WaitingFacade {
             );
             return new GetTokenResponseDto(user.getWaitingToken());
         }
-        Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        String token = jwtUtil.generateWaitingToken(QueueType.WAITING.getStr(), data);
+
+        String token = jwtService.createWaitingToken(userId);
 
 
         userService.updateToken(userId, token);
@@ -47,7 +48,7 @@ public class WaitingFacade {
 
     @Transactional
     public GetWaitingTokenResponseDto getWaitingInfo(String token){
-        Long userId = ((Number) jwtUtil.extractData(token, QueueKey.USER_ID.getStr())).longValue();
+        Long userId = jwtService.extractUserId(token);
 
         Long waitingNumber = waitingService.getWaitingNumber(userId);
         boolean isProcessing = waitingNumber == 0;
