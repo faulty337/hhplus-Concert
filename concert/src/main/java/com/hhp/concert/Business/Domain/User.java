@@ -29,6 +29,6 @@ public class User extends BaseEntity{
     }
 
     public void chargeBalance(int amount){
-        balance += amount;
+        this.balance += amount;
     }
 }

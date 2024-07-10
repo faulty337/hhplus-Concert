@@ -35,7 +35,7 @@ public class UserServiceTest {
         long userId = 1L;
         User user = new User(userId, "token", 1000);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         Optional<User> foundUser = userService.getUser(1L);
 
@@ -47,7 +47,7 @@ public class UserServiceTest {
     void testUpdateToken() {
         long userId = 1L;
         User user = new User(userId, "token", 1000);
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(userRepository.save(any(User.class))).willReturn(user);
 
         User updatedUser = userService.updateToken(1L, "newToken");
@@ -60,10 +60,10 @@ public class UserServiceTest {
     @Test
     void testUpdateTokenUserNotFound() {
         long userId = 1L;
-        given(userRepository.findById(1L)).willReturn(Optional.empty());
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            userService.updateToken(1L, "newToken");
+            userService.updateToken(userId, "newToken");
         });
 
         assertEquals(ErrorCode.NOT_FOUND_USER_ID.getMsg(), exception.getMsg());
@@ -78,13 +78,13 @@ public class UserServiceTest {
         int amount = 10000;
         User user = new User(userId, "token", balance);
 
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(userRepository.save(any(User.class))).willReturn(user);
 
-        User updatedUser = userService.chargePoint(1L, amount);
+        User updatedUser = userService.chargePoint(userId, amount);
 
         assertEquals(balance + amount, updatedUser.getBalance());
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(userId);
         verify(userRepository, times(1)).save(user);
     }
 
@@ -92,14 +92,14 @@ public class UserServiceTest {
     void testChargePointInvalidAmount() {
         long userId = 1L;
         User user = new User(userId, "token", 1000);
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            userService.chargePoint(1L, 0);
+            userService.chargePoint(userId, 0);
         });
 
         assertEquals(ErrorCode.INVALID_AMOUNT.getMsg(), exception.getMsg());
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(userId);
         verify(userRepository, never()).save(user);
     }
 

@@ -131,15 +131,11 @@ public class ConcertFacadeTest {
     @Test
     @DisplayName("예약 토큰 예외 테스트")
     public void getReservationTokenExceptionTest(){
-        long userId = 1L;
         Long concertId = 1L;
         Long sessionId = 1L;
         Long seatId = 2L;
-        Long reservationId = 23L;
-        User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
-        Seat seat = new Seat(seatId, 1, 1000, false, session);
         String successToken = "successToken";
 
         given(jwtService.isProcessingToken(successToken)).willReturn(false);
