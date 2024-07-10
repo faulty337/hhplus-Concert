@@ -43,13 +43,21 @@ public class WaitingFacade {
     }
 
     @Transactional
-    public GetWaitingTokenResponseDto getWaitingInfo(String token){
-        Long userId = jwtService.extractUserId(token);
+    public GetWaitingTokenResponseDto getWaitingInfo(Long userId){
+        User user = userService.getUser(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
+        Optional<WaitingQueue> waitingQueue = queueService.waitingQueueByUserId(userId);
+        Long waitingNumber;
+        if(waitingQueue.isEmpty()){
+            queueService.addWaiting(new WaitingQueue(userId));
+        }
+        waitingNumber = queueService.getWaitingNumber(user.getId());
 
-        Long waitingNumber = queueService.getWaitingNumber(userId);
         boolean isProcessing = waitingNumber == 0;
 
         return new GetWaitingTokenResponseDto(waitingNumber, isProcessing);
     }
+
 
 }

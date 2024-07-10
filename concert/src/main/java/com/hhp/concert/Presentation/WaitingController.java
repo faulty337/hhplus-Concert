@@ -20,15 +20,15 @@ public class WaitingController {
 
     @GetMapping("/waiting/status")
     public GetWaitingTokenResponseDto getWaitingNumber(
-            @RequestParam String token
+            @RequestParam Long userId
     ){
-        return waitingFacade.getWaitingInfo(token);
+        return waitingFacade.getWaitingInfo(userId);
     }
 
-    @GetMapping("/waiting/token")
-    public GetTokenResponseDto getWaitingToken(
-            @RequestParam long userId
-    ){
-        return waitingFacade.getToken(userId);
-    }
+//    @GetMapping("/waiting/token")
+//    public GetTokenResponseDto getWaitingToken(
+//            @RequestParam long userId
+//    ){
+//        return waitingFacade.getToken(userId);
+//    }
 }

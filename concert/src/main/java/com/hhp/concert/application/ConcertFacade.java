@@ -46,15 +46,13 @@ public class ConcertFacade {
 
     @Transactional
     public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, String token) {
-
-        if(!jwtService.isProcessingToken(token)){
+        Long userId = jwtService.extractUserId(token);
+        if(!jwtService.isProcessing(token, userId)){
             throw new CustomException(ErrorCode.INVALID_TOKEN_STATE);
         };
 
-        Long userId = jwtService.extractUserId(token);
-        User user = userService.getUser(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );
+
+
         Concert concert = concertService.getConcert(concertId);
 
         Session session = sessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);

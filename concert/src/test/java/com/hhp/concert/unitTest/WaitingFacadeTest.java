@@ -99,7 +99,7 @@ public class WaitingFacadeTest {
         given(jwtService.extractUserId(token)).willReturn(userId);
         given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
-        GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(token);
+        GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(userId);
 
         assertEquals(response.getWaitingNumber(), waitingNumber);
         assertFalse(response.isProcessing());
@@ -111,11 +111,10 @@ public class WaitingFacadeTest {
         Long userId = 1L;
         String token = "token";
         Long waitingNumber = 0L;
-        Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
         given(jwtService.extractUserId(token)).willReturn(userId);
         given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
-        GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(token);
+        GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(userId);
 
         assertEquals(response.getWaitingNumber(), waitingNumber);
         assertTrue(response.isProcessing());
