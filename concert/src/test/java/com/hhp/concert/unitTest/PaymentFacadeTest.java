@@ -1,7 +1,7 @@
 package com.hhp.concert.unitTest;
 
 import com.hhp.concert.Business.Domain.User;
-import com.hhp.concert.Business.dto.ChargeResponseDto;
+import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.Business.service.UserService;
 import com.hhp.concert.application.PaymentFacade;
 import com.hhp.concert.util.CustomException;
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,7 +38,7 @@ public class PaymentFacadeTest {
 
         when(userService.chargePoint(userId, amount)).thenReturn(user);
 
-        ChargeResponseDto response = paymentFacade.charge(userId, amount);
+        UserBalanceResponseDto response = paymentFacade.charge(userId, amount);
 
         assertEquals(1L, response.getUserId());
         assertEquals(balance + amount, response.getBalance());
