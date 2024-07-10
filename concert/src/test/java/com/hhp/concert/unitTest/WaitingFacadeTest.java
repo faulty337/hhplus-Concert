@@ -92,7 +92,7 @@ public class WaitingFacadeTest {
     }
     
     @Test
-    @DisplayName("대기번호 발급 테스트 - 대기열")
+    @DisplayName("대기 번호 발급 테스트 - 대기열")
     public void getWaitingNumberWaitingStatusTest(){
         Long userId = 1L;
         String token = "token";
@@ -108,7 +108,7 @@ public class WaitingFacadeTest {
     }
 
     @Test
-    @DisplayName("대기번호 발급 테스트 - 처리열")
+    @DisplayName("대기 번호 발급 테스트 - 처리열")
     public void getWaitingNumberProcessingStatusTest(){
         Long userId = 1L;
         String token = "token";
