@@ -17,7 +17,8 @@ public enum ErrorCode {
     INVALID_AMOUNT(400, "잘못된 금액 입니다."),
     NOT_FOUND_RESERVATION_ID(404, "reservationId를 찾을 수 없습니다."),
     INSUFFICIENT_FUNDS(402, "잔액이 부족합니다."),
-    IS_NOT_PROCESSING(403, "아직 처리 순서가 아닙니다.");
+    IS_NOT_PROCESSING(403, "아직 처리 순서가 아닙니다."),
+    NOT_AUTHORITY(403, "권한이 없습니다.");
 
 
     private final int status;
