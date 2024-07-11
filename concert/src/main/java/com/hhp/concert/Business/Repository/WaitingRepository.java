@@ -10,4 +10,13 @@ public interface WaitingRepository {
     public Optional<WaitingQueue> getFirst();
 
     WaitingQueue save(WaitingQueue waitingQueue);
+
+    void deleteById(Long id);
+
+    void delete(WaitingQueue waitingQueue);
+    boolean existsById(Long id);
+
+    Optional<WaitingQueue> findById(Long l);
+
+    Long count();
 }

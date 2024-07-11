@@ -21,31 +21,23 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateNotExpirationToken(String sign) {
-        Map<String, Object> claims = new HashMap<>();
-        return generateNotExpirationToken(sign, claims);
-    }
-
-    public String generateProcessToken(String userId) {
-        Map<String, Object> claims = new HashMap<>();
-        return generateNotExpirationToken(userId, claims);
-    }
 
     public String generateNotExpirationToken(String sign, Map<String, Object> claims) {
         Map<String, Object> mutableClaims = new HashMap<>(claims);
         return Jwts.builder()
-                .setSubject(sign)
                 .setClaims(mutableClaims)
+                .setSubject(sign)
                 .setIssuedAt(new Date())
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String generateToken(String sign, Map<String, Object> claims, Date expiration) {
+        System.out.println(sign);
         Map<String, Object> mutableClaims = new HashMap<>(claims);
         return Jwts.builder()
-                .setSubject(sign)
                 .setClaims(mutableClaims)
+                .setSubject(sign)
                 .setIssuedAt(new Date())
                 .setExpiration(expiration)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

@@ -19,6 +19,13 @@ public class ProcessQueue extends BaseEntity{
 
     private Long userId;
 
+    private String token;
+
+    public ProcessQueue(Long userId, String token) {
+        this.userId = userId;
+        this.token = token;
+    }
+
     public ProcessQueue(Long userId) {
         this.userId = userId;
     }

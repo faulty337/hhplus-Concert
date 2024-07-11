@@ -4,6 +4,7 @@ import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.util.JwtUtil;
 import com.hhp.concert.util.enums.QueueKey;
 import com.hhp.concert.util.enums.QueueType;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,47 +15,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
 public class JwtServiceTest {
 
-    @Autowired
+    @InjectMocks
     private JwtUtil jwtUtil;
-
-    @Value("${jwt.secret}")
-    private String secret;
-
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);  // Mock 객체 초기화
+        MockitoAnnotations.openMocks(this);
+        ReflectionTestUtils.setField(jwtUtil, "secret", "super-secret-key-for-hhp-application-2024!");// Mock 객체 초기화
     }
+
 
     @Test
-    @DisplayName("시크릿 키 주입 테스트")
-    public void secretKeyInjectionTest() {
-        assertEquals("super-secret-key-for-hhp-application-2024!", secret);
+    public void testTokenCreationAndExtraction() {
+        Long userId = 123L;
+        Map<String, Object> data = Map.of("tokenType", "processing");
+        String token = jwtUtil.generateToken(String.valueOf(userId), data, new Date(System.currentTimeMillis() + 1000 * 60 * 5));
+
+        System.out.println("Generated Token: " + token); // 디버깅용 출력
+
+        Claims claims = jwtUtil.extractClaims(token);
+        System.out.println("Claims: " + claims); // 디버깅용 출력
+
+        String extractedUserId = jwtUtil.extractSign(token);
+
+        System.out.println("Extracted User ID: " + extractedUserId); // 디버깅용 출력
+
+        assertNotNull(extractedUserId);
+        assertEquals(String.valueOf(userId), extractedUserId);
     }
-
-    @Test
-    @DisplayName("토큰 제작 이후 데이터 확인 테스트")
-    public void createAndExtractTest(){
-        Long userId = 3L;
-        String token = jwtUtil.generateNotExpirationToken(QueueType.WAITING.getStr(), Map.of(QueueKey.USER_ID.getStr(), String.valueOf(userId)));
-
-        Long responseUserId = Long.valueOf((String) jwtUtil.extractData(token, QueueKey.USER_ID.getStr()));
-
-        assertEquals(userId, responseUserId);
-
-    }
-
 
 
 }

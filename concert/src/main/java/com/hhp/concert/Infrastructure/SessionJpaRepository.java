@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface SessionJpaRepository extends JpaRepository<Session, Long> {
     List<Session> findAllByConcertIdAndSessionTimeAfter(Long concertId, LocalDateTime now);
 
-    Optional<Session> findByIdAndConcertIdAndSessionTimeBefore(Long sessionId, Long concertId, LocalDateTime now);
+    Optional<Session> findByIdAndConcertIdAndSessionTimeAfter(Long sessionId, Long concertId, LocalDateTime now);
 
 }
