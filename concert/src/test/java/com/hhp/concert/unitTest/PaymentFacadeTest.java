@@ -4,10 +4,7 @@ import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Business.Domain.enums.ReservationStatus;
 import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
-import com.hhp.concert.Business.service.JwtService;
-import com.hhp.concert.Business.service.PaymentService;
-import com.hhp.concert.Business.service.ReservationService;
-import com.hhp.concert.Business.service.UserService;
+import com.hhp.concert.Business.service.*;
 import com.hhp.concert.application.PaymentFacade;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
@@ -37,6 +34,9 @@ public class PaymentFacadeTest {
 
     @Mock
     private PaymentService paymentService;
+
+    @Mock
+    private QueueService queueService;
 
     @InjectMocks
     private PaymentFacade paymentFacade;
@@ -101,12 +101,11 @@ public class PaymentFacadeTest {
 
         Seat seat = new Seat(1, price, false, session);
 
-
-
         Reservation reservation = new Reservation(user, session, seat, price);
 
         PaymentHistory paymentHistory = new PaymentHistory(price, user, reservation);
 
+        given(queueService.isProcessing(userId)).willReturn(true);
         given(userService.getUser(userId)).willReturn(Optional.of(user));
         given(jwtService.isProcessing(token, userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
@@ -127,7 +126,7 @@ public class PaymentFacadeTest {
     }
 
     @Test
-    public void testPayment_UserNotFound() {
+    public void testPaymentUserNotFound() {
         long userId = 1L;
         long reservationId = 1L;
         String token = "token";
@@ -145,9 +144,29 @@ public class PaymentFacadeTest {
         verify(reservationService, never()).getReservationByUserId(anyLong(), anyLong());
         verify(paymentService, never()).addPaymentHistory(any(PaymentHistory.class));
     }
+    @Test
+    public void testPaymentNotFoundProcessQueue() {
+        long userId = 1L;
+        long reservationId = 1L;
+        String token = "token";
+
+        User user = new User(userId, "token", 1000);
+        given(userService.getUser(userId)).willReturn(Optional.of(user));
+        given(jwtService.isProcessing(token, userId)).willReturn(true);
+        given(queueService.isProcessing(userId)).willReturn(false);
+
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            paymentFacade.payment(userId, reservationId, token);
+        });
+
+        assertEquals(ErrorCode.IS_NOT_PROCESSING.getMsg(), exception.getMsg());
+
+        verify(userService, times(1)).getUser(userId);
+    }
 
     @Test
-    public void testPayment_InvalidToken() {
+    public void testPaymentInvalidToken() {
         String token = "invalid-token";
         long userId = 1L;
         long reservationId = 1L;
@@ -175,7 +194,7 @@ public class PaymentFacadeTest {
     }
 
     @Test
-    public void testPayment_InsufficientFunds() {
+    public void testPaymentInsufficientFunds() {
         long userId = 1L;
         long reservationId = 1L;
         long concertId = 1L;
@@ -192,6 +211,7 @@ public class PaymentFacadeTest {
 
         given(userService.getUser(userId)).willReturn(Optional.of(user));
         given(jwtService.isProcessing(token, userId)).willReturn(true);
+        given(queueService.isProcessing(userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
 
         CustomException exception = assertThrows(CustomException.class, () -> {
