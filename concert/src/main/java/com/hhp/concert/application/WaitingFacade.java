@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -25,21 +26,21 @@ public class WaitingFacade {
 
     @Transactional
     public GetTokenResponseDto getToken(Long userId){
-        Optional<WaitingQueue> waitingQueue = queueService.waitingQueueByUserId(userId);
-        if(waitingQueue.isPresent()){
-            User user = userService.getUser(waitingQueue.get().getUserId()).orElseThrow(
-                    () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-            );
-            return new GetTokenResponseDto(user.getToken());
+        User user = userService.getUser(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
+        if(user.getToken().isEmpty()){
+            throw new CustomException(ErrorCode.NOT_AUTHORITY);
         }
 
-        String token = jwtService.createProcessingToken(userId);
-
-
-        userService.updateToken(userId, token);
-        queueService.addWaiting(new WaitingQueue(userId));
-
-        return new GetTokenResponseDto(token);
+        try {
+            if(Objects.equals(userId, jwtService.extractUserId(user.getToken()))){
+                return new GetTokenResponseDto(user.getToken());
+            }
+        }catch (Exception e){
+            throw new CustomException(ErrorCode.NOT_AUTHORITY);
+        }
+        throw new CustomException(ErrorCode.NOT_AUTHORITY);
     }
 
     @Transactional
