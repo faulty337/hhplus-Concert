@@ -5,14 +5,16 @@ import com.hhp.concert.Business.ProcessQueueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class ProcessQueueRepositoryImpl implements ProcessQueueRepository {
     private final ProcessQueueJpaRepository processQueueJpaRepository;
 
 
-    public void delete(Long processionId){
-        processQueueJpaRepository.deleteById(processionId);
+    public void delete(ProcessQueue processQueue){
+        processQueueJpaRepository.delete(processQueue);
     }
 
     @Override
@@ -23,5 +25,15 @@ public class ProcessQueueRepositoryImpl implements ProcessQueueRepository {
     @Override
     public boolean existByUserId(Long userId) {
         return processQueueJpaRepository.existsByUserId(userId);
+    }
+
+    @Override
+    public Long size() {
+        return processQueueJpaRepository.count();
+    }
+
+    @Override
+    public List<ProcessQueue> findAll() {
+        return processQueueJpaRepository.findAll();
     }
 }

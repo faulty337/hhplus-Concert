@@ -42,6 +42,7 @@ class QueueServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        ReflectionTestUtils.setField(queueService, "processingSize", 2);
     }
 
     @Test
@@ -87,5 +88,28 @@ class QueueServiceTest {
         assertEquals(waitingNumber, waitingId - firstWaitingId);
     }
 
+    @Test
+    @DisplayName("스케줄러 테스트")
+    void testUpdateQueue() {
+        Long userId1 = 1L;
+        Long userId2 = 2L;
+        long userId = 3L;
+        ProcessQueue processQueue1 = new ProcessQueue(userId1, "validToken1");
+        ProcessQueue processQueue2 = new ProcessQueue(userId2, "invalidToken");
+        List<ProcessQueue> processQueueList = Arrays.asList(processQueue1, processQueue2);
+
+        when(processQueueRepository.findAll()).thenReturn(processQueueList);
+        when(jwtService.validateToken("validToken1", userId1)).thenReturn(true);
+        when(jwtService.validateToken("invalidToken", userId2)).thenReturn(false);
+
+        WaitingQueue waitingQueue = new WaitingQueue(1L, userId);
+        when(waitingRepository.findById(userId1)).thenReturn(Optional.of(waitingQueue));
+        when(jwtService.createProcessingToken(userId)).thenReturn("newToken");
+
+        queueService.updateQueue();
+
+        verify(processQueueRepository, times(1)).delete(processQueue2);
+        verify(processQueueRepository, times(1)).save(any(ProcessQueue.class));
+        verify(waitingRepository, times(1)).deleteById(userId1);
     }
 }
