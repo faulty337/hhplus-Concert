@@ -80,6 +80,7 @@ public class QueueServiceImpl implements QueueService {
 
         // 처리큐 채우기
         while (size < processingSize) {
+
             Optional<WaitingQueue> waitingQueue = waitingRepository.findById(count.get());
             if (waitingQueue.isEmpty()) {
                 count.incrementAndGet();

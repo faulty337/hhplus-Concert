@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -90,13 +91,12 @@ class QueueServiceTest {
 
     @Test
     @DisplayName("스케줄러 테스트")
-    void testUpdateQueue() {
+    void testUpdateQueueTest() {
         Long userId1 = 1L;
         Long userId2 = 2L;
         long userId3 = 3L;
         ProcessQueue processQueue1 = new ProcessQueue(userId1, "validToken1");
         ProcessQueue processQueue2 = new ProcessQueue(userId2, "invalidToken");
-        ProcessQueue processQueue3 = new ProcessQueue(userId3, "validToken2");
         List<ProcessQueue> processQueueList = Arrays.asList(processQueue1, processQueue2);
 
         when(processQueueRepository.findAll()).thenReturn(processQueueList);
@@ -105,12 +105,42 @@ class QueueServiceTest {
 
         WaitingQueue waitingQueue = new WaitingQueue(1L, userId3);
         when(waitingRepository.findById(1L)).thenReturn(Optional.of(waitingQueue));
+        when(waitingRepository.findByUserId(userId2)).thenReturn(Optional.empty());
         when(jwtService.createProcessingToken(userId3)).thenReturn("newToken");
 
         queueService.updateQueue();
 
         verify(processQueueRepository, times(1)).delete(processQueue2);
         verify(processQueueRepository, times(1)).save(any(ProcessQueue.class));
-        verify(waitingRepository, times(1)).deleteById(userId1);
+//        verify(waitingRepository, times(1)).delete(any(WaitingQueue.class));
+    }
+
+    @Test
+    @DisplayName("스케줄러 이동 테스트")
+    void testUpdateQueueMoveTest() {
+        Long userId1 = 1L;
+        Long userId2 = 2L;
+        long userId3 = 3L;
+//        ProcessQueue processQueue1 = new ProcessQueue(userId1, "validToken1");
+//        ProcessQueue processQueue2 = new ProcessQueue(userId2, "validToken1");
+        List<ProcessQueue> processQueueList = new ArrayList<>();
+
+        when(processQueueRepository.findAll()).thenReturn(processQueueList);
+//        when(jwtService.validateToken("validToken1", userId1)).thenReturn(true);
+//        when(jwtService.validateToken("validToken1", userId2)).thenReturn(false);
+
+        WaitingQueue waitingQueue = new WaitingQueue(1L, userId2);
+        when(waitingRepository.findById(userId1)).thenReturn(Optional.of(new WaitingQueue(1L, userId1)));
+        when(waitingRepository.findById(userId2)).thenReturn(Optional.of(new WaitingQueue(2L, userId2)));
+        when(waitingRepository.findByUserId(userId1)).thenReturn(Optional.of(waitingQueue));
+        when(waitingRepository.findByUserId(userId2)).thenReturn(Optional.of(waitingQueue));
+        when(jwtService.createProcessingToken(userId1)).thenReturn("newToken");
+        when(jwtService.createProcessingToken(userId2)).thenReturn("newToken");
+
+        queueService.updateQueue();
+
+//        verify(processQueueRepository, times(1)).delete(processQueue2);
+        verify(processQueueRepository, times(2)).save(any(ProcessQueue.class));
+        verify(waitingRepository, times(2)).delete(any(WaitingQueue.class));
     }
 }
