@@ -18,5 +18,5 @@ public interface QueueService {
 
     void updateQueue();
 
-    ProcessQueue addProcessingQueue(ProcessQueue processQueue);
+    ProcessQueue addProcessingQueue(Long userId);
 }

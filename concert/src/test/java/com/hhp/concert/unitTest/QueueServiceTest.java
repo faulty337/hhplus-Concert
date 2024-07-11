@@ -93,18 +93,19 @@ class QueueServiceTest {
     void testUpdateQueue() {
         Long userId1 = 1L;
         Long userId2 = 2L;
-        long userId = 3L;
+        long userId3 = 3L;
         ProcessQueue processQueue1 = new ProcessQueue(userId1, "validToken1");
         ProcessQueue processQueue2 = new ProcessQueue(userId2, "invalidToken");
+        ProcessQueue processQueue3 = new ProcessQueue(userId3, "validToken2");
         List<ProcessQueue> processQueueList = Arrays.asList(processQueue1, processQueue2);
 
         when(processQueueRepository.findAll()).thenReturn(processQueueList);
         when(jwtService.validateToken("validToken1", userId1)).thenReturn(true);
         when(jwtService.validateToken("invalidToken", userId2)).thenReturn(false);
 
-        WaitingQueue waitingQueue = new WaitingQueue(1L, userId);
-        when(waitingRepository.findById(userId1)).thenReturn(Optional.of(waitingQueue));
-        when(jwtService.createProcessingToken(userId)).thenReturn("newToken");
+        WaitingQueue waitingQueue = new WaitingQueue(1L, userId3);
+        when(waitingRepository.findById(1L)).thenReturn(Optional.of(waitingQueue));
+        when(jwtService.createProcessingToken(userId3)).thenReturn("newToken");
 
         queueService.updateQueue();
 

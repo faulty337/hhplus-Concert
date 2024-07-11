@@ -34,6 +34,11 @@ public class WaitingRepositoryImpl implements WaitingRepository {
     }
 
     @Override
+    public void delete(WaitingQueue waitingQueue) {
+        waitingQueueJpaRepository.delete(waitingQueue);
+    }
+
+    @Override
     public boolean existsById(Long id) {
         return waitingQueueJpaRepository.existsById(id);
     }

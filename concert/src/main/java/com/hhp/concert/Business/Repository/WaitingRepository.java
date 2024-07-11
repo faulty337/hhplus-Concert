@@ -13,6 +13,7 @@ public interface WaitingRepository {
 
     void deleteById(Long id);
 
+    void delete(WaitingQueue waitingQueue);
     boolean existsById(Long id);
 
     Optional<WaitingQueue> findById(Long l);

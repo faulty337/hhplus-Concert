@@ -5,6 +5,7 @@ import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Business.ProcessQueueRepository;
 import com.hhp.concert.Business.Repository.WaitingRepository;
 import com.hhp.concert.util.CustomException;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
 import com.hhp.concert.util.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -85,16 +86,18 @@ public class QueueServiceImpl implements QueueService {
                 continue;
             }
             Long userId = waitingQueue.get().getUserId();
-            addProcessingQueue(new ProcessQueue(userId, jwtService.createProcessingToken(userId)));
-            waitingRepository.deleteById(count.get());
+            addProcessingQueue(userId);
             count.incrementAndGet();
             size++;
         }
     }
 
     @Override
-    public ProcessQueue addProcessingQueue(ProcessQueue processQueue){
-        return processQueueRepository.save(processQueue);
+    public ProcessQueue addProcessingQueue(Long userId){
+        Optional<WaitingQueue> waitingQueue = waitingRepository.findByUserId(userId);
+        waitingQueue.ifPresent(waitingRepository::delete);
+
+        return processQueueRepository.save(new ProcessQueue(userId, jwtService.createProcessingToken(userId)));
     }
 
 
