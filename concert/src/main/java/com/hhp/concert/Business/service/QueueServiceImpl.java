@@ -28,6 +28,7 @@ public class QueueServiceImpl implements QueueService {
 
     private final JwtService jwtService;
 
+    //최근 처리 대기열 첫번째 인덱스 저장
     private final AtomicLong count = new AtomicLong(1);
 
 
@@ -62,14 +63,17 @@ public class QueueServiceImpl implements QueueService {
         processQueueRepository.delete(processQueue);
     }
 
+
+    //스케줄러 함수
     @Override
     @Transactional
     public synchronized void updateQueue() {
 
+        //처리열 조회
         List<ProcessQueue> list = processQueueRepository.findAll();
         long size = list.size();
 
-        // 유효성 체크
+        // 처리열 각 토큰 유효성 검사
         for (ProcessQueue processQueue : list) {
             if (!jwtService.validateToken(processQueue.getToken(), processQueue.getUserId())) {
                 removeProcessing(processQueue);
@@ -89,10 +93,13 @@ public class QueueServiceImpl implements QueueService {
     @Override
     public void moveUserToProcessingQueue(){
         Optional<WaitingQueue> waitingQueue;
+
+        //waiting이 비었을 때 처리(무한반복 위험)
         Long size = waitingRepository.count();
         if(size == 0){
             return;
         }
+        //대기열 삭제 및 처리열 삽입
         do {
             waitingQueue = waitingRepository.findById(count.get());
             if(waitingQueue.isEmpty()){

@@ -35,10 +35,9 @@ public class ConcertFacade {
 
     @Transactional(readOnly = true)
     public GetSessionSeatResponseDto getSessionSeat(Long concertId, Long sessionId) {
+        //좌석 정보 반환
         Concert concert = concertService.getConcert(concertId);
-
         Session session = sessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
-
         List<Seat> seatList = seatService.getSessionBySeatList(session.getId());
 
         return new GetSessionSeatResponseDto(session.getSessionTime(), seatList.stream().map(seat -> new SeatInfoDto(seat.getSeatNumber(), seat.isAvailable(), seat.getPrice())).toList());
@@ -46,6 +45,7 @@ public class ConcertFacade {
 
     @Transactional
     public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, String token) {
+        //JWT 토큰 이용 유효 시간, user sign 확인
         Long userId = jwtService.extractUserId(token);
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
@@ -54,13 +54,12 @@ public class ConcertFacade {
             throw new CustomException(ErrorCode.INVALID_TOKEN_STATE);
         };
 
-
+        //유효성 검사
         Concert concert = concertService.getConcert(concertId);
-
         Session session = sessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
-
         Seat seat = seatService.getSeatsForConcertSessionAndAvailable(session.getId(), seatId);
 
+        //예약 저장
         Reservation reservation = reservationService.addReservation(new Reservation(user, session, seat, seat.getPrice()));
 
 
