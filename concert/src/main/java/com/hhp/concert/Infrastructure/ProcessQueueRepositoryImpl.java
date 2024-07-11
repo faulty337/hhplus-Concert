@@ -19,4 +19,9 @@ public class ProcessQueueRepositoryImpl implements ProcessQueueRepository {
     public ProcessQueue save(ProcessQueue processQueue) {
         return processQueueJpaRepository.save(processQueue);
     }
+
+    @Override
+    public boolean existByUserId(Long userId) {
+        return processQueueJpaRepository.existsByUserId(userId);
+    }
 }

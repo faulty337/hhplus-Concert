@@ -10,4 +10,6 @@ public interface QueueService {
     public Long getWaitingNumber(Long userId);
 
     public WaitingQueue addWaiting(WaitingQueue waitingQueue);
+
+    boolean isProcessing(long userId);
 }

@@ -1,6 +1,7 @@
 package com.hhp.concert.Business.service;
 
 import com.hhp.concert.Business.Domain.WaitingQueue;
+import com.hhp.concert.Business.ProcessQueueRepository;
 import com.hhp.concert.Business.Repository.WaitingRepository;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
@@ -14,6 +15,8 @@ import java.util.Optional;
 public class QueueServiceImpl implements QueueService {
 
     private final WaitingRepository waitingRepository;
+
+    private final ProcessQueueRepository processQueueRepository;
 
     @Override
     public Optional<WaitingQueue> waitingQueueByUserId(Long userId) {
@@ -34,6 +37,11 @@ public class QueueServiceImpl implements QueueService {
     @Override
     public WaitingQueue addWaiting(WaitingQueue waitingQueue) {
         return waitingRepository.save(waitingQueue);
+    }
+
+    @Override
+    public boolean isProcessing(long userId) {
+        return processQueueRepository.existByUserId(userId);
     }
 
 
