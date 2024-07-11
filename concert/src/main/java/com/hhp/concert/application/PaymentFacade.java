@@ -57,7 +57,7 @@ public class PaymentFacade {
         }
 
         PaymentHistory paymentHistory = paymentService.addPaymentHistory(new PaymentHistory(seat.getPrice(), user, reservation));
-
+        user.userBalance(paymentHistory.getAmount());
         reservation.setStatus(ReservationStatus.CONFIRMED);
         Session session = reservation.getSession();
 
