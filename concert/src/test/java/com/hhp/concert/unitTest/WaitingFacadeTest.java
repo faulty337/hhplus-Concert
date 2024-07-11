@@ -52,7 +52,7 @@ public class WaitingFacadeTest {
         String token = "token";
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
         given(queueService.waitingQueueByUserId(userId)).willReturn(Optional.empty());
-        given(jwtService.createWaitingToken(userId)).willReturn(token);
+        given(jwtService.createProcessingToken(userId)).willReturn(token);
 
         GetTokenResponseDto response = waitingFacade.getToken(userId);
 
@@ -80,7 +80,7 @@ public class WaitingFacadeTest {
     public void getTokenExceptionTest(){
         Long userId = 1L;
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(jwtService.createWaitingToken(userId)).willThrow(new CustomException(ErrorCode.INVALID_JWT));
+        given(jwtService.createProcessingToken(userId)).willThrow(new CustomException(ErrorCode.INVALID_JWT));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             waitingFacade.getToken(userId);

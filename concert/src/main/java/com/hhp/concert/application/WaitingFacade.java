@@ -30,10 +30,10 @@ public class WaitingFacade {
             User user = userService.getUser(waitingQueue.get().getUserId()).orElseThrow(
                     () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
             );
-            return new GetTokenResponseDto(user.getWaitingToken());
+            return new GetTokenResponseDto(user.getToken());
         }
 
-        String token = jwtService.createWaitingToken(userId);
+        String token = jwtService.createProcessingToken(userId);
 
 
         userService.updateToken(userId, token);

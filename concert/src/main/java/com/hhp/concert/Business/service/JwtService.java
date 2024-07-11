@@ -1,7 +1,7 @@
 package com.hhp.concert.Business.service;
 
 public interface JwtService{
-    String createWaitingToken(Long userId);
+    String createProcessingToken(Long userId);
 
     Long extractUserId(String token);
 

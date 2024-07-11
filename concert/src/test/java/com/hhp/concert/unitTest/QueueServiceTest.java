@@ -1,76 +1,91 @@
 package com.hhp.concert.unitTest;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
+import com.hhp.concert.Business.Domain.ProcessQueue;
 import com.hhp.concert.Business.Domain.WaitingQueue;
+import com.hhp.concert.Business.ProcessQueueRepository;
+import com.hhp.concert.Business.Repository.WaitingRepository;
+import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.QueueServiceImpl;
-import com.hhp.concert.Infrastructure.WaitingRepositoryImpl;
 import com.hhp.concert.util.CustomException;
+import com.hhp.concert.util.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
-import static org.mockito.BDDMockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+class QueueServiceTest {
 
-
-public class QueueServiceTest {
     @Mock
-    private WaitingRepositoryImpl waitingRepository;
+    private WaitingRepository waitingRepository;
+
+    @Mock
+    private ProcessQueueRepository processQueueRepository;
+
+    @Mock
+    private JwtService jwtService;
 
     @InjectMocks
-    private QueueServiceImpl waitingService;
+    private QueueServiceImpl queueService;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);  // Mock 객체 초기화
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     @DisplayName("waiting 조회 테스트")
-    public void getWaitingQueueTest(){
+    public void getWaitingQueueTest() {
         Long waitingId = 1L;
         Long userId = 1L;
         given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId)));
 
-        WaitingQueue returnData = waitingService.waitingQueueByUserId(userId).get();
+        Optional<WaitingQueue> returnData = queueService.waitingQueueByUserId(userId);
 
-        assertEquals(returnData.getId(), waitingId);
-        assertEquals(returnData.getUserId(), userId);
+        assertTrue(returnData.isPresent());
+        assertEquals(returnData.get().getId(), waitingId);
+        assertEquals(returnData.get().getUserId(), userId);
     }
 
     @Test
-    @DisplayName("waiting 조회 테스트")
-    public void getWaitingQueueExceptionTest(){
-        Long waitingId = 1L;
+    @DisplayName("waiting 조회 예외 테스트")
+    public void getWaitingQueueExceptionTest() {
         Long userId = 1L;
         given(waitingRepository.findByUserId(userId)).willReturn(Optional.empty());
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            waitingService.waitingQueueByUserId(userId);
+            queueService.getWaitingNumber(userId);
         });
-    }
 
+        assertEquals(ErrorCode.NOT_FOUND_USER_ID.getMsg(), exception.getMsg());
+    }
 
     @Test
     @DisplayName("대기 번호 조회 테스트")
-    public void getWaitingNumberTest(){
+    public void getWaitingNumberTest() {
         Long firstWaitingId = 32L;
         Long firstUserId = 32L;
-
         Long waitingId = 64L;
         Long userId = 64L;
 
         given(waitingRepository.getFirst()).willReturn(Optional.of(new WaitingQueue(firstWaitingId, firstUserId)));
         given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId)));
 
-        Long waitingNumber = waitingService.getWaitingNumber(userId);
+        Long waitingNumber = queueService.getWaitingNumber(userId);
 
         assertEquals(waitingNumber, waitingId - firstWaitingId);
+    }
 
     }
 }

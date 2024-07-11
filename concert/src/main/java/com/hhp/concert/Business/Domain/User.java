@@ -15,17 +15,19 @@ public class User extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String waitingToken;
+    private String token;
 
     private int balance;
 
-    public User(String waitingToken, int balance) {
-        this.waitingToken = waitingToken;
+
+
+    public User(String token, int balance) {
+        this.token = token;
         this.balance = balance;
     }
 
     public void updateWaitingToken(String waitingToken){
-        this.waitingToken = waitingToken;
+        this.token = waitingToken;
     }
     public void userBalance(int amount){
         this.balance -= amount;

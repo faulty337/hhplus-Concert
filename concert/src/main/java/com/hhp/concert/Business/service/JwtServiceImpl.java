@@ -6,16 +6,18 @@ import com.hhp.concert.util.enums.QueueType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService{
     private final JwtUtil jwtUtil;
+
     @Override
-    public String createWaitingToken(Long userId) {
+    public String createProcessingToken(Long userId) {
         Map<String, Object> data = Map.of("tokenType", "processing");
-        return jwtUtil.generateNotExpirationToken(String.valueOf(userId), data);
+        return jwtUtil.generateToken(String.valueOf(userId), data, new Date(System.currentTimeMillis() + 1000 * 60 * 5));
     }
 
     @Override

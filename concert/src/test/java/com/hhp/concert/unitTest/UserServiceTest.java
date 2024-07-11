@@ -52,7 +52,7 @@ public class UserServiceTest {
 
         User updatedUser = userService.updateToken(1L, "newToken");
 
-        assertEquals("newToken", updatedUser.getWaitingToken());
+        assertEquals("newToken", updatedUser.getToken());
         verify(userRepository, times(1)).findById(1L);
         verify(userRepository, times(1)).save(user);
     }

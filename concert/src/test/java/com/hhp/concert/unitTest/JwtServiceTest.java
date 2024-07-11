@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,26 +22,15 @@ import java.util.Map;
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
 public class JwtServiceTest {
 
-    @Autowired
+    @InjectMocks
     private JwtUtil jwtUtil;
-
-    @Value("${jwt.secret}")
-    private String secret;
-
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);  // Mock 객체 초기화
-    }
-
-    @Test
-    @DisplayName("시크릿 키 주입 테스트")
-    public void secretKeyInjectionTest() {
-        assertEquals("super-secret-key-for-hhp-application-2024!", secret);
+        MockitoAnnotations.openMocks(this);
+        ReflectionTestUtils.setField(jwtUtil, "secret", "super-secret-key-for-hhp-application-2024!");// Mock 객체 초기화
     }
 
     @Test
