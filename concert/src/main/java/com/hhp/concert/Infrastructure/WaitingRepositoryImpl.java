@@ -48,5 +48,10 @@ public class WaitingRepositoryImpl implements WaitingRepository {
         return waitingQueueJpaRepository.findById(id);
     }
 
+    @Override
+    public Long count() {
+        return waitingQueueJpaRepository.count();
+    }
+
 
 }

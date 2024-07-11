@@ -14,4 +14,6 @@ public interface ProcessQueueRepository {
     Long size();
 
     List<ProcessQueue> findAll();
+
+    void deleteByUserId(Long userId);
 }

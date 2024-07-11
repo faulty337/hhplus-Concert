@@ -99,14 +99,15 @@ class QueueServiceTest {
         ProcessQueue processQueue2 = new ProcessQueue(userId2, "invalidToken");
         List<ProcessQueue> processQueueList = Arrays.asList(processQueue1, processQueue2);
 
-        when(processQueueRepository.findAll()).thenReturn(processQueueList);
-        when(jwtService.validateToken("validToken1", userId1)).thenReturn(true);
-        when(jwtService.validateToken("invalidToken", userId2)).thenReturn(false);
+        given(processQueueRepository.findAll()).willReturn(processQueueList);
+        given(jwtService.validateToken("validToken1", userId1)).willReturn(true);
+        given(jwtService.validateToken("invalidToken", userId2)).willReturn(false);
 
         WaitingQueue waitingQueue = new WaitingQueue(1L, userId3);
-        when(waitingRepository.findById(1L)).thenReturn(Optional.of(waitingQueue));
-        when(waitingRepository.findByUserId(userId2)).thenReturn(Optional.empty());
-        when(jwtService.createProcessingToken(userId3)).thenReturn("newToken");
+        given(waitingRepository.count()).willReturn(1L);
+        given(waitingRepository.findById(1L)).willReturn(Optional.of(waitingQueue));
+        given(waitingRepository.findByUserId(userId2)).willReturn(Optional.empty());
+        given(jwtService.createProcessingToken(userId3)).willReturn("newToken");
 
         queueService.updateQueue();
 
@@ -125,17 +126,18 @@ class QueueServiceTest {
 //        ProcessQueue processQueue2 = new ProcessQueue(userId2, "validToken1");
         List<ProcessQueue> processQueueList = new ArrayList<>();
 
-        when(processQueueRepository.findAll()).thenReturn(processQueueList);
+        given(processQueueRepository.findAll()).willReturn(processQueueList);
 //        when(jwtService.validateToken("validToken1", userId1)).thenReturn(true);
 //        when(jwtService.validateToken("validToken1", userId2)).thenReturn(false);
 
         WaitingQueue waitingQueue = new WaitingQueue(1L, userId2);
-        when(waitingRepository.findById(userId1)).thenReturn(Optional.of(new WaitingQueue(1L, userId1)));
-        when(waitingRepository.findById(userId2)).thenReturn(Optional.of(new WaitingQueue(2L, userId2)));
-        when(waitingRepository.findByUserId(userId1)).thenReturn(Optional.of(waitingQueue));
-        when(waitingRepository.findByUserId(userId2)).thenReturn(Optional.of(waitingQueue));
-        when(jwtService.createProcessingToken(userId1)).thenReturn("newToken");
-        when(jwtService.createProcessingToken(userId2)).thenReturn("newToken");
+        given(waitingRepository.count()).willReturn(2L);
+        given(waitingRepository.findById(userId1)).willReturn(Optional.of(new WaitingQueue(1L, userId1)));
+        given(waitingRepository.findById(userId2)).willReturn(Optional.of(new WaitingQueue(2L, userId2)));
+        given(waitingRepository.findByUserId(userId1)).willReturn(Optional.of(waitingQueue));
+        given(waitingRepository.findByUserId(userId2)).willReturn(Optional.of(waitingQueue));
+        given(jwtService.createProcessingToken(userId1)).willReturn("newToken");
+        given(jwtService.createProcessingToken(userId2)).willReturn("newToken");
 
         queueService.updateQueue();
 

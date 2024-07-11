@@ -17,4 +17,6 @@ public interface WaitingRepository {
     boolean existsById(Long id);
 
     Optional<WaitingQueue> findById(Long l);
+
+    Long count();
 }

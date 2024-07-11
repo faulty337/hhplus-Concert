@@ -26,7 +26,7 @@ public class User extends BaseEntity{
         this.balance = balance;
     }
 
-    public void updateWaitingToken(String waitingToken){
+    public void updateToken(String waitingToken){
         this.token = waitingToken;
     }
     public void userBalance(int amount){

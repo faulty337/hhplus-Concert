@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
-        user.updateWaitingToken(token);
+        user.updateToken(token);
         return userRepository.save(user);
     }
 

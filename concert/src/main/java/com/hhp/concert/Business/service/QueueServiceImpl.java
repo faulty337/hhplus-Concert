@@ -5,7 +5,6 @@ import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Business.ProcessQueueRepository;
 import com.hhp.concert.Business.Repository.WaitingRepository;
 import com.hhp.concert.util.CustomException;
-import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
 import com.hhp.concert.util.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +69,7 @@ public class QueueServiceImpl implements QueueService {
         List<ProcessQueue> list = processQueueRepository.findAll();
         long size = list.size();
 
-        //유효성 체크
+        // 유효성 체크
         for (ProcessQueue processQueue : list) {
             if (!jwtService.validateToken(processQueue.getToken(), processQueue.getUserId())) {
                 removeProcessing(processQueue);
@@ -78,30 +77,45 @@ public class QueueServiceImpl implements QueueService {
             }
         }
 
-        // 처리큐 채우기
+        // 대기열의 유저를 처리열로 이동
         while (size < processingSize) {
-
-            Optional<WaitingQueue> waitingQueue = waitingRepository.findById(count.get());
-            if (waitingQueue.isEmpty()) {
-                count.incrementAndGet();
-                continue;
-            }
-            Long userId = waitingQueue.get().getUserId();
-            addProcessingQueue(userId);
-            count.incrementAndGet();
+            moveUserToProcessingQueue();
             size++;
         }
+
+    }
+
+
+    @Override
+    public void moveUserToProcessingQueue(){
+        Optional<WaitingQueue> waitingQueue;
+        Long size = waitingRepository.count();
+        if(size == 0){
+            return;
+        }
+        do {
+            waitingQueue = waitingRepository.findById(count.get());
+            if(waitingQueue.isEmpty()){
+                count.incrementAndGet();
+            }
+        } while (waitingQueue.isEmpty());
+
+        Long userId = waitingQueue.get().getUserId();
+        addProcessingQueue(userId);
     }
 
     @Override
     public ProcessQueue addProcessingQueue(Long userId){
         Optional<WaitingQueue> waitingQueue = waitingRepository.findByUserId(userId);
         waitingQueue.ifPresent(waitingRepository::delete);
-
+        count.incrementAndGet();
         return processQueueRepository.save(new ProcessQueue(userId, jwtService.createProcessingToken(userId)));
     }
 
-
+    @Override
+    public void removeProcessingByUserId(Long userId) {
+        processQueueRepository.deleteByUserId(userId);
+    }
 
 
 }

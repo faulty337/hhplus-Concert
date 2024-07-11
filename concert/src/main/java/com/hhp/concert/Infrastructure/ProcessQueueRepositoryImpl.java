@@ -36,4 +36,10 @@ public class ProcessQueueRepositoryImpl implements ProcessQueueRepository {
     public List<ProcessQueue> findAll() {
         return processQueueJpaRepository.findAll();
     }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        processQueueJpaRepository.deleteByUserId(userId);
+    }
+
 }

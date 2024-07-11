@@ -18,5 +18,9 @@ public interface QueueService {
 
     void updateQueue();
 
+    void moveUserToProcessingQueue();
+
     ProcessQueue addProcessingQueue(Long userId);
+
+    void removeProcessingByUserId(Long userId);
 }
