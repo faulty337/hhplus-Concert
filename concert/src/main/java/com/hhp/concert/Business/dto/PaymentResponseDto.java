@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
 public class PaymentResponseDto {
     private long sessionId;
-    private LocalDate date;
+    private LocalDateTime date;
     private int seatNumber;
+    private int price;
 }

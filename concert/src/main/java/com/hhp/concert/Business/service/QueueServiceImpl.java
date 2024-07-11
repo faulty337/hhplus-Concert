@@ -1,6 +1,7 @@
 package com.hhp.concert.Business.service;
 
 import com.hhp.concert.Business.Domain.WaitingQueue;
+import com.hhp.concert.Business.ProcessQueueRepository;
 import com.hhp.concert.Business.Repository.WaitingRepository;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
@@ -11,17 +12,19 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class WaitingServiceImpl implements WaitingService{
+public class QueueServiceImpl implements QueueService {
 
     private final WaitingRepository waitingRepository;
 
+    private final ProcessQueueRepository processQueueRepository;
+
     @Override
-    public Optional<WaitingQueue> findByUserId(Long userId) {
+    public Optional<WaitingQueue> waitingQueueByUserId(Long userId) {
         return waitingRepository.findByUserId(userId);
     }
 
     public Long getWaitingNumber(Long userId){
-        WaitingQueue user = findByUserId(userId).orElseThrow(
+        WaitingQueue user = waitingQueueByUserId(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );;
         Optional<WaitingQueue> first = waitingRepository.getFirst();
@@ -32,8 +35,13 @@ public class WaitingServiceImpl implements WaitingService{
     }
 
     @Override
-    public WaitingQueue add(WaitingQueue waitingQueue) {
+    public WaitingQueue addWaiting(WaitingQueue waitingQueue) {
         return waitingRepository.save(waitingQueue);
+    }
+
+    @Override
+    public boolean isProcessing(long userId) {
+        return processQueueRepository.existByUserId(userId);
     }
 
 

@@ -6,4 +6,6 @@ public interface JwtService{
     Long extractUserId(String token);
 
     Boolean isProcessingToken(String token);
+
+    Boolean isProcessing(String token, Long userId);
 }

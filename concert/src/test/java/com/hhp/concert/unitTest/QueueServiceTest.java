@@ -2,7 +2,7 @@ package com.hhp.concert.unitTest;
 
 
 import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.service.WaitingServiceImpl;
+import com.hhp.concert.Business.service.QueueServiceImpl;
 import com.hhp.concert.Infrastructure.WaitingRepositoryImpl;
 import com.hhp.concert.util.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +18,12 @@ import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class WaitingServiceTest {
+public class QueueServiceTest {
     @Mock
     private WaitingRepositoryImpl waitingRepository;
 
     @InjectMocks
-    private WaitingServiceImpl waitingService;
+    private QueueServiceImpl waitingService;
 
     @BeforeEach
     public void setUp() {
@@ -37,7 +37,7 @@ public class WaitingServiceTest {
         Long userId = 1L;
         given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId)));
 
-        WaitingQueue returnData = waitingService.findByUserId(userId).get();
+        WaitingQueue returnData = waitingService.waitingQueueByUserId(userId).get();
 
         assertEquals(returnData.getId(), waitingId);
         assertEquals(returnData.getUserId(), userId);
@@ -51,7 +51,7 @@ public class WaitingServiceTest {
         given(waitingRepository.findByUserId(userId)).willReturn(Optional.empty());
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            waitingService.findByUserId(userId);
+            waitingService.waitingQueueByUserId(userId);
         });
     }
 

@@ -14,8 +14,10 @@ public enum ErrorCode {
     NOT_FOUND_SEAT_ID(404, "seatId를 찾을 수 없습니다."),
     NOT_AVAILABLE_SEAT(409, "예약할 수 없는 좌석입니다."),
     INVALID_TOKEN_STATE(403, "처리할 수 있는 토큰 상태가 아닙니다."),
-    INVALID_AMOUNT(400, "잘못된 금액 입니다.");
-
+    INVALID_AMOUNT(400, "잘못된 금액 입니다."),
+    NOT_FOUND_RESERVATION_ID(404, "reservationId를 찾을 수 없습니다."),
+    INSUFFICIENT_FUNDS(402, "잔액이 부족합니다."),
+    IS_NOT_PROCESSING(403, "아직 처리 순서가 아닙니다.");
 
 
     private final int status;

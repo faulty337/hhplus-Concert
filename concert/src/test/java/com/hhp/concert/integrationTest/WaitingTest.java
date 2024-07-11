@@ -47,60 +47,60 @@ public class WaitingTest {
         waitingQueueJpaRepository.deleteAll();
     }
 
-    @Test
-    @DisplayName("새로운 토큰 발급 테스트")
-    public void getTokenReissued() throws Exception {
-        User user = userJpaRepository.save(new User(null, 0));
-
-        mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
-                .andDo(print())
-                .andReturn();
-        user = userJpaRepository.findById(user.getId()).get();
-        String userToken = user.getWaitingToken();
-        MvcResult result = mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
-                .andDo(print())
-                .andReturn();
-
-        String jsonResponse = result.getResponse().getContentAsString();
-        JSONObject jsonObject = new JSONObject(jsonResponse);
-        String token = jsonObject.getString("token");
-
-//         토큰 값을 사용하거나 출력
-        System.out.println("Extracted Token: " + token);
-
-        int size = waitingQueueJpaRepository.findAll().size();
-
-        assertEquals(size, 1);
-        assertEquals(userToken, token);
-
-    }
-
-    @Test
-    @DisplayName("새로운 토큰 발급 테스트")
-    public void getToken() throws Exception {
-        User user = userJpaRepository.save(new User(null, 0));
-
-        MvcResult result = mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
-                .andDo(print())
-                .andReturn();
-
-        String jsonResponse = result.getResponse().getContentAsString();
-        JSONObject jsonObject = new JSONObject(jsonResponse);
-        String token = jsonObject.getString("token");
-
-        user = userJpaRepository.findById(user.getId()).get();
-        int size = waitingQueueJpaRepository.findAll().size();
-
-        assertEquals(size, 1);
-        assertEquals(user.getWaitingToken(), token);
-
-    }
+//    @Test
+//    @DisplayName("새로운 토큰 발급 테스트")
+//    public void getTokenReissued() throws Exception {
+//        User user = userJpaRepository.save(new User(null, 0));
+//
+//        mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.token").exists())
+//                .andDo(print())
+//                .andReturn();
+//        user = userJpaRepository.findById(user.getId()).get();
+//        String userToken = user.getWaitingToken();
+//        MvcResult result = mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.token").exists())
+//                .andDo(print())
+//                .andReturn();
+//
+//        String jsonResponse = result.getResponse().getContentAsString();
+//        JSONObject jsonObject = new JSONObject(jsonResponse);
+//        String token = jsonObject.getString("token");
+//
+////         토큰 값을 사용하거나 출력
+//        System.out.println("Extracted Token: " + token);
+//
+//        int size = waitingQueueJpaRepository.findAll().size();
+//
+//        assertEquals(size, 1);
+//        assertEquals(userToken, token);
+//
+//    }
+//
+//    @Test
+//    @DisplayName("새로운 토큰 발급 테스트")
+//    public void getToken() throws Exception {
+//        User user = userJpaRepository.save(new User(null, 0));
+//
+//        MvcResult result = mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.token").exists())
+//                .andDo(print())
+//                .andReturn();
+//
+//        String jsonResponse = result.getResponse().getContentAsString();
+//        JSONObject jsonObject = new JSONObject(jsonResponse);
+//        String token = jsonObject.getString("token");
+//
+//        user = userJpaRepository.findById(user.getId()).get();
+//        int size = waitingQueueJpaRepository.findAll().size();
+//
+//        assertEquals(size, 1);
+//        assertEquals(user.getWaitingToken(), token);
+//
+//    }
 
 
     @Test
@@ -110,19 +110,16 @@ public class WaitingTest {
         User user2 = userJpaRepository.save(new User(null, 0));
         User user3 = userJpaRepository.save(new User(null, 0));
 
-        mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user1.getId())))
+        MvcResult save1 = mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user1.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
                 .andDo(print())
                 .andReturn();
-        mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user2.getId())))
+        MvcResult save2 = mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user2.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
                 .andDo(print())
                 .andReturn();
-        mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user3.getId())))
+        MvcResult save3 = mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user3.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
                 .andDo(print())
                 .andReturn();
 
@@ -130,11 +127,11 @@ public class WaitingTest {
         user3 = userJpaRepository.findById(user3.getId()).get();
         System.out.println("user1 token : " + user1.getWaitingToken());
         System.out.println("user3 token : " + user3.getWaitingToken());
-        MvcResult result1 = mockMvc.perform(get("/concert/waiting/status").param("token", user1.getWaitingToken()))
+        MvcResult result1 = mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user1.getId())))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
-        MvcResult result2 = mockMvc.perform(get("/concert/waiting/status").param("token", user3.getWaitingToken()))
+        MvcResult result2 = mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user3.getId())))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();

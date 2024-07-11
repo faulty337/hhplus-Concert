@@ -49,7 +49,6 @@ public class JwtServiceTest {
         Long userId = 3L;
         String token = jwtUtil.generateNotExpirationToken(QueueType.WAITING.getStr(), Map.of(QueueKey.USER_ID.getStr(), String.valueOf(userId)));
 
-//        System.out.println(jwtUtil.extractData(token, QueueKey.USER_ID.getStr()));
         Long responseUserId = Long.valueOf((String) jwtUtil.extractData(token, QueueKey.USER_ID.getStr()));
 
         assertEquals(userId, responseUserId);

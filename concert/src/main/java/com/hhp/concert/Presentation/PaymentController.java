@@ -1,6 +1,8 @@
 package com.hhp.concert.Presentation;
 
 import com.hhp.concert.Business.dto.ChargeRequestDto;
+import com.hhp.concert.Business.dto.PaymentRequestDto;
+import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.application.PaymentFacade;
 import lombok.RequiredArgsConstructor;
@@ -26,4 +28,11 @@ public class PaymentController {
         return paymentFacade.getBalance(userId);
     }
 
+    @PostMapping("/payment")
+    public PaymentResponseDto concertPayment(
+            @RequestBody PaymentRequestDto request
+    ){
+
+        return paymentFacade.payment(request.getUserId(), request.getReservationId(), request.getToken());
+    }
 }

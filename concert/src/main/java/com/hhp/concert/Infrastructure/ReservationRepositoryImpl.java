@@ -20,4 +20,10 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     public Reservation save(Reservation reservation) {
         return reservationJpaRepository.save(reservation);
     }
+
+
+    @Override
+    public Optional<Reservation> findByIdAndUserId(long reservationId, long userId) {
+        return reservationJpaRepository.findByIdAndUserId(reservationId, userId);
+    }
 }

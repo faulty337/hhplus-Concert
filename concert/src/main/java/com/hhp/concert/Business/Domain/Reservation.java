@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -15,17 +16,18 @@ public class Reservation extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
-    @OneToOne
+    @ManyToOne
     private Session session;
 
-    @OneToOne
+    @ManyToOne
     private Seat seat;
 
     private int reservationPrice;
 
+    @Setter
     private ReservationStatus status = ReservationStatus.PENDING;
 
 
@@ -35,4 +37,5 @@ public class Reservation extends BaseEntity{
         this.seat = seat;
         this.reservationPrice = reservationPrice;
     }
+
 }
