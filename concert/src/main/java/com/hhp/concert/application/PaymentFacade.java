@@ -61,7 +61,9 @@ public class PaymentFacade {
         reservation.setStatus(ReservationStatus.CONFIRMED);
         Session session = reservation.getSession();
 
+
         queueService.removeProcessingByUserId(userId);
+        queueService.moveUserToProcessingQueue();
         return new PaymentResponseDto(session.getId(), session.getSessionTime(), seat.getSeatNumber(), paymentHistory.getAmount());
     }
 }

@@ -21,6 +21,6 @@ public class SessionRepositoryImpl implements SessionRepository {
 
     @Override
     public Optional<Session> findByIdAndConcertIdAndOpen(Long sessionId, Long concertId) {
-        return sessionJpaRepository.findByIdAndConcertIdAndSessionTimeBefore(sessionId, concertId, LocalDateTime.now());
+        return sessionJpaRepository.findByIdAndConcertIdAndSessionTimeAfter(sessionId, concertId, LocalDateTime.now());
     }
 }
