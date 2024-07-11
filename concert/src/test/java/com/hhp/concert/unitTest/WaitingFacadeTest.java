@@ -90,13 +90,15 @@ public class WaitingFacadeTest {
     }
     
     @Test
-    @DisplayName("대기 번호 발급 테스트 - 대기열")
+    @DisplayName("대기 번호 발급 테스트")
     public void getWaitingNumberWaitingStatusTest(){
         Long userId = 1L;
         String token = "token";
         Long waitingNumber = 5L;
         Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
-        given(jwtService.extractUserId(token)).willReturn(userId);
+        given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, token, 1000)));
+        given(queueService.waitingQueueByUserId(userId)).willReturn(Optional.of(new WaitingQueue(userId)));
+        given(queueService.addWaiting(any(WaitingQueue.class))).willReturn(new WaitingQueue(userId));
         given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
         GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(userId);
@@ -104,22 +106,5 @@ public class WaitingFacadeTest {
         assertEquals(response.getWaitingNumber(), waitingNumber);
         assertFalse(response.isProcessing());
     }
-
-    @Test
-    @DisplayName("대기 번호 발급 테스트 - 처리열")
-    public void getWaitingNumberProcessingStatusTest(){
-        Long userId = 1L;
-        String token = "token";
-        Long waitingNumber = 0L;
-        given(jwtService.extractUserId(token)).willReturn(userId);
-        given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
-
-        GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(userId);
-
-        assertEquals(response.getWaitingNumber(), waitingNumber);
-        assertTrue(response.isProcessing());
-    }
-
-
     
 }

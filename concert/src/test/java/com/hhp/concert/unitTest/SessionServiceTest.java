@@ -61,9 +61,10 @@ public class SessionServiceTest {
 
         Concert concert = new Concert(concertId, "test");
 
-        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.of(new Session(sessionId, LocalDateTime.now(), concert)));
+        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.of(new Session(sessionId, LocalDateTime.now().plusDays(1), concert)));
 
-        Session response = sessionService.getSessionByOpenAndConcertId(sessionId, concertId);
+
+        Session response = sessionService.getSessionByOpenAndConcertId(concertId, sessionId);
 
         assertEquals(response.getId(), sessionId);
         assertEquals(response.getConcert().getId(), concertId);

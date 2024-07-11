@@ -112,7 +112,7 @@ public class ConcertFacadeTest {
         Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), ReservationStatus.PENDING);
         String successToken = "successToken";
 
-        given(jwtService.isProcessingToken(successToken)).willReturn(true);
+        given(jwtService.isProcessing(successToken, userId)).willReturn(true);
         given(jwtService.extractUserId(successToken)).willReturn(userId);
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(session);
@@ -137,7 +137,9 @@ public class ConcertFacadeTest {
         Concert concert = new Concert(concertId, "test");
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
         String successToken = "successToken";
-
+        Long userId = 3L;
+        given(jwtService.extractUserId(successToken)).willReturn(userId);
+        given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, "", 1000)));
         given(jwtService.isProcessingToken(successToken)).willReturn(false);
         CustomException exception = assertThrows(CustomException.class, () -> {
             concertFacade.reservation(concertId, sessionId, seatId, successToken);
