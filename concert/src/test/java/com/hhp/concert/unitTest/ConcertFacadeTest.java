@@ -9,6 +9,8 @@ import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.application.ConcertFacade;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,9 @@ import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ConcertFacadeTest {
+
+    private static final Logger logger = LogManager.getLogger(ConcertFacadeTest.class);
+
     @InjectMocks
     private ConcertFacade concertFacade;
 
@@ -47,6 +52,8 @@ public class ConcertFacadeTest {
     @Mock
     private JwtService jwtService;
 
+
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);  // Mock 객체 초기화
@@ -65,6 +72,7 @@ public class ConcertFacadeTest {
         }
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(sessionService.getSessionListByOpen(concertId)).willReturn(sessionList);
+
 
         List<GetSessionDateResponseDto> response = concertFacade.getSessionDate(concertId);
 
