@@ -26,9 +26,12 @@ public class WaitingFacade {
 
     @Transactional
     public GetTokenResponseDto getToken(Long userId){
+        // 유효서 ㅇ검사
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
+
+        //토큰 확인 및 예외 처리
         if(user.getToken().isEmpty()){
             throw new CustomException(ErrorCode.NOT_AUTHORITY);
         }
@@ -45,16 +48,22 @@ public class WaitingFacade {
 
     @Transactional
     public GetWaitingTokenResponseDto getWaitingInfo(Long userId){
+        //유저 유효성 검사
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
+
         Optional<WaitingQueue> waitingQueue = queueService.waitingQueueByUserId(userId);
         Long waitingNumber;
+
+        //대기열 X 시 대기열 삽입
         if(waitingQueue.isEmpty()){
             queueService.addWaiting(new WaitingQueue(userId));
         }
+        //번호 조회
         waitingNumber = queueService.getWaitingNumber(user.getId());
 
+        //처리열 상태
         boolean isProcessing = waitingNumber == 0;
 
         return new GetWaitingTokenResponseDto(waitingNumber, isProcessing);
