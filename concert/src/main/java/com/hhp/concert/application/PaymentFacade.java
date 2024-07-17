@@ -7,7 +7,10 @@ import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
+import com.hhp.concert.util.LoggingInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ public class PaymentFacade {
     private final JwtService jwtService;
     private final QueueService queueService;
 
+    private static final Logger logger = LogManager.getLogger(PaymentFacade.class);
 
 
     public UserBalanceResponseDto charge(Long userId, int amount) {
@@ -70,6 +74,9 @@ public class PaymentFacade {
         //예약 상태 변환
         reservation.setStatus(ReservationStatus.CONFIRMED);
         Session session = reservation.getSession();
+
+        logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
+
 
         //처리열 삭제 및 대기열 업데이트
         queueService.removeProcessingByUserId(userId);

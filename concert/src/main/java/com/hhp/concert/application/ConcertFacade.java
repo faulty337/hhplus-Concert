@@ -9,7 +9,10 @@ import com.hhp.concert.Business.dto.SeatInfoDto;
 import com.hhp.concert.util.CustomException;
 import com.hhp.concert.util.ErrorCode;
 import com.hhp.concert.util.JwtUtil;
+import com.hhp.concert.util.LoggingInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ public class ConcertFacade {
     private final ReservationService reservationService;
     private final JwtService jwtService;
 
+    private static final Logger logger = LogManager.getLogger(ConcertFacade.class);
 
     @Transactional(readOnly = true)
     public List<GetSessionDateResponseDto> getSessionDate(Long concertId){
@@ -58,6 +62,10 @@ public class ConcertFacade {
         Concert concert = concertService.getConcert(concertId);
         Session session = sessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
         Seat seat = seatService.getSeatsForConcertSessionAndAvailable(session.getId(), seatId);
+
+        //통계 · 정보성 logging
+        logger.info("Reservation try made: User ID: {}, Concert ID: {}, Session ID: {}, Seat ID: {}, Price: {}",
+                user.getId(), concert.getId(), session.getId(), seat.getId(), seat.getPrice());
 
         //예약 저장
         Reservation reservation = reservationService.addReservation(new Reservation(user, session, seat, seat.getPrice()));
