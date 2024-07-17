@@ -15,7 +15,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         long startTime = System.currentTimeMillis();
         request.setAttribute("startTime", startTime);
-        logger.info("Request URL: {} Method: {} Start Time: {}",
+        logger.info("Request URL: {}, Method: {}, Start Time: {}",
                 request.getRequestURL(), request.getMethod(), startTime);
 
         return true;
@@ -28,7 +28,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
         long duration = endTime - startTime;
 
 
-        logger.info("Request URL: {} Method: {} Status: {} End Time: {} Duration: {} ms",
+        logger.info("Request URL: {}, Method: {}, Status: {}, End Time: {}, Duration: {} ms",
                 request.getRequestURL(), request.getMethod(), response.getStatus(), endTime, duration);
     }
 }
