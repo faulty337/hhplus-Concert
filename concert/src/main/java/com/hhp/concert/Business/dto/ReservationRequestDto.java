@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ReservationRequestDto {
     private long sessionId;
     private long seatId;
-    private String token;
+    private long userId;
 }

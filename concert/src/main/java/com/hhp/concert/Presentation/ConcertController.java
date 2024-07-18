@@ -43,7 +43,7 @@ public class ConcertController {
                 concertId,
                 requestDto.getSessionId(),
                 requestDto.getSeatId(),
-                requestDto.getToken()
+                requestDto.getUserId()
         );
     }
 }

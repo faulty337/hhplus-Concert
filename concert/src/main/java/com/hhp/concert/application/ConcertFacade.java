@@ -48,16 +48,10 @@ public class ConcertFacade {
     }
 
     @Transactional
-    public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, String token) {
-        //JWT 토큰 이용 유효 시간, user sign 확인
-        Long userId = jwtService.extractUserId(token);
+    public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, Long userId) {
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
-        if(!jwtService.isProcessing(token, userId)){
-            throw new CustomException(ErrorCode.INVALID_TOKEN_STATE);
-        };
-
         //유효성 검사
         Concert concert = concertService.getConcert(concertId);
         Session session = sessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
