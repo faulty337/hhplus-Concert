@@ -23,8 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -79,7 +77,7 @@ public class JwtFilterTest {
         Long sessionId = 2141L;
         Long seatId = 2L;
         Long reservationId = 23L;
-        String requestBody = new ObjectMapper().writeValueAsString(new ReservationRequestDto(sessionId, seatId, userId));
+        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(sessionId, seatId, userId));
         User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
@@ -103,7 +101,7 @@ public class JwtFilterTest {
 
     @Test
     public void testInvalidToken() throws Exception {
-        String requestBody = new ObjectMapper().writeValueAsString(new ReservationRequestDto(1, 1, 1));
+        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1, 1, 1));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/concert/{concertId}/reservation", 1)
                         .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + invalidToken)
@@ -114,11 +112,20 @@ public class JwtFilterTest {
 
     @Test
     public void testNoToken() throws Exception {
-        String requestBody = new ObjectMapper().writeValueAsString(new ReservationRequestDto(1, 1, 1));
+        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1, 1, 1));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/concert/{concertId}/reservation", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    public void testNonFilteredUrl() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/concert/waiting/status"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
 }

@@ -1,6 +1,5 @@
 package com.hhp.concert.util.filter;
 
-import com.hhp.concert.ApiControllerAdvice;
 import com.hhp.concert.util.JwtUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,12 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @RequiredArgsConstructor
-@Component
 public class JwtWaitingAuthFilter implements Filter {
 
     private static final Logger logger = LogManager.getLogger(JwtWaitingAuthFilter.class);
@@ -52,7 +49,6 @@ public class JwtWaitingAuthFilter implements Filter {
         } else {
             logger.info("Token is invalid or not present, returning unauthorized status.");
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
         }
     }
 
