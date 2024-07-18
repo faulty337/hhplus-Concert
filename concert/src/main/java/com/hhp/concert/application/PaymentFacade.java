@@ -44,14 +44,11 @@ public class PaymentFacade {
     }
 
     @Transactional
-    public PaymentResponseDto payment(long userId, long reservationId, String token){
+    public PaymentResponseDto payment(long userId, long reservationId){
         //토큰 유효성 검사 및 user 유효성 검사
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
-        if(!jwtService.isProcessing(token, userId)){
-            throw new CustomException(ErrorCode.INVALID_TOKEN_STATE);
-        };
         if(!queueService.isProcessing(userId)){
             throw new CustomException(ErrorCode.IS_NOT_PROCESSING);
         }

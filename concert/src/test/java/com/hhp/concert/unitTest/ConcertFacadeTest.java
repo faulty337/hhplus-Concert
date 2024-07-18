@@ -118,17 +118,14 @@ public class ConcertFacadeTest {
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
         Seat seat = new Seat(seatId, 1, 1000, false, session);
         Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), ReservationStatus.PENDING);
-        String successToken = "successToken";
 
-        given(jwtService.isProcessing(successToken, userId)).willReturn(true);
-        given(jwtService.extractUserId(successToken)).willReturn(userId);
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(session);
         given(seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId)).willReturn(seat);
         given(userService.getUser(userId)).willReturn(Optional.of(user));
         given(reservationService.addReservation(any(Reservation.class))).willReturn(reservation);
 
-        ReservationResponseDto response = concertFacade.reservation(concertId, sessionId, seatId, successToken);
+        ReservationResponseDto response = concertFacade.reservation(concertId, sessionId, seatId, userId);
 
         assertEquals(response.getReservationId(), reservation.getId());
         assertEquals(response.getPrice(), seat.getPrice());
@@ -146,11 +143,10 @@ public class ConcertFacadeTest {
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
         String successToken = "successToken";
         Long userId = 3L;
-        given(jwtService.extractUserId(successToken)).willReturn(userId);
         given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, "", 1000)));
         given(jwtService.isProcessingToken(successToken)).willReturn(false);
         CustomException exception = assertThrows(CustomException.class, () -> {
-            concertFacade.reservation(concertId, sessionId, seatId, successToken);
+            concertFacade.reservation(concertId, sessionId, seatId, userId);
         });
 
         assertEquals(exception.getMsg(), ErrorCode.INVALID_TOKEN_STATE.getMsg());

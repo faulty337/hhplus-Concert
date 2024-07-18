@@ -111,7 +111,7 @@ public class PaymentFacadeTest {
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(paymentService.addPaymentHistory(any(PaymentHistory.class))).willReturn(paymentHistory);
 
-        PaymentResponseDto response = paymentFacade.payment(userId, reservationId, token);
+        PaymentResponseDto response = paymentFacade.payment(userId, reservationId);
 
         assertNotNull(response);
         assertEquals(session.getId(), response.getSessionId());
@@ -134,7 +134,7 @@ public class PaymentFacadeTest {
         given(userService.getUser(userId)).willReturn(Optional.empty());
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            paymentFacade.payment(userId, reservationId, token);
+            paymentFacade.payment(userId, reservationId);
         });
 
         assertEquals(ErrorCode.NOT_FOUND_USER_ID.getMsg(), exception.getMsg());
@@ -157,7 +157,7 @@ public class PaymentFacadeTest {
 
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            paymentFacade.payment(userId, reservationId, token);
+            paymentFacade.payment(userId, reservationId);
         });
 
         assertEquals(ErrorCode.IS_NOT_PROCESSING.getMsg(), exception.getMsg());
@@ -182,7 +182,7 @@ public class PaymentFacadeTest {
         given(jwtService.isProcessing(token, userId)).willReturn(false);
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            paymentFacade.payment(userId, reservationId, token);
+            paymentFacade.payment(userId, reservationId);
         });
 
         assertEquals(ErrorCode.INVALID_TOKEN_STATE.getMsg(), exception.getMsg());
@@ -215,7 +215,7 @@ public class PaymentFacadeTest {
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
 
         CustomException exception = assertThrows(CustomException.class, () -> {
-            paymentFacade.payment(userId, reservationId, token);
+            paymentFacade.payment(userId, reservationId);
         });
 
         assertEquals(ErrorCode.INSUFFICIENT_FUNDS.getMsg(), exception.getMsg());

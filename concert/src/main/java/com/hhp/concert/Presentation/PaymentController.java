@@ -33,6 +33,6 @@ public class PaymentController {
             @RequestBody PaymentRequestDto request
     ){
 
-        return paymentFacade.payment(request.getUserId(), request.getReservationId(), request.getToken());
+        return paymentFacade.payment(request.getUserId(), request.getReservationId());
     }
 }
