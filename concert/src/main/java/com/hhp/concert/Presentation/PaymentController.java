@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
 
     private final PaymentFacade paymentFacade;
+
+    //충전
     @PatchMapping("/charge")
     public UserBalanceResponseDto charge(
             @RequestBody ChargeRequestDto request
@@ -21,6 +23,7 @@ public class PaymentController {
         return paymentFacade.charge(request.getUserId(), request.getAmount());
     }
 
+    //잔액조회
     @GetMapping("/balance")
     public UserBalanceResponseDto getBalance(
             @RequestBody Long userId
@@ -28,6 +31,7 @@ public class PaymentController {
         return paymentFacade.getBalance(userId);
     }
 
+    //결제
     @PostMapping("/payment")
     public PaymentResponseDto concertPayment(
             @RequestBody PaymentRequestDto request

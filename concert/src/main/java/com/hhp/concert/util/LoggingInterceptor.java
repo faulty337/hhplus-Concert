@@ -11,6 +11,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoggingInterceptor implements HandlerInterceptor {
     private static final Logger logger = LogManager.getLogger(LoggingInterceptor.class);
 
+    //interceptor 이용 로깅 처리
+
+    //요청 시작
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         long startTime = System.currentTimeMillis();
@@ -21,6 +24,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
         return true;
     }
 
+
+    //요청 끝
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         long startTime = (Long) request.getAttribute("startTime");

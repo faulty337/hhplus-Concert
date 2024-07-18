@@ -18,6 +18,7 @@ public class WaitingController {
     private final WaitingFacade waitingFacade;
 
 
+    //대기열 상태 조회
     @GetMapping("/waiting/status")
     public GetWaitingTokenResponseDto getWaitingNumber(
             @RequestParam Long userId

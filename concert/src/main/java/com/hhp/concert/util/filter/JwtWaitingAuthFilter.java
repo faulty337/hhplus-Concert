@@ -35,6 +35,8 @@ public class JwtWaitingAuthFilter implements Filter {
 
         logger.info("Authorization Header: {}", header);
 
+
+        //헤더 체크
         if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
             username = jwtUtil.extractSign(token);
@@ -43,6 +45,7 @@ public class JwtWaitingAuthFilter implements Filter {
             logger.info("Username: {}", username);
         }
 
+        //토큰 유효성 검사
         if (username != null && jwtUtil.validateToken(token)) {
             logger.info("Token is valid, proceeding with the request.");
             chain.doFilter(request, response);

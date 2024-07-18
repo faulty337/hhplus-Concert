@@ -18,6 +18,7 @@ public class ConcertController {
 
     private final ConcertFacade concertFacade;
 
+    //날짜조회
     @GetMapping("/{concertId}/session")
     public List<GetSessionDateResponseDto> getSessionDate(
             @PathVariable Long concertId
@@ -25,6 +26,7 @@ public class ConcertController {
         return concertFacade.getSessionDate(concertId);
     }
 
+    //좌석조회
     @GetMapping("/{concertId}/seat")
     public GetSessionSeatResponseDto getSessionSeat(
             @PathVariable Long concertId,

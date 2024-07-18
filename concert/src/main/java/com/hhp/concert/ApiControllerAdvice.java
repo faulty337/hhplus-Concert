@@ -15,6 +15,7 @@ public class ApiControllerAdvice {
 
     @ExceptionHandler(value = CustomException.class)
     public ResponseEntity<ErrorResponse> ExceptionHandler(CustomException e, HttpServletRequest request) {
+        //기존 Exception AOP 처리 및 로깅
         logger.error("Request URL: {}, ExceptionMessage: {}, StatusCode: {}", request.getRequestURL().toString(), e.getMessage(), e.getStatusCode());
         return ResponseEntity
                 .status(e.getStatusCode())
