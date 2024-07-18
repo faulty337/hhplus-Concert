@@ -125,8 +125,6 @@ public class WaitingTest {
 
         user1 = userJpaRepository.findById(user1.getId()).get();
         user3 = userJpaRepository.findById(user3.getId()).get();
-        System.out.println("user1 token : " + user1.getToken());
-        System.out.println("user3 token : " + user3.getToken());
         MvcResult result1 = mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user1.getId())))
                 .andExpect(status().isOk())
                 .andDo(print())

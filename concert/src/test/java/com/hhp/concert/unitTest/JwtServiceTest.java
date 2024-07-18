@@ -42,14 +42,10 @@ public class JwtServiceTest {
         Map<String, Object> data = Map.of("tokenType", "processing");
         String token = jwtUtil.generateToken(String.valueOf(userId), data, new Date(System.currentTimeMillis() + 1000 * 60 * 5));
 
-        System.out.println("Generated Token: " + token); // 디버깅용 출력
-
         Claims claims = jwtUtil.extractClaims(token);
-        System.out.println("Claims: " + claims); // 디버깅용 출력
 
         String extractedUserId = jwtUtil.extractSign(token);
 
-        System.out.println("Extracted User ID: " + extractedUserId); // 디버깅용 출력
 
         assertNotNull(extractedUserId);
         assertEquals(String.valueOf(userId), extractedUserId);
