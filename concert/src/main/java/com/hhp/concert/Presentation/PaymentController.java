@@ -23,7 +23,7 @@ public class PaymentController {
 
     @GetMapping("/balance")
     public UserBalanceResponseDto getBalance(
-            @RequestBody Long userId
+            @RequestParam Long userId
     ){
         return paymentFacade.getBalance(userId);
     }

@@ -9,12 +9,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class JwtWaitingAuthFilter implements Filter {
 
     private static final Logger logger = LogManager.getLogger(JwtWaitingAuthFilter.class);
     private final JwtUtil jwtUtil;
+
+    private final List<Pattern> urlPatterns = Arrays.asList(
+            Pattern.compile("/concert/\\d+/reservation"),
+            Pattern.compile("/concert/\\d+/payment")
+    );
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -26,6 +34,15 @@ public class JwtWaitingAuthFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+        String requestURI = httpRequest.getRequestURI();
+
+        boolean matches = urlPatterns.stream()
+                .anyMatch(pattern -> pattern.matcher(requestURI).matches());
+
+        if (!matches) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         logger.info("Request URI: {}", httpRequest.getRequestURI());
 

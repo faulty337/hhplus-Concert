@@ -122,7 +122,10 @@ public class JwtFilterTest {
 
     @Test
     public void testNonFilteredUrl() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/concert/waiting/status"))
+        Long userId = 1231L;
+        User user = new User(userId, "", 123123);
+        when(userService.getUser(userId)).thenReturn(Optional.of(user));
+        mockMvc.perform(MockMvcRequestBuilders.get("/concert/balance").param("userId", String.valueOf(userId)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

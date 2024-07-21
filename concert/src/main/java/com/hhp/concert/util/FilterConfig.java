@@ -1,13 +1,18 @@
 package com.hhp.concert.util;
 
+import com.hhp.concert.ApiControllerAdvice;
 import com.hhp.concert.util.filter.JwtWaitingAuthFilter;
 import jakarta.servlet.Filter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 @Configuration
 public class FilterConfig {
+
+    private static final Logger logger = LogManager.getLogger(FilterConfig.class);
 
     @Bean
     public JwtWaitingAuthFilter jwtWaitingAuthFilter(JwtUtil jwtUtil) {
@@ -17,9 +22,11 @@ public class FilterConfig {
     @Bean
     public FilterRegistrationBean<JwtWaitingAuthFilter> jwtAuthenticationFilterRegistration(JwtWaitingAuthFilter jwtWaitingAuthFilter) {
         FilterRegistrationBean<JwtWaitingAuthFilter> registrationBean = new FilterRegistrationBean<>();
+        logger.info("filter registrationBean");
         registrationBean.setFilter(jwtWaitingAuthFilter);
-        registrationBean.addUrlPatterns("/concert/*/reservation", "/concert/*/payment");
+        registrationBean.addUrlPatterns("/concert/*");
         registrationBean.setOrder(1);
+
         return registrationBean;
     }
 
