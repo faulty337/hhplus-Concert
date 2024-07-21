@@ -133,26 +133,6 @@ public class ConcertFacadeTest {
     }
 
 
-    @Test
-    @DisplayName("예약 토큰 예외 테스트")
-    public void getReservationTokenExceptionTest(){
-        Long concertId = 1L;
-        Long sessionId = 1L;
-        Long seatId = 2L;
-        Concert concert = new Concert(concertId, "test");
-        Session session = new Session(sessionId, LocalDateTime.now(), concert);
-        String successToken = "successToken";
-        Long userId = 3L;
-        given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, "", 1000)));
-        given(jwtService.isProcessingToken(successToken)).willReturn(false);
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            concertFacade.reservation(concertId, sessionId, seatId, userId);
-        });
-
-        assertEquals(exception.getMsg(), ErrorCode.INVALID_TOKEN_STATE.getMsg());
-
-    }
-
 
 
 

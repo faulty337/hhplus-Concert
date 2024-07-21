@@ -107,7 +107,6 @@ public class PaymentFacadeTest {
 
         given(queueService.isProcessing(userId)).willReturn(true);
         given(userService.getUser(userId)).willReturn(Optional.of(user));
-        given(jwtService.isProcessing(token, userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(paymentService.addPaymentHistory(any(PaymentHistory.class))).willReturn(paymentHistory);
 
@@ -120,7 +119,6 @@ public class PaymentFacadeTest {
         assertEquals(paymentHistory.getAmount(), response.getPrice());
 
         verify(userService, times(1)).getUser(userId);
-        verify(jwtService, times(1)).isProcessing(token, userId);
         verify(reservationService, times(1)).getReservationByUserId(userId, reservationId);
         verify(paymentService, times(1)).addPaymentHistory(any(PaymentHistory.class));
     }
@@ -166,34 +164,6 @@ public class PaymentFacadeTest {
     }
 
     @Test
-    public void testPaymentInvalidToken() {
-        String token = "invalid-token";
-        long userId = 1L;
-        long reservationId = 1L;
-        long concertId = 1L;
-        int price = 5000;
-        Concert concert = new Concert(concertId, "test");
-        User user = new User(userId, "token", 1000);
-
-        Session session = new Session(LocalDateTime.now().plusDays(1), concert);
-
-
-        given(userService.getUser(userId)).willReturn(Optional.of(user));
-        given(jwtService.isProcessing(token, userId)).willReturn(false);
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            paymentFacade.payment(userId, reservationId);
-        });
-
-        assertEquals(ErrorCode.INVALID_TOKEN_STATE.getMsg(), exception.getMsg());
-
-        verify(userService, times(1)).getUser(userId);
-        verify(jwtService, times(1)).isProcessing(token, userId);
-        verify(reservationService, never()).getReservationByUserId(anyLong(), anyLong());
-        verify(paymentService, never()).addPaymentHistory(any(PaymentHistory.class));
-    }
-
-    @Test
     public void testPaymentInsufficientFunds() {
         long userId = 1L;
         long reservationId = 1L;
@@ -210,7 +180,6 @@ public class PaymentFacadeTest {
         Reservation reservation = new Reservation(reservationId, user, session, seat, price, ReservationStatus.PENDING);
 
         given(userService.getUser(userId)).willReturn(Optional.of(user));
-        given(jwtService.isProcessing(token, userId)).willReturn(true);
         given(queueService.isProcessing(userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
 
@@ -221,7 +190,6 @@ public class PaymentFacadeTest {
         assertEquals(ErrorCode.INSUFFICIENT_FUNDS.getMsg(), exception.getMsg());
 
         verify(userService, times(1)).getUser(userId);
-        verify(jwtService, times(1)).isProcessing(token, userId);
         verify(reservationService, times(1)).getReservationByUserId(userId, reservationId);
         verify(paymentService, never()).addPaymentHistory(any(PaymentHistory.class));
     }

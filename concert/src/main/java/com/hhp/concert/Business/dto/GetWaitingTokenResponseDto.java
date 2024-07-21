@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class GetWaitingTokenResponseDto {
     private long waitingNumber;
     private boolean isProcessing;
+    private String token;
 }

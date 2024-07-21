@@ -24,27 +24,27 @@ public class WaitingFacade {
     private final UserService userService;
 
 
-    @Transactional
-    public GetTokenResponseDto getToken(Long userId){
-        // 유효서 ㅇ검사
-        User user = userService.getUser(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );
-
-        //토큰 확인 및 예외 처리
-        if(user.getToken().isEmpty()){
-            throw new CustomException(ErrorCode.NOT_AUTHORITY);
-        }
-
-        try {
-            if(Objects.equals(userId, jwtService.extractUserId(user.getToken()))){
-                return new GetTokenResponseDto(user.getToken());
-            }
-        }catch (Exception e){
-            throw new CustomException(ErrorCode.NOT_AUTHORITY);
-        }
-        throw new CustomException(ErrorCode.NOT_AUTHORITY);
-    }
+//    public GetTokenResponseDto getToken(Long userId){
+//        // 유효성 검사
+//        User user = userService.getUser(userId).orElseThrow(
+//                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+//        );
+//
+//        //토큰 확인 및 예외 처리
+//        if(user.getToken().isEmpty()){
+//            throw new CustomException(ErrorCode.NOT_AUTHORITY);
+//        }
+//
+//        //
+//        try {
+//            if(Objects.equals(userId, jwtService.extractUserId(user.getToken()))){
+//                return new GetTokenResponseDto(user.getToken());
+//            }
+//        }catch (Exception e){
+//            throw new CustomException(ErrorCode.NOT_AUTHORITY);
+//        }
+//        throw new CustomException(ErrorCode.NOT_AUTHORITY);
+//    }
 
     @Transactional
     public GetWaitingTokenResponseDto getWaitingInfo(Long userId){
@@ -53,21 +53,27 @@ public class WaitingFacade {
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
 
+        //process 토큰 확인
+        String token = user.getToken();
+        if(jwtService.isProcessingToken(token)){
+            return new GetWaitingTokenResponseDto(0, true, token);
+        }
+
         Optional<WaitingQueue> waitingQueue = queueService.waitingQueueByUserId(userId);
-        Long waitingNumber;
 
         //대기열 X 시 대기열 삽입
         if(waitingQueue.isEmpty()){
             queueService.addWaiting(new WaitingQueue(userId));
         }
+
         //번호 조회
-        waitingNumber = queueService.getWaitingNumber(user.getId());
+        Long waitingNumber = queueService.getWaitingNumber(user.getId());
 
-        //처리열 상태
-        boolean isProcessing = waitingNumber == 0;
 
-        return new GetWaitingTokenResponseDto(waitingNumber, isProcessing);
+        return new GetWaitingTokenResponseDto(waitingNumber, false, "");
+
     }
+
 
 
 }

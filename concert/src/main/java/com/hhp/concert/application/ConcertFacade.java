@@ -26,7 +26,6 @@ public class ConcertFacade {
     private final SeatService seatService;
     private final UserService userService;
     private final ReservationService reservationService;
-    private final JwtService jwtService;
 
     private static final Logger logger = LogManager.getLogger(ConcertFacade.class);
 

@@ -25,10 +25,4 @@ public class WaitingController {
         return waitingFacade.getWaitingInfo(userId);
     }
 
-//    @GetMapping("/waiting/token")
-//    public GetTokenResponseDto getWaitingToken(
-//            @RequestParam long userId
-//    ){
-//        return waitingFacade.getToken(userId);
-//    }
 }
