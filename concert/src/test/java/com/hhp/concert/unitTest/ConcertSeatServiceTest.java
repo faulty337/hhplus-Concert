@@ -1,9 +1,9 @@
 package com.hhp.concert.unitTest;
 
-import com.hhp.concert.Business.service.SeatServiceImpl;
-import com.hhp.concert.Business.Domain.Seat;
-import com.hhp.concert.Business.Domain.Session;
-import com.hhp.concert.Infrastructure.seat.SeatRepositoryImpl;
+import com.hhp.concert.Business.Domain.ConcertSeat;
+import com.hhp.concert.Business.Domain.ConcertSession;
+import com.hhp.concert.Business.service.ConcertSeatServiceImpl;
+import com.hhp.concert.Infrastructure.seat.ConcertSeatRepositoryImpl;
 import com.hhp.concert.util.exception.CustomException;
 import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,13 +20,13 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SeatServiceTest {
+public class ConcertSeatServiceTest {
 
     @Mock
-    private SeatRepositoryImpl seatRepository;
+    private ConcertSeatRepositoryImpl seatRepository;
 
     @InjectMocks
-    private SeatServiceImpl seatService;
+    private ConcertSeatServiceImpl seatService;
 
     @BeforeEach
     public void setUp() {
@@ -39,17 +39,17 @@ public class SeatServiceTest {
     public void getSeatListTest(){
         Long sessionId = 1L;
 
-        List<Seat> sessionList = new ArrayList<>();
+        List<ConcertSeat> sessionList = new ArrayList<>();
         int listSize = 5;
-        Session concertSession = new Session();
+        ConcertSession concertSession = new ConcertSession();
 
         for(int i = 1; i <= listSize; i++){
-          sessionList.add(new Seat((long)i, i, 1000, false, concertSession));
+          sessionList.add(new ConcertSeat((long)i, i, 1000, false, concertSession));
         }
 
         given(seatRepository.findAllBySessionId(sessionId)).willReturn(sessionList);
 
-        List<Seat> response = seatService.getSessionBySeatList(sessionId);
+        List<ConcertSeat> response = seatService.getSessionBySeatList(sessionId);
 
         assertEquals(response.size(), listSize);
         assertFalse(response.get(0).isAvailable());
@@ -62,13 +62,13 @@ public class SeatServiceTest {
         Long seatId = 12414L;
         int seatNumber = 32;
 
-        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new Seat(seatId, seatNumber, 1000, true, new Session())));
+        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new ConcertSeat(seatId, seatNumber, 1000, true, new ConcertSession())));
 
-        Seat seat = seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId);
-        assertNotNull(seat);
-        assertEquals(seatId, seat.getId());
-        assertEquals(seatNumber, seat.getSeatNumber());
-        assertTrue(seat.isAvailable());
+        ConcertSeat concertSeat = seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId);
+        assertNotNull(concertSeat);
+        assertEquals(seatId, concertSeat.getId());
+        assertEquals(seatNumber, concertSeat.getSeatNumber());
+        assertTrue(concertSeat.isAvailable());
 
     }
 
@@ -96,7 +96,7 @@ public class SeatServiceTest {
         Long seatId = 12414L;
         int seatNumber = 32;
 
-        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new Seat(seatId, seatNumber, 1000, false, new Session())));
+        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new ConcertSeat(seatId, seatNumber, 1000, false, new ConcertSession())));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId);

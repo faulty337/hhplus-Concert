@@ -42,10 +42,10 @@ public class JwtFilterTest {
     private ConcertService concertService;
 
     @MockBean
-    private SessionService sessionService;
+    private ConcertSessionService concertSessionService;
 
     @MockBean
-    private SeatService seatService;
+    private ConcertSeatService concertSeatService;
 
     @MockBean
     private ReservationService reservationService;
@@ -77,13 +77,13 @@ public class JwtFilterTest {
         String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(concertId, sessionId, seatNumber, userId));
         User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
-        Session session = new Session(sessionId, LocalDateTime.now(), concert);
-        Seat seat = new Seat(seatNumber, 1, 1000, false, session);
-        Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), Reservation.ReservationStatus.PENDING);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concert);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1, 1000, false, concertSession);
+        Reservation reservation = new Reservation(reservationId, user, concertSession, concertSeat, concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
 
         when(concertService.getConcert(concertId)).thenReturn(concert);
-        when(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).thenReturn(session);
-        when(seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatNumber)).thenReturn(seat);
+        when(concertSessionService.getSessionByOpenAndConcertId(concertId, sessionId)).thenReturn(concertSession);
+        when(concertSeatService.getSeatsForConcertSessionAndAvailable(sessionId, seatNumber)).thenReturn(concertSeat);
         when(userService.getUser(userId)).thenReturn(Optional.of(user));
         when(reservationService.addReservation(any(Reservation.class))).thenReturn(reservation);
 

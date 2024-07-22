@@ -6,8 +6,8 @@ import com.hhp.concert.Business.dto.ReservationRequestDto;
 import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
 import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
-import com.hhp.concert.Infrastructure.seat.SeatJpaRepository;
-import com.hhp.concert.Infrastructure.session.SessionJpaRepository;
+import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
+import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
 import com.hhp.concert.Infrastructure.user.UserJpaRepository;
 import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -45,9 +44,9 @@ public class ConcertTest {
     private ConcertJpaRepository concertJpaRepository;
 
     @Autowired
-    private SessionJpaRepository sessionJpaRepository;
+    private ConcertSessionJpaRepository concertSessionJpaRepository;
     @Autowired
-    private SeatJpaRepository seatJpaRepository;
+    private ConcertSeatJpaRepository concertSeatJpaRepository;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -61,8 +60,8 @@ public class ConcertTest {
     @BeforeEach
     public void setUp(){
         reservationJpaRepository.deleteAll();
-        seatJpaRepository.deleteAll();
-        sessionJpaRepository.deleteAll();
+        concertSeatJpaRepository.deleteAll();
+        concertSessionJpaRepository.deleteAll();
         concertJpaRepository.deleteAll();
 
     }
@@ -72,13 +71,13 @@ public class ConcertTest {
     public void getSessionDateTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
         long listSize = 5L;
-        List<Session> sessionList = new ArrayList<>();
+        List<ConcertSession> concertSessionList = new ArrayList<>();
         for(int i = 1; i <= listSize; i++){
-            sessionList.add(new Session(LocalDateTime.now().plusDays(i), concert));
+            concertSessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert));
         }
-        sessionList.add(new Session(LocalDateTime.now().minusDays(1), concert));
+        concertSessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert));
 
-        sessionJpaRepository.saveAll(sessionList);
+        concertSessionJpaRepository.saveAll(concertSessionList);
 
         mockMvc.perform(get("/concert/{concertId}/session", concert.getId()))
                 .andExpect(status().isOk())
@@ -93,13 +92,13 @@ public class ConcertTest {
     public void getSessionDateNotFoundConcertIdTest() throws Exception {
 //        Concert concert = concertJpaRepository.save(new Concert("test"));
 //        long listSize = 5L;
-//        List<Session> sessionList = new ArrayList<>();
+//        List<ConcertSession> sessionList = new ArrayList<>();
 //        for(int i = 1; i <= listSize; i++){
-//            sessionList.add(new Session(LocalDateTime.now().plusDays(i), concert));
+//            sessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert));
 //        }
-//        sessionList.add(new Session(LocalDateTime.now().minusDays(1), concert));
+//        sessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert));
 //
-//        sessionJpaRepository.saveAll(sessionList);
+//        concertSessionJpaRepository.saveAll(sessionList);
 
         mockMvc.perform(get("/concert/{concertId}/session", 0L))
                 .andExpect(status().isNotFound())
@@ -114,16 +113,16 @@ public class ConcertTest {
     @DisplayName("좌석 반환 - 성공 테스트")
     public void getSessionSeatTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session concertSession = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            seatList.add(new Seat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
         }
 
-        seatJpaRepository.saveAll(seatList);
+        concertSeatJpaRepository.saveAll(concertSeatList);
 
         mockMvc.perform(get("/concert/{concertId}/seat", concert.getId()).param("sessionId", String.valueOf(concertSession.getId())))
                 .andExpect(status().isOk())
@@ -137,16 +136,16 @@ public class ConcertTest {
     @DisplayName("좌석 반환 - 잘못된 concertId 테스트")
     public void getSessionSeatInvalidConcertIdTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session concertSession = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            seatList.add(new Seat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
         }
 
-        seatJpaRepository.saveAll(seatList);
+        concertSeatJpaRepository.saveAll(concertSeatList);
 
         mockMvc.perform(get("/concert/{concertId}/seat", 23L).param("sessionId", String.valueOf(concertSession.getId())))
                 .andExpect(status().isNotFound())
@@ -159,16 +158,16 @@ public class ConcertTest {
     @DisplayName("좌석 반환 - 잘못된 sessionId 테스트")
     public void getSessionSeatInvalidSessionIdTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session concertSession = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            seatList.add(new Seat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
         }
 
-        seatJpaRepository.saveAll(seatList);
+        concertSeatJpaRepository.saveAll(concertSeatList);
 
         mockMvc.perform(get("/concert/{concertId}/seat", concert.getId()).param("sessionId", String.valueOf(0)))
                 .andExpect(status().isNotFound())
@@ -182,22 +181,22 @@ public class ConcertTest {
     public void reservationTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session session = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            seatList.add(new Seat( i, 1000, false, session));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
         }
         int seatNumber = i;
-        Seat seat = new Seat(seatNumber, 1000, true, session);
-        seatList.add(seat);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        concertSeatList.add(concertSeat);
 
 
-        seatJpaRepository.saveAll(seatList);
-        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), session.getId(), seat.getId(), user.getId());
+        concertSeatJpaRepository.saveAll(concertSeatList);
+        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), concertSeat.getId(), user.getId());
         MvcResult mvcResult = mockMvc.perform(post("/concert/reservation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -212,7 +211,7 @@ public class ConcertTest {
 
         assertTrue(reservation.isPresent());
         assertEquals(reservation.get().getId(), responseDto.getReservationId());
-        assertEquals(seat.getPrice(), responseDto.getPrice());
+        assertEquals(concertSeat.getPrice(), responseDto.getPrice());
 
     }
 
@@ -221,21 +220,21 @@ public class ConcertTest {
     public void reservationNotFoundUserTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session session = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            seatList.add(new Seat(i, 1000, false, session));
+            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession));
         }
-        Seat seat = new Seat(i+1, 1000, true, session);
-        seatList.add(seat);
+        ConcertSeat concertSeat = new ConcertSeat(i+1, 1000, true, concertSession);
+        concertSeatList.add(concertSeat);
 
 
-        seatJpaRepository.saveAll(seatList);
-        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), session.getId(), seat.getId(), 0);
+        concertSeatJpaRepository.saveAll(concertSeatList);
+        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), concertSeat.getId(), 0);
         mockMvc.perform(post("/concert/reservation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -250,22 +249,22 @@ public class ConcertTest {
     public void reservationNotFoundConcertIdTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session session = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            seatList.add(new Seat( i, 1000, false, session));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
         }
         int seatNumber = i;
-        Seat seat = new Seat(seatNumber, 1000, true, session);
-        seatList.add(seat);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        concertSeatList.add(concertSeat);
 
 
-        seatJpaRepository.saveAll(seatList);
-        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId()+1, session.getId(), seat.getId(), user.getId());
+        concertSeatJpaRepository.saveAll(concertSeatList);
+        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId()+1, concertSession.getId(), concertSeat.getId(), user.getId());
         mockMvc.perform(post("/concert/reservation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -280,22 +279,22 @@ public class ConcertTest {
     public void reservationNotFoundSessionIdTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session session = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            seatList.add(new Seat( i, 1000, false, session));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
         }
         int seatNumber = i;
-        Seat seat = new Seat(seatNumber, 1000, true, session);
-        seatList.add(seat);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        concertSeatList.add(concertSeat);
 
 
-        seatJpaRepository.saveAll(seatList);
-        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), session.getId()+1, seat.getId(), user.getId());
+        concertSeatJpaRepository.saveAll(concertSeatList);
+        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId()+1, concertSeat.getId(), user.getId());
         mockMvc.perform(post("/concert/reservation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -310,22 +309,22 @@ public class ConcertTest {
     public void reservationNotFoundSeatNumberTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session session = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
-        List<Seat> seatList = new ArrayList<>();
+        List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            seatList.add(new Seat( i, 1000, false, session));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
         }
         int seatNumber = i;
-        Seat seat = new Seat(seatNumber, 1000, true, session);
-        seatList.add(seat);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        concertSeatList.add(concertSeat);
 
 
-        seatJpaRepository.saveAll(seatList);
-        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), session.getId(), i+1, user.getId());
+        concertSeatJpaRepository.saveAll(concertSeatList);
+        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), i+1, user.getId());
         mockMvc.perform(post("/concert/reservation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))

@@ -1,9 +1,9 @@
 package com.hhp.concert.unitTest;
 
-import com.hhp.concert.Business.service.SessionServiceImpl;
+import com.hhp.concert.Business.Domain.ConcertSession;
+import com.hhp.concert.Business.service.ConcertSessionServiceImpl;
 import com.hhp.concert.Business.Domain.Concert;
-import com.hhp.concert.Business.Domain.Session;
-import com.hhp.concert.Infrastructure.session.SessionRepositoryImpl;
+import com.hhp.concert.Infrastructure.session.ConcertSessionRepositoryImpl;
 import com.hhp.concert.util.exception.CustomException;
 import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,13 +21,13 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SessionServiceTest {
+public class ConcertSessionServiceTest {
 
     @Mock
-    private SessionRepositoryImpl concertSessionRepository;
+    private ConcertSessionRepositoryImpl concertSessionRepository;
 
     @InjectMocks
-    private SessionServiceImpl sessionService;
+    private ConcertSessionServiceImpl sessionService;
 
     @BeforeEach
     public void setUp() {
@@ -41,14 +41,14 @@ public class SessionServiceTest {
         Long concertId = 1L;
         int listSize = 5;
         Concert concert = new Concert(concertId, "test");
-        List<Session> sessionList = new ArrayList<>();
+        List<ConcertSession> concertSessionList = new ArrayList<>();
         for(long i = 1; i <= listSize; i++){
-            sessionList.add(new Session(i, LocalDateTime.now().minusDays(i), concert));
+            concertSessionList.add(new ConcertSession(i, LocalDateTime.now().minusDays(i), concert));
         }
 
-        given(concertSessionRepository.findAllByConcertId(concertId)).willReturn(sessionList);
+        given(concertSessionRepository.findAllByConcertId(concertId)).willReturn(concertSessionList);
 
-        List<Session> list = sessionService.getSessionListByOpen(concertId);
+        List<ConcertSession> list = sessionService.getSessionListByOpen(concertId);
 
         assertEquals(list.size(), listSize);
     }
@@ -61,10 +61,10 @@ public class SessionServiceTest {
 
         Concert concert = new Concert(concertId, "test");
 
-        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.of(new Session(sessionId, LocalDateTime.now().plusDays(1), concert)));
+        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.of(new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert)));
 
 
-        Session response = sessionService.getSessionByOpenAndConcertId(concertId, sessionId);
+        ConcertSession response = sessionService.getSessionByOpenAndConcertId(concertId, sessionId);
 
         assertEquals(response.getId(), sessionId);
         assertEquals(response.getConcert().getId(), concertId);

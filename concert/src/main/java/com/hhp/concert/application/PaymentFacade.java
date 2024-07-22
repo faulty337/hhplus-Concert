@@ -47,28 +47,24 @@ public class PaymentFacade {
         User user = userService.getUser(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
-        if(!queueService.isProcessing(userId)){
-            throw new CustomException(ErrorCode.IS_NOT_PROCESSING);
-        }
-
 
         //예약 정보 확인
         Reservation reservation = reservationService.getReservationByUserId(user.getId(), reservationId);
 
-        Seat seat = reservation.getSeat();
+        ConcertSeat concertSeat = reservation.getConcertSeat();
 
         //잔액 확인
-        if(user.getBalance() < seat.getPrice()){
+        if(user.getBalance() < concertSeat.getPrice()){
             throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
         }
 
         //결제 정보 저장
-        PaymentHistory paymentHistory = paymentService.addPaymentHistory(new PaymentHistory(seat.getPrice(), user, reservation));
+        PaymentHistory paymentHistory = paymentService.addPaymentHistory(new PaymentHistory(concertSeat.getPrice(), user, reservation));
         user.userBalance(paymentHistory.getAmount());
 
         //예약 상태 변환
         reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
-        Session session = reservation.getSession();
+        ConcertSession concertSession = reservation.getConcertSession();
 
         logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
 
@@ -77,6 +73,6 @@ public class PaymentFacade {
         queueService.removeProcessingByUserId(userId);
         queueService.moveUserToProcessingQueue();
 
-        return new PaymentResponseDto(session.getId(), session.getSessionTime(), seat.getSeatNumber(), paymentHistory.getAmount());
+        return new PaymentResponseDto(concertSession.getId(), concertSession.getSessionTime(), concertSeat.getSeatNumber(), paymentHistory.getAmount());
     }
 }

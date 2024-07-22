@@ -19,21 +19,22 @@ public class Reservation extends BaseEntity{
     private User user;
 
     @ManyToOne
-    private Session session;
+    private ConcertSession concertSession;
 
     @ManyToOne
-    private Seat seat;
+    private ConcertSeat concertSeat;
 
     private int reservationPrice;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     private ReservationStatus status = ReservationStatus.PENDING;
 
 
-    public Reservation(User user, Session session, Seat seat, int reservationPrice) {
+    public Reservation(User user, ConcertSession concertSession, ConcertSeat concertSeat, int reservationPrice) {
         this.user = user;
-        this.session = session;
-        this.seat = seat;
+        this.concertSession = concertSession;
+        this.concertSeat = concertSeat;
         this.reservationPrice = reservationPrice;
     }
 

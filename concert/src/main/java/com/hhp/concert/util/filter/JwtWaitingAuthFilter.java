@@ -20,8 +20,8 @@ public class JwtWaitingAuthFilter implements Filter {
     private final JwtUtil jwtUtil;
 
     private final List<Pattern> urlPatterns = Arrays.asList(
-            Pattern.compile("/concert/\\d+/reservation"),
-            Pattern.compile("/concert/\\d+/payment")
+            Pattern.compile("/concert/reservation"),
+            Pattern.compile("/concert/payment")
     );
 
     @Override

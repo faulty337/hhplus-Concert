@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Session {
+public class ConcertSession {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -21,7 +21,7 @@ public class Session {
     @ManyToOne
     private Concert concert;
 
-    public Session(LocalDateTime sessionTime, Concert concert) {
+    public ConcertSession(LocalDateTime sessionTime, Concert concert) {
         this.sessionTime = sessionTime;
         this.concert = concert;
     }

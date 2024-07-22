@@ -96,11 +96,11 @@ public class PaymentFacadeTest {
         Concert concert = new Concert(concertId, "test");
         User user = new User(userId, "token", 10000);
 
-        Session session = new Session(sessionId, LocalDateTime.now().plusDays(1), concert);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert);
 
-        Seat seat = new Seat(1, price, false, session);
+        ConcertSeat concertSeat = new ConcertSeat(1, price, false, concertSession);
 
-        Reservation reservation = new Reservation(user, session, seat, price);
+        Reservation reservation = new Reservation(user, concertSession, concertSeat, price);
 
         PaymentHistory paymentHistory = new PaymentHistory(price, user, reservation);
 
@@ -112,9 +112,9 @@ public class PaymentFacadeTest {
         PaymentResponseDto response = paymentFacade.payment(userId, reservationId);
 
         assertNotNull(response);
-        assertEquals(session.getId(), response.getSessionId());
-        assertEquals(session.getSessionTime(), response.getDate());
-        assertEquals(seat.getSeatNumber(), response.getSeatNumber());
+        assertEquals(concertSession.getId(), response.getSessionId());
+        assertEquals(concertSession.getSessionTime(), response.getDate());
+        assertEquals(concertSeat.getSeatNumber(), response.getSeatNumber());
         assertEquals(paymentHistory.getAmount(), response.getPrice());
 
         verify(userService, times(1)).getUser(userId);
@@ -172,11 +172,11 @@ public class PaymentFacadeTest {
         Concert concert = new Concert(concertId, "test");
         User user = new User(userId, "token", 1000);
 
-        Session session = new Session(LocalDateTime.now().plusDays(1), concert);
+        ConcertSession concertSession = new ConcertSession(LocalDateTime.now().plusDays(1), concert);
 
-        Seat seat = new Seat(1, price, false, session);
+        ConcertSeat concertSeat = new ConcertSeat(1, price, false, concertSession);
 
-        Reservation reservation = new Reservation(reservationId, user, session, seat, price, Reservation.ReservationStatus.PENDING);
+        Reservation reservation = new Reservation(reservationId, user, concertSession, concertSeat, price, Reservation.ReservationStatus.PENDING);
 
         given(userService.getUser(userId)).willReturn(Optional.of(user));
         given(queueService.isProcessing(userId)).willReturn(true);
