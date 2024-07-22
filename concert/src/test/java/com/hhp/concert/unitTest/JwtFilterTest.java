@@ -2,18 +2,15 @@ package com.hhp.concert.unitTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.*;
-import com.hhp.concert.Business.Domain.enums.ReservationStatus;
 import com.hhp.concert.Business.dto.ReservationRequestDto;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -82,7 +79,7 @@ public class JwtFilterTest {
         Concert concert = new Concert(concertId, "test");
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
         Seat seat = new Seat(seatId, 1, 1000, false, session);
-        Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), ReservationStatus.PENDING);
+        Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), Reservation.ReservationStatus.PENDING);
 
         when(concertService.getConcert(concertId)).thenReturn(concert);
         when(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).thenReturn(session);

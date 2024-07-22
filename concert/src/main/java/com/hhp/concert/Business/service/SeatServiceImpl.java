@@ -2,8 +2,8 @@ package com.hhp.concert.Business.service;
 
 import com.hhp.concert.Business.Domain.Seat;
 import com.hhp.concert.Business.Repository.SeatRepository;
-import com.hhp.concert.util.CustomException;
-import com.hhp.concert.util.ErrorCode;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

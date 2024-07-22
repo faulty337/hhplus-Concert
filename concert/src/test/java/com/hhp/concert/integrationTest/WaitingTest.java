@@ -2,8 +2,8 @@ package com.hhp.concert.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.User;
-import com.hhp.concert.Infrastructure.UserJpaRepository;
-import com.hhp.concert.Infrastructure.WaitingQueueJpaRepository;
+import com.hhp.concert.Infrastructure.user.UserJpaRepository;
+import com.hhp.concert.Infrastructure.waitingQueue.WaitingQueueJpaRepository;
 import com.hhp.concert.util.JwtUtil;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;

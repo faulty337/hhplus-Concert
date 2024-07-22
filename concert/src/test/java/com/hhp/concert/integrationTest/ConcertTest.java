@@ -3,9 +3,9 @@ package com.hhp.concert.integrationTest;
 import com.hhp.concert.Business.Domain.Concert;
 import com.hhp.concert.Business.Domain.Seat;
 import com.hhp.concert.Business.Domain.Session;
-import com.hhp.concert.Infrastructure.ConcertJpaRepository;
-import com.hhp.concert.Infrastructure.SeatJpaRepository;
-import com.hhp.concert.Infrastructure.SessionJpaRepository;
+import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
+import com.hhp.concert.Infrastructure.seat.SeatJpaRepository;
+import com.hhp.concert.Infrastructure.session.SessionJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,10 +72,10 @@ public class ConcertTest {
     }
 
     @Test
-    @DisplayName("날짜 반환")
+    @DisplayName("좌석 반환")
     public void getSessionSeatTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        Session concertSession = sessionJpaRepository.save(new Session(LocalDateTime.now().minusDays(1), concert));
+        Session concertSession = sessionJpaRepository.save(new Session(LocalDateTime.now().plusDays(1), concert));
 
         List<Seat> seatList = new ArrayList<>();
 

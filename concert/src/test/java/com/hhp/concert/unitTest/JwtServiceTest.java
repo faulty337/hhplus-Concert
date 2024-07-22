@@ -1,27 +1,16 @@
 package com.hhp.concert.unitTest;
 
-import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.util.JwtUtil;
-import com.hhp.concert.util.enums.QueueKey;
-import com.hhp.concert.util.enums.QueueType;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JwtServiceTest {

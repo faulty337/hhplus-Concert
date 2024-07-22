@@ -1,7 +1,7 @@
 package com.hhp.concert;
 
-import com.hhp.concert.util.CustomException;
-import com.hhp.concert.util.ErrorResponse;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

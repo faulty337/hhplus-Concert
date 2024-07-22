@@ -1,14 +1,11 @@
 package com.hhp.concert.unitTest;
 
 import com.hhp.concert.Business.Domain.*;
-import com.hhp.concert.Business.Domain.enums.ReservationStatus;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
 import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.application.ConcertFacade;
-import com.hhp.concert.util.CustomException;
-import com.hhp.concert.util.ErrorCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -117,7 +114,7 @@ public class ConcertFacadeTest {
         Concert concert = new Concert(concertId, "test");
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
         Seat seat = new Seat(seatId, 1, 1000, false, session);
-        Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), ReservationStatus.PENDING);
+        Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), Reservation.ReservationStatus.PENDING);
 
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(session);

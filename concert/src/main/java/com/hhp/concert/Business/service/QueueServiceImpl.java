@@ -2,11 +2,11 @@ package com.hhp.concert.Business.service;
 
 import com.hhp.concert.Business.Domain.ProcessQueue;
 import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.ProcessQueueRepository;
+import com.hhp.concert.Business.Repository.ProcessQueueRepository;
 import com.hhp.concert.Business.Repository.WaitingRepository;
-import com.hhp.concert.util.CustomException;
+import com.hhp.concert.util.exception.CustomException;
 import org.springframework.beans.factory.annotation.Value;
-import com.hhp.concert.util.ErrorCode;
+import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

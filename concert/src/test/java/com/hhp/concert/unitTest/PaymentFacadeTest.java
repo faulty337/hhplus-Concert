@@ -1,13 +1,12 @@
 package com.hhp.concert.unitTest;
 
 import com.hhp.concert.Business.Domain.*;
-import com.hhp.concert.Business.Domain.enums.ReservationStatus;
 import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.application.PaymentFacade;
-import com.hhp.concert.util.CustomException;
-import com.hhp.concert.util.ErrorCode;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -177,7 +176,7 @@ public class PaymentFacadeTest {
 
         Seat seat = new Seat(1, price, false, session);
 
-        Reservation reservation = new Reservation(reservationId, user, session, seat, price, ReservationStatus.PENDING);
+        Reservation reservation = new Reservation(reservationId, user, session, seat, price, Reservation.ReservationStatus.PENDING);
 
         given(userService.getUser(userId)).willReturn(Optional.of(user));
         given(queueService.isProcessing(userId)).willReturn(true);

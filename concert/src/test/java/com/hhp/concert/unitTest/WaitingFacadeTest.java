@@ -7,11 +7,7 @@ import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.UserService;
 import com.hhp.concert.application.WaitingFacade;
 import com.hhp.concert.Business.service.QueueService;
-import com.hhp.concert.Business.dto.GetTokenResponseDto;
 import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
-import com.hhp.concert.util.CustomException;
-import com.hhp.concert.util.ErrorCode;
-import com.hhp.concert.util.enums.QueueKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
@@ -52,7 +47,6 @@ public class WaitingFacadeTest {
         Long userId = 1L;
         String token = "token";
         Long waitingNumber = 5L;
-        Map<String, Object> data = Map.of(QueueKey.USER_ID.getStr(), userId);
         given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, token, 1000)));
         given(queueService.waitingQueueByUserId(userId)).willReturn(Optional.of(new WaitingQueue(userId)));
         given(queueService.addWaiting(any(WaitingQueue.class))).willReturn(new WaitingQueue(userId));

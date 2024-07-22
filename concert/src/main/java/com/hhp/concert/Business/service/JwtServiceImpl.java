@@ -1,7 +1,6 @@
 package com.hhp.concert.Business.service;
 
 import com.hhp.concert.util.JwtUtil;
-import com.hhp.concert.util.enums.QueueKey;
 import com.hhp.concert.util.enums.QueueType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

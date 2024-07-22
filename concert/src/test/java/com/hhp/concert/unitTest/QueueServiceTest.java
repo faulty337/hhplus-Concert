@@ -6,12 +6,12 @@ import static org.mockito.Mockito.*;
 
 import com.hhp.concert.Business.Domain.ProcessQueue;
 import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.ProcessQueueRepository;
+import com.hhp.concert.Business.Repository.ProcessQueueRepository;
 import com.hhp.concert.Business.Repository.WaitingRepository;
 import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.QueueServiceImpl;
-import com.hhp.concert.util.CustomException;
-import com.hhp.concert.util.ErrorCode;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 class QueueServiceTest {
 

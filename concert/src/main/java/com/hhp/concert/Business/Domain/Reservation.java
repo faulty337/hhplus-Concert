@@ -1,6 +1,5 @@
 package com.hhp.concert.Business.Domain;
 
-import com.hhp.concert.Business.Domain.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,4 +37,10 @@ public class Reservation extends BaseEntity{
         this.reservationPrice = reservationPrice;
     }
 
+    public enum ReservationStatus {
+        PENDING,        // 예약 대기 중
+        CONFIRMED,      // 예약 확정
+        CANCELLED,      // 예약 취소됨
+        COMPLETED       // 예약 완료됨 (사용자에 의해 사용됨)
+    }
 }

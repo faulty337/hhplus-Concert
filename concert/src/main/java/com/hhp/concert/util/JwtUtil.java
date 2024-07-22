@@ -1,14 +1,13 @@
 package com.hhp.concert.util;
 
-import com.hhp.concert.ApiControllerAdvice;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Date;

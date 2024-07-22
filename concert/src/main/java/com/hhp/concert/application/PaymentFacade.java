@@ -1,13 +1,11 @@
 package com.hhp.concert.application;
 
 import com.hhp.concert.Business.Domain.*;
-import com.hhp.concert.Business.Domain.enums.ReservationStatus;
 import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.Business.service.*;
-import com.hhp.concert.util.CustomException;
-import com.hhp.concert.util.ErrorCode;
-import com.hhp.concert.util.LoggingInterceptor;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,7 +67,7 @@ public class PaymentFacade {
         user.userBalance(paymentHistory.getAmount());
 
         //예약 상태 변환
-        reservation.setStatus(ReservationStatus.CONFIRMED);
+        reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
         Session session = reservation.getSession();
 
         logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
