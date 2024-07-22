@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class ReservationRequestDto {
+    private long concertId;
     private long sessionId;
     private long seatId;
     private long userId;

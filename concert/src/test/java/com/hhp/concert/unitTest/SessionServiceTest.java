@@ -85,7 +85,7 @@ public class SessionServiceTest {
             sessionService.getSessionByOpenAndConcertId(sessionId, concertId);
         });
 
-        assertEquals(exception.getMsg(), ErrorCode.INVALID_SESSION_ID.getMsg());
+        assertEquals(exception.getMsg(), ErrorCode.NOT_FOUND_SESSION_ID.getMsg());
     }
 
 }

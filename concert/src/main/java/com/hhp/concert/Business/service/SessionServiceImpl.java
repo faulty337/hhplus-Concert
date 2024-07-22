@@ -22,7 +22,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public Session getSessionByOpenAndConcertId(Long concertId, Long sessionId) {
         return sessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_SESSION_ID)
+                () -> new CustomException(ErrorCode.NOT_FOUND_SESSION_ID)
         );
     }
 }

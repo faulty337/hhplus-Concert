@@ -34,13 +34,12 @@ public class ConcertController {
     }
 
 
-    @PostMapping("/{concertId}/reservation")
+    @PostMapping("/reservation")
     public ReservationResponseDto reservationConcert(
-            @PathVariable Long concertId,
             @RequestBody ReservationRequestDto requestDto
     ){
         return concertFacade.reservation(
-                concertId,
+                requestDto.getConcertId(),
                 requestDto.getSessionId(),
                 requestDto.getSeatId(),
                 requestDto.getUserId()

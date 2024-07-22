@@ -23,7 +23,7 @@ public class SeatServiceImpl implements SeatService {
     @Override
     public Seat getSeatsForConcertSessionAndAvailable(Long sessionId, Long seatId) {
         Seat seat = seatRepository.findByIdAndSessionId(seatId, sessionId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_SEAT_ID)
+                () -> new CustomException(ErrorCode.NOT_FOUND_SEAT_NUMBER)
         );
         if(!seat.isAvailable()){
             throw new CustomException(ErrorCode.NOT_AVAILABLE_SEAT);

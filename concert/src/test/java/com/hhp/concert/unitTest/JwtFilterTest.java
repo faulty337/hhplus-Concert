@@ -72,18 +72,18 @@ public class JwtFilterTest {
         long userId = 1231L;
         Long concertId = 235L;
         Long sessionId = 2141L;
-        Long seatId = 2L;
+        Long seatNumber = 2L;
         Long reservationId = 23L;
-        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(sessionId, seatId, userId));
+        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(concertId, sessionId, seatNumber, userId));
         User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
         Session session = new Session(sessionId, LocalDateTime.now(), concert);
-        Seat seat = new Seat(seatId, 1, 1000, false, session);
+        Seat seat = new Seat(seatNumber, 1, 1000, false, session);
         Reservation reservation = new Reservation(reservationId, user, session, seat, seat.getPrice(), Reservation.ReservationStatus.PENDING);
 
         when(concertService.getConcert(concertId)).thenReturn(concert);
         when(sessionService.getSessionByOpenAndConcertId(concertId, sessionId)).thenReturn(session);
-        when(seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId)).thenReturn(seat);
+        when(seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatNumber)).thenReturn(seat);
         when(userService.getUser(userId)).thenReturn(Optional.of(user));
         when(reservationService.addReservation(any(Reservation.class))).thenReturn(reservation);
 
@@ -98,7 +98,7 @@ public class JwtFilterTest {
 
     @Test
     public void testInvalidToken() throws Exception {
-        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1, 1, 1));
+        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1,1, 1, 1));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/concert/{concertId}/reservation", 1)
                         .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + invalidToken)
@@ -109,7 +109,7 @@ public class JwtFilterTest {
 
     @Test
     public void testNoToken() throws Exception {
-        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1, 1, 1));
+        String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1, 1, 1, 1));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/concert/{concertId}/reservation", 1)
                         .contentType(MediaType.APPLICATION_JSON)

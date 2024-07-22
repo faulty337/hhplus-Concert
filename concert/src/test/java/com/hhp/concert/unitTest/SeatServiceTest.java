@@ -85,7 +85,7 @@ public class SeatServiceTest {
             seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId);
         });
 
-        assertEquals(exception.getMsg(), ErrorCode.NOT_FOUND_SEAT_ID.getMsg());
+        assertEquals(exception.getMsg(), ErrorCode.NOT_FOUND_SEAT_NUMBER.getMsg());
 
     }
 
