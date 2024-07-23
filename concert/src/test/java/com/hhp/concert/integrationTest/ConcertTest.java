@@ -9,6 +9,7 @@ import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
 import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
 import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
 import com.hhp.concert.Infrastructure.user.UserJpaRepository;
+import com.hhp.concert.util.JwtUtil;
 import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,6 +53,8 @@ public class ConcertTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private JwtUtil jwtUtil;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -57,6 +62,7 @@ public class ConcertTest {
     @Autowired
     private ReservationJpaRepository reservationJpaRepository;
 
+    private final String validToken = "valid-jwt-token";
     @BeforeEach
     public void setUp(){
         reservationJpaRepository.deleteAll();
@@ -64,6 +70,10 @@ public class ConcertTest {
         concertSessionJpaRepository.deleteAll();
         concertJpaRepository.deleteAll();
 
+        String validToken = "valid-jwt-token";
+
+        when(jwtUtil.validateToken(validToken)).thenReturn(true);
+        when(jwtUtil.extractSign(validToken)).thenReturn(String.valueOf(1L));
     }
 
     @Test
@@ -198,6 +208,7 @@ public class ConcertTest {
         concertSeatJpaRepository.saveAll(concertSeatList);
         ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), concertSeat.getId(), user.getId());
         MvcResult mvcResult = mockMvc.perform(post("/concert/reservation")
+                        .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
@@ -236,6 +247,7 @@ public class ConcertTest {
         concertSeatJpaRepository.saveAll(concertSeatList);
         ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), concertSeat.getId(), 0);
         mockMvc.perform(post("/concert/reservation")
+                        .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isNotFound())
@@ -266,6 +278,7 @@ public class ConcertTest {
         concertSeatJpaRepository.saveAll(concertSeatList);
         ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId()+1, concertSession.getId(), concertSeat.getId(), user.getId());
         mockMvc.perform(post("/concert/reservation")
+                        .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isNotFound())
@@ -296,6 +309,7 @@ public class ConcertTest {
         concertSeatJpaRepository.saveAll(concertSeatList);
         ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId()+1, concertSeat.getId(), user.getId());
         mockMvc.perform(post("/concert/reservation")
+                        .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isNotFound())
@@ -326,6 +340,7 @@ public class ConcertTest {
         concertSeatJpaRepository.saveAll(concertSeatList);
         ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), i+1, user.getId());
         mockMvc.perform(post("/concert/reservation")
+                        .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isConflict())

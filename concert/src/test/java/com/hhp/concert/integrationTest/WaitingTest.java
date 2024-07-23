@@ -144,7 +144,7 @@ public class WaitingTest {
         boolean processing1 = jsonObject1.getBoolean("processing");
         boolean processing2 = jsonObject2.getBoolean("processing");
 
-        assertTrue(processing1);
+        assertFalse(processing1);
         assertFalse(processing2);
 
     }

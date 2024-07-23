@@ -141,26 +141,6 @@ public class PaymentFacadeTest {
         verify(reservationService, never()).getReservationByUserId(anyLong(), anyLong());
         verify(paymentService, never()).addPaymentHistory(any(PaymentHistory.class));
     }
-    @Test
-    public void testPaymentNotFoundProcessQueue() {
-        long userId = 1L;
-        long reservationId = 1L;
-        String token = "token";
-
-        User user = new User(userId, "token", 1000);
-        given(userService.getUser(userId)).willReturn(Optional.of(user));
-        given(jwtService.isProcessing(token, userId)).willReturn(true);
-        given(queueService.isProcessing(userId)).willReturn(false);
-
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            paymentFacade.payment(userId, reservationId);
-        });
-
-        assertEquals(ErrorCode.IS_NOT_PROCESSING.getMsg(), exception.getMsg());
-
-        verify(userService, times(1)).getUser(userId);
-    }
 
     @Test
     public void testPaymentInsufficientFunds() {

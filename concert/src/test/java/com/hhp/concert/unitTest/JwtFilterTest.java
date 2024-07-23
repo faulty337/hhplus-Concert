@@ -87,7 +87,7 @@ public class JwtFilterTest {
         when(userService.getUser(userId)).thenReturn(Optional.of(user));
         when(reservationService.addReservation(any(Reservation.class))).thenReturn(reservation);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/concert/{concertId}/reservation", concertId)
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/concert/reservation")
                         .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -100,7 +100,7 @@ public class JwtFilterTest {
     public void testInvalidToken() throws Exception {
         String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1,1, 1, 1));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/concert/{concertId}/reservation", 1)
+        mockMvc.perform(MockMvcRequestBuilders.post("/concert/reservation")
                         .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + invalidToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -111,7 +111,7 @@ public class JwtFilterTest {
     public void testNoToken() throws Exception {
         String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(1, 1, 1, 1));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/concert/{concertId}/reservation", 1)
+        mockMvc.perform(MockMvcRequestBuilders.post("/concert/reservation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized());
