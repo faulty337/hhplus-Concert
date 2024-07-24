@@ -6,8 +6,6 @@ import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
 import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.Business.dto.SeatInfoDto;
-import com.hhp.concert.util.exception.CustomException;
-import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,14 +25,14 @@ public class ConcertFacade {
 
     private static final Logger logger = LogManager.getLogger(ConcertFacade.class);
 
-    @Transactional(readOnly = true)
+
     public List<GetSessionDateResponseDto> getSessionDate(Long concertId){
         Concert concert = concertService.getConcert(concertId);
 
         return concertSessionService.getSessionListByOpen(concert.getId()).stream().map(session->new GetSessionDateResponseDto(session.getId(), session.getSessionTime())).toList();
     }
 
-    @Transactional(readOnly = true)
+
     public GetSessionSeatResponseDto getSessionSeat(Long concertId, Long sessionId) {
         //좌석 정보 반환
         Concert concert = concertService.getConcert(concertId);
@@ -46,20 +44,18 @@ public class ConcertFacade {
 
     @Transactional
     public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, Long userId) {
-        User user = userService.getUser(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );
+        User user = userService.getUser(userId);
         //유효성 검사
-        Concert concert = concertService.getConcert(concertId);
-        ConcertSession concertSession = concertSessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
-        ConcertSeat concertSeat = concertSeatService.getSeatsForConcertSessionAndAvailable(concertSession.getId(), seatId);
+        ConcertSeat concertSeat = concertService.getSeat(concertId, sessionId, seatId);
+
+        concertSeat = concertService.getAvailableReservationSeats(concertId, sessionId, seatId);
 
         //통계 · 정보성 logging
         logger.info("Reservation try made: User ID: {}, Concert ID: {}, ConcertSession ID: {}, ConcertSeat ID: {}, Price: {}",
-                user.getId(), concert.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice());
+                user.getId(), concertId, sessionId, seatId, concertSeat.getPrice());
 
         //예약 저장
-        Reservation reservation = reservationService.addReservation(new Reservation(user, concertSession, concertSeat, concertSeat.getPrice()));
+        Reservation reservation = reservationService.createReservation(new Reservation(user.getId(), sessionId, concertSeat.getId(), concertSeat.getPrice()));
 
 
         return new ReservationResponseDto(reservation.getId(), reservation.getReservationPrice());

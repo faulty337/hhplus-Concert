@@ -25,9 +25,7 @@ public class WaitingFacade {
     @Transactional
     public GetWaitingTokenResponseDto getWaitingInfo(Long userId){
         //유저 유효성 검사
-        User user = userService.getUser(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );
+        User user = userService.getUser(userId);
 
         //process 토큰 확인
         String token = user.getToken();

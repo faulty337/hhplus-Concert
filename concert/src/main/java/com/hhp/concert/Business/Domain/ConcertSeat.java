@@ -30,5 +30,9 @@ public class ConcertSeat {
         this.available = available;
         this.concertSession = concertSession;
     }
+
+    public void reserveSeat(){
+        this.available = false;
+    }
 }
 

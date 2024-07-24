@@ -35,6 +35,9 @@ public class PaymentFacadeTest {
     private PaymentService paymentService;
 
     @Mock
+    private ConcertService concertService;
+
+    @Mock
     private QueueService queueService;
 
     @InjectMocks
@@ -91,6 +94,7 @@ public class PaymentFacadeTest {
         long reservationId = 1L;
         long concertId = 1L;
         long sessionId = 1L;
+        long seatId = 1L;
         int price = 5000;
         String token = "valid-token";
         Concert concert = new Concert(concertId, "test");
@@ -98,16 +102,19 @@ public class PaymentFacadeTest {
 
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert);
 
-        ConcertSeat concertSeat = new ConcertSeat(1, price, false, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatId, 1, price, false, concertSession);
 
-        Reservation reservation = new Reservation(user, concertSession, concertSeat, price);
+        Reservation reservation = new Reservation(user.getId(), concertSession.getId(), concertSeat.getId(), price);
 
         PaymentHistory paymentHistory = new PaymentHistory(price, user, reservation);
 
         given(queueService.isProcessing(userId)).willReturn(true);
-        given(userService.getUser(userId)).willReturn(Optional.of(user));
+        given(userService.getUser(userId)).willReturn(user);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(paymentService.addPaymentHistory(any(PaymentHistory.class))).willReturn(paymentHistory);
+        given(concertService.getConcertBySessionId(sessionId)).willReturn(concert);
+        given(concertService.getSeat(concertId, sessionId, concertSeat.getId())).willReturn(concertSeat);
+        given(concertService.getSession(sessionId)).willReturn(concertSession);
 
         PaymentResponseDto response = paymentFacade.payment(userId, reservationId);
 
@@ -128,7 +135,7 @@ public class PaymentFacadeTest {
         long reservationId = 1L;
         String token = "token";
 
-        given(userService.getUser(userId)).willReturn(Optional.empty());
+        given(userService.getUser(userId)).willThrow(new CustomException(ErrorCode.NOT_FOUND_USER_ID));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             paymentFacade.payment(userId, reservationId);
@@ -156,11 +163,13 @@ public class PaymentFacadeTest {
 
         ConcertSeat concertSeat = new ConcertSeat(1, price, false, concertSession);
 
-        Reservation reservation = new Reservation(reservationId, user, concertSession, concertSeat, price, Reservation.ReservationStatus.PENDING);
+        Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), price, Reservation.ReservationStatus.PENDING);
 
-        given(userService.getUser(userId)).willReturn(Optional.of(user));
+        given(userService.getUser(userId)).willReturn(user);
         given(queueService.isProcessing(userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
+        given(concertService.getConcertBySessionId(concertSession.getId())).willReturn(concert);
+        given(concertService.getSeat(concertId, concertSession.getId(), concertSeat.getId())).willReturn(concertSeat);
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             paymentFacade.payment(userId, reservationId);

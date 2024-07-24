@@ -18,7 +18,7 @@ public class PaymentFacade {
     private final UserService userService;
     private final ReservationService reservationService;
     private final PaymentService paymentService;
-    private final JwtService jwtService;
+    private final ConcertService concertService;
     private final QueueService queueService;
 
     private static final Logger logger = LogManager.getLogger(PaymentFacade.class);
@@ -34,9 +34,7 @@ public class PaymentFacade {
 
     public UserBalanceResponseDto getBalance(Long userId) {
         //잔액조회
-        User user = userService.getUser(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );
+        User user = userService.getUser(userId);
 
         return new UserBalanceResponseDto(user.getId(), user.getBalance());
     }
@@ -44,14 +42,13 @@ public class PaymentFacade {
     @Transactional
     public PaymentResponseDto payment(long userId, long reservationId){
         //토큰 유효성 검사 및 user 유효성 검사
-        User user = userService.getUser(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );
+        User user = userService.getUser(userId);
 
         //예약 정보 확인
         Reservation reservation = reservationService.getReservationByUserId(user.getId(), reservationId);
+        Concert concert = concertService.getConcertBySessionId(reservation.getConcertSessionId());
 
-        ConcertSeat concertSeat = reservation.getConcertSeat();
+        ConcertSeat concertSeat = concertService.getSeat(concert.getId(), reservation.getConcertSessionId(), reservation.getConcertSeatId());
 
         //잔액 확인
         if(user.getBalance() < concertSeat.getPrice()){
@@ -64,7 +61,7 @@ public class PaymentFacade {
 
         //예약 상태 변환
         reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
-        ConcertSession concertSession = reservation.getConcertSession();
+        ConcertSession concertSession = concertService.getSession(reservation.getConcertSessionId());
 
         logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
 

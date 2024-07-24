@@ -47,7 +47,7 @@ public class WaitingFacadeTest {
         Long userId = 1L;
         String token = "token";
         Long waitingNumber = 5L;
-        given(userService.getUser(userId)).willReturn(Optional.of(new User(userId, token, 1000)));
+        given(userService.getUser(userId)).willReturn(new User(userId, token, 1000));
         given(queueService.waitingQueueByUserId(userId)).willReturn(Optional.of(new WaitingQueue(userId)));
         given(queueService.addWaiting(any(WaitingQueue.class))).willReturn(new WaitingQueue(userId));
         given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
