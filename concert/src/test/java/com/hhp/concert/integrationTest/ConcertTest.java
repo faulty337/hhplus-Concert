@@ -257,7 +257,7 @@ public class ConcertTest {
     }
 
     @Test
-    @DisplayName("예약 - 잘못된 userId 테스트")
+    @DisplayName("예약 - 잘못된 concertId 테스트")
     public void reservationNotFoundConcertIdTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
