@@ -10,6 +10,7 @@ import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
 import com.hhp.concert.Infrastructure.user.UserJpaRepository;
 import com.hhp.concert.Infrastructure.waitingQueue.WaitingQueueJpaRepository;
 import com.hhp.concert.application.ConcertFacade;
+import com.hhp.concert.application.PaymentFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
@@ -53,6 +55,8 @@ public class ConcurrencyTest {
     private ReservationJpaRepository reservationJpaRepository;
     @Autowired
     private ConcertFacade concertFacade;
+    @Autowired
+    private PaymentFacade paymentFacade;
 
     private Long concertId = 1L;
     private Long sessionId = 1L;
@@ -60,10 +64,42 @@ public class ConcurrencyTest {
 
     @BeforeEach
     public void setUp() {
+        reservationJpaRepository.deleteAll();
+        concertSeatJpaRepository.deleteAll();
+        concertSessionJpaRepository.deleteAll();
+        concertJpaRepository.deleteAll();
+        userJpaRepository.deleteAll();
+    }
+
+    @Test
+    public void chargeConcurrencyTest() throws InterruptedException {
+        User user = userJpaRepository.save(new User("", 0));
+        Long userId = user.getId();
+        int threadCount = 10;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+
+        for (int i = 1; i <= threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    paymentFacade.charge(userId, 1000);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        user = userJpaRepository.findById(user.getId()).get();
+        assertEquals(threadCount * 1000, user.getBalance());
+
 
     }
+
+
     @Test
-    public void getTokenConcurrencyTest() throws InterruptedException {
+    public void reservationConcurrencyTest() throws InterruptedException {
         int threadCount = 10;
         //given
         List<User> userList = new ArrayList<>();
@@ -110,8 +146,8 @@ public class ConcurrencyTest {
         List<Reservation> reservationList = reservationJpaRepository.findAll();
 
         assertEquals(1, reservationList.size());
-
-
     }
+
+
 
 }
