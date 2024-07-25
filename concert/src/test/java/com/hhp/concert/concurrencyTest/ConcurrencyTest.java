@@ -158,12 +158,14 @@ public class ConcurrencyTest {
     @Test
     public void paymentConcurrencyTest() throws InterruptedException {
         int threadCount = 10;
+        int userBalance = 100000;
+        int seatPrice = 10000;
         //given
         List<User> userList = new ArrayList<>();
         for(int i = 1; i <= threadCount; i++) {
             userJpaRepository.save(new User( "", 100000));
         }
-        User user =userJpaRepository.save(new User("", 10000));
+        User user =userJpaRepository.save(new User("", userBalance));
 
 
 
@@ -173,11 +175,11 @@ public class ConcurrencyTest {
         long listSize = 5L;
         int seatNum = 1;
         for(;seatNum <= listSize; seatNum++){
-            concertSeatJpaRepository.save(new ConcertSeat(seatNum, 1000, false, concertSession.getId()));
+            concertSeatJpaRepository.save(new ConcertSeat(seatNum, seatPrice, false, concertSession.getId()));
         }
         int seatNumber = seatNum;
         Long seatId = 1241241L;
-        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, 1000, true, concertSession.getId()));
+        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, seatPrice, true, concertSession.getId()));
 
         Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice()));
 
@@ -201,6 +203,9 @@ public class ConcurrencyTest {
 
         List<PaymentHistory> paymentHistoryList = paymentHistoryJpaRepository.findAllByUserId(user.getId());
 
+
+        User reseltUser = userJpaRepository.findById(user.getId()).get();
+        assertEquals(reseltUser.getBalance(), userBalance - seatPrice);
         assertEquals(1, paymentHistoryList.size());
 
 

@@ -5,7 +5,10 @@ import com.hhp.concert.Business.dto.PaymentRequestDto;
 import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.application.PaymentFacade;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,7 +35,10 @@ public class PaymentController {
     public PaymentResponseDto concertPayment(
             @RequestBody PaymentRequestDto request
     ){
-
-        return paymentFacade.payment(request.getUserId(), request.getReservationId());
+        try{
+            return paymentFacade.payment(request.getUserId(), request.getReservationId());
+        }catch (ObjectOptimisticLockingFailureException e){
+            throw new CustomException(ErrorCode.NOT_AVAILABLE_SEAT);
+        }
     }
 }
