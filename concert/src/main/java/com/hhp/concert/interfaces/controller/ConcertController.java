@@ -41,12 +41,16 @@ public class ConcertController {
     public ReservationResponseDto reserveConcert(
             @RequestBody ReservationRequestDto requestDto
     ){
-        return concertFacade.reserveConcert(
-                requestDto.getConcertId(),
-                requestDto.getSessionId(),
-                requestDto.getSeatId(),
-                requestDto.getUserId()
-        );
 
+        try{
+            return concertFacade.reserveConcert(
+                    requestDto.getConcertId(),
+                    requestDto.getSessionId(),
+                    requestDto.getSeatId(),
+                    requestDto.getUserId()
+            );
+        }catch (ObjectOptimisticLockingFailureException e){
+            throw new CustomException(ErrorCode.NOT_AVAILABLE_SEAT);
+        }
     }
 }

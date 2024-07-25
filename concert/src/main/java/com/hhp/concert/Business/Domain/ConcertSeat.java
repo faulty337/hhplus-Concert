@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class ConcertSeat {
 
@@ -22,6 +23,8 @@ public class ConcertSeat {
 
     private long concertSessionId;
 
+    @Version
+    private int version;
 
     public ConcertSeat(int seatNumber, int price, boolean available, Long concertSessionId) {
         this.seatNumber = seatNumber;
