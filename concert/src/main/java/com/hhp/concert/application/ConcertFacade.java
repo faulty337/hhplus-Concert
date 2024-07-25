@@ -43,12 +43,10 @@ public class ConcertFacade {
     }
 
     @Transactional
-    public ReservationResponseDto reservation(Long concertId, Long sessionId, Long seatId, Long userId) {
+    public ReservationResponseDto reserveConcert(Long concertId, Long sessionId, Long seatId, Long userId) {
         User user = userService.getUser(userId);
         //유효성 검사
-        ConcertSeat concertSeat = concertService.getSeat(concertId, sessionId, seatId);
-
-        concertSeat = concertService.getAvailableReservationSeats(concertId, sessionId, seatId);
+        ConcertSeat concertSeat = concertService.getAvailableReservationSeats(concertId, sessionId, seatId);
 
         //통계 · 정보성 logging
         logger.info("Reservation try made: User ID: {}, Concert ID: {}, ConcertSession ID: {}, ConcertSeat ID: {}, Price: {}",

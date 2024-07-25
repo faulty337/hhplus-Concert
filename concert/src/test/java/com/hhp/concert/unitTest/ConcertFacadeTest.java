@@ -103,7 +103,7 @@ public class ConcertFacadeTest {
 
     @Test
     @DisplayName("예약 테스트")
-    public void getReservationTest(){
+    public void getReserveConcertTest(){
         long userId = 1L;
         Long concertId = 1L;
         Long sessionId = 1L;
@@ -121,7 +121,7 @@ public class ConcertFacadeTest {
         given(userService.getUser(userId)).willReturn(user);
         given(reservationService.createReservation(any(Reservation.class))).willReturn(reservation);
         given(concertService.getAvailableReservationSeats(concertId, sessionId, seatId)).willReturn(concertSeat);
-        ReservationResponseDto response = concertFacade.reservation(concertId, sessionId, seatId, userId);
+        ReservationResponseDto response = concertFacade.reserveConcert(concertId, sessionId, seatId, userId);
 
         assertEquals(response.getReservationId(), reservation.getId());
         assertEquals(response.getPrice(), concertSeat.getPrice());
