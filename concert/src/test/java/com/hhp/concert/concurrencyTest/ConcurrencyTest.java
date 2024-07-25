@@ -2,8 +2,10 @@ package com.hhp.concert.concurrencyTest;
 
 import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Business.Repository.ReservationRepository;
+import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
+import com.hhp.concert.Infrastructure.payment.PaymentHistoryJpaRepository;
 import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
 import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
 import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
@@ -11,6 +13,8 @@ import com.hhp.concert.Infrastructure.user.UserJpaRepository;
 import com.hhp.concert.Infrastructure.waitingQueue.WaitingQueueJpaRepository;
 import com.hhp.concert.application.ConcertFacade;
 import com.hhp.concert.application.PaymentFacade;
+import com.hhp.concert.util.exception.CustomException;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -38,13 +42,9 @@ public class ConcurrencyTest {
     private static final Logger logger = LoggerFactory.getLogger(ConcurrencyTest.class);
 
     @Autowired
-    private ReservationService reservationService;
+    private PaymentHistoryJpaRepository paymentHistoryJpaRepository;
     @Autowired
     private UserJpaRepository userJpaRepository;
-    @Autowired
-    private ReservationRepository reservationRepository;
-    @Autowired
-    private WaitingQueueJpaRepository waitingQueueJpaRepository;
     @Autowired
     private ConcertJpaRepository concertJpaRepository;
     @Autowired
@@ -57,10 +57,6 @@ public class ConcurrencyTest {
     private ConcertFacade concertFacade;
     @Autowired
     private PaymentFacade paymentFacade;
-
-    private Long concertId = 1L;
-    private Long sessionId = 1L;
-    private Long seatId = 1L;
 
     @BeforeEach
     public void setUp() {
@@ -91,6 +87,8 @@ public class ConcurrencyTest {
             });
         }
 
+        latch.await();
+
         user = userJpaRepository.findById(user.getId()).get();
         assertEquals(threadCount * 1000, user.getBalance());
 
@@ -104,9 +102,11 @@ public class ConcurrencyTest {
         //given
         List<User> userList = new ArrayList<>();
         for(int i = 1; i <= threadCount; i++) {
-            userList.add(new User(i, "", 100000));
+            userList.add(new User( "", 100000));
         }
         userJpaRepository.saveAll(userList);
+        User user = userJpaRepository.save(new User("" ,100000));
+
         Concert concert = concertJpaRepository.save(new Concert("test"));
         ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
 
@@ -118,10 +118,10 @@ public class ConcurrencyTest {
             concertSeatList.add(new ConcertSeat(seatNum, 1000, false, concertSession));
         }
         int seatNumber = seatNum;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
-        concertSeatList.add(concertSeat);
+        Long seatId = 33L;
         concertSeatJpaRepository.saveAll(concertSeatList);
 
+        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, 1000, true, concertSession));
 
 
 
@@ -135,6 +135,8 @@ public class ConcurrencyTest {
                 int userId = userIdCounter.getAndIncrement();
                 try {
                     concertFacade.reservation(concert.getId(), concertSession.getId(), concertSeat.getId(), (long) userId);
+                }catch(CustomException e) {
+                    logger.info(e.getMessage());
                 } finally {
                     latch.countDown();
                 }
@@ -148,6 +150,55 @@ public class ConcurrencyTest {
         assertEquals(1, reservationList.size());
     }
 
+    @Test
+    public void paymentConcurrencyTest() throws InterruptedException {
+        int threadCount = 10;
+        //given
+        List<User> userList = new ArrayList<>();
+        for(int i = 1; i <= threadCount; i++) {
+            userJpaRepository.save(new User( "", 100000));
+        }
+        User user =userJpaRepository.save(new User("", 10000));
 
+
+
+        Concert concert = concertJpaRepository.save(new Concert("test"));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+
+        long listSize = 5L;
+        int seatNum = 1;
+        for(;seatNum <= listSize; seatNum++){
+            concertSeatJpaRepository.save(new ConcertSeat(seatNum, 1000, false, concertSession));
+        }
+        int seatNumber = seatNum;
+        Long seatId = 1241241L;
+        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, 1000, true, concertSession));
+
+        Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice()));
+
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for (int i = 1; i <= threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    paymentFacade.payment(user.getId(), reservation.getId());
+                }catch(CustomException e) {
+                    logger.info(e.getMessage());
+                }
+                finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        List<PaymentHistory> paymentHistoryList = paymentHistoryJpaRepository.findAllByUserId(user.getId());
+
+        assertEquals(1, paymentHistoryList.size());
+
+
+    }
 
 }

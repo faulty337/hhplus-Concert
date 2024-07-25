@@ -5,6 +5,8 @@ import com.hhp.concert.Business.Repository.PaymentHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService{
@@ -13,5 +15,10 @@ public class PaymentServiceImpl implements PaymentService{
     @Override
     public PaymentHistory addPaymentHistory(PaymentHistory paymentHistory) {
         return paymentHistoryRepository.save(paymentHistory);
+    }
+
+    @Override
+    public List<PaymentHistory> getPaymentHistoryList(Long userId) {
+        return paymentHistoryRepository.findAllByUserId(userId);
     }
 }
