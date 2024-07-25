@@ -15,14 +15,11 @@ public class Reservation extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
-    private User user;
+    private Long userId;
 
-    @ManyToOne
-    private ConcertSession concertSession;
+    private Long concertSessionId;
 
-    @ManyToOne
-    private ConcertSeat concertSeat;
+    private Long concertSeatId;
 
     private int reservationPrice;
 
@@ -30,12 +27,23 @@ public class Reservation extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private ReservationStatus status = ReservationStatus.PENDING;
 
+    @Version
+    private long version;
 
-    public Reservation(User user, ConcertSession concertSession, ConcertSeat concertSeat, int reservationPrice) {
-        this.user = user;
-        this.concertSession = concertSession;
-        this.concertSeat = concertSeat;
+    public Reservation(Long id, Long userId, Long concertSessionId, Long concertSeatId, int reservationPrice, ReservationStatus status) {
+        this.id = id;
+        this.userId = userId;
+        this.concertSessionId = concertSessionId;
+        this.concertSeatId = concertSeatId;
         this.reservationPrice = reservationPrice;
+        this.status = status;
+    }
+
+    public Reservation(Long userId, Long concertSessionId, Long concertSeatId, int price) {
+        this.userId = userId;
+        this.concertSessionId = concertSessionId;
+        this.concertSeatId = concertSeatId;
+        this.reservationPrice = price;
     }
 
     public enum ReservationStatus {

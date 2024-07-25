@@ -9,4 +9,8 @@ public interface ConcertSeatRepository {
     List<ConcertSeat> findAllBySessionId(Long sessionId);
 
     Optional<ConcertSeat> findByIdAndSessionId(Long seatId, Long sessionId);
+
+    Optional<ConcertSeat> findById(Long concertSeatId);
+
+    ConcertSeat save(ConcertSeat concertSeat);
 }

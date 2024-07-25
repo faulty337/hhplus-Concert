@@ -3,8 +3,10 @@ package com.hhp.concert.Business.service;
 import com.hhp.concert.Business.Domain.Reservation;
 
 public interface ReservationService {
-    Reservation addReservation(Reservation reservation);
+    Reservation createReservation(Reservation reservation);
 
 
     Reservation getReservationByUserId(long userId, long reservationId);
+
+    void confirmReservationStatus(long reservationId);
 }

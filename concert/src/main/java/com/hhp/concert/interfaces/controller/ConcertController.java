@@ -6,7 +6,10 @@ import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
 import com.hhp.concert.Business.dto.ReservationRequestDto;
 import com.hhp.concert.Business.dto.ReservationResponseDto;
 import com.hhp.concert.application.ConcertFacade;
+import com.hhp.concert.util.exception.CustomException;
+import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,14 +38,19 @@ public class ConcertController {
 
 
     @PostMapping("/reservation")
-    public ReservationResponseDto reservationConcert(
+    public ReservationResponseDto reserveConcert(
             @RequestBody ReservationRequestDto requestDto
     ){
-        return concertFacade.reservation(
-                requestDto.getConcertId(),
-                requestDto.getSessionId(),
-                requestDto.getSeatId(),
-                requestDto.getUserId()
-        );
+
+        try{
+            return concertFacade.reserveConcert(
+                    requestDto.getConcertId(),
+                    requestDto.getSessionId(),
+                    requestDto.getSeatId(),
+                    requestDto.getUserId()
+            );
+        }catch (ObjectOptimisticLockingFailureException e){
+            throw new CustomException(ErrorCode.NOT_AVAILABLE_SEAT);
+        }
     }
 }

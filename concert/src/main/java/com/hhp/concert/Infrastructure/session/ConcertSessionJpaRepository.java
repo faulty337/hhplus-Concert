@@ -12,4 +12,5 @@ public interface ConcertSessionJpaRepository extends JpaRepository<ConcertSessio
 
     Optional<ConcertSession> findByIdAndConcertIdAndSessionTimeAfter(Long sessionId, Long concertId, LocalDateTime now);
 
+    Optional<ConcertSession> findByIdAndConcertId(Long id, Long concertId);
 }

@@ -21,4 +21,14 @@ public class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     public Optional<ConcertSeat> findByIdAndSessionId(Long seatId, Long sessionId) {
         return concertSeatJpaRepository.findByIdAndConcertSessionId(seatId, sessionId);
     }
+
+    @Override
+    public Optional<ConcertSeat> findById(Long concertSeatId) {
+        return concertSeatJpaRepository.findById(concertSeatId);
+    }
+
+    @Override
+    public ConcertSeat save(ConcertSeat concertSeat) {
+        return concertSeatJpaRepository.save(concertSeat);
+    }
 }

@@ -17,9 +17,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,14 +78,15 @@ public class JwtFilterTest {
         User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concert);
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1, 1000, false, concertSession);
-        Reservation reservation = new Reservation(reservationId, user, concertSession, concertSeat, concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1, 1000, false, concertSession.getId());
+        Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
 
         when(concertService.getConcert(concertId)).thenReturn(concert);
         when(concertSessionService.getSessionByOpenAndConcertId(concertId, sessionId)).thenReturn(concertSession);
         when(concertSeatService.getSeatsForConcertSessionAndAvailable(sessionId, seatNumber)).thenReturn(concertSeat);
-        when(userService.getUser(userId)).thenReturn(Optional.of(user));
-        when(reservationService.addReservation(any(Reservation.class))).thenReturn(reservation);
+        when(userService.getUser(userId)).thenReturn(user);
+        when(reservationService.createReservation(any(Reservation.class))).thenReturn(reservation);
+        given(concertService.getAvailableReservationSeats(concertId, sessionId, concertSeat.getId())).willReturn(concertSeat);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/concert/reservation")
                         .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
@@ -121,7 +122,7 @@ public class JwtFilterTest {
     public void testNonFilteredUrl() throws Exception {
         Long userId = 1231L;
         User user = new User(userId, "", 123123);
-        when(userService.getUser(userId)).thenReturn(Optional.of(user));
+        when(userService.getUser(userId)).thenReturn(user);
         mockMvc.perform(MockMvcRequestBuilders.get("/concert/balance").param("userId", String.valueOf(userId)))
                 .andDo(print())
                 .andExpect(status().isOk());

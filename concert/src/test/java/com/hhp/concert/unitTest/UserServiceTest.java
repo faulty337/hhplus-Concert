@@ -37,10 +37,10 @@ public class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        Optional<User> foundUser = userService.getUser(1L);
+        User foundUser = userService.getUser(1L);
 
-        assertTrue(foundUser.isPresent());
-        assertEquals(1L, foundUser.get().getId());
+
+        assertEquals(1L, foundUser.getId());
     }
 
     @Test

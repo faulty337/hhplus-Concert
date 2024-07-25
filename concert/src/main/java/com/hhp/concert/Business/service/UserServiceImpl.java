@@ -6,8 +6,7 @@ import com.hhp.concert.util.exception.CustomException;
 import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +14,10 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
     @Override
-    public Optional<User> getUser(Long userId) {
-        return userRepository.findById(userId);
+    public User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
     }
 
     @Override
@@ -29,9 +30,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public User chargePoint(Long userId, int amount) {
         //유효성 검사
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findByIdWithLock(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
         if(amount < 1){
@@ -40,6 +42,25 @@ public class UserServiceImpl implements UserService{
 
         user.chargeBalance(amount);
         user = userRepository.save(user);
+        return user;
+    }
+
+    @Override
+    public void checkUser(Long userId) {
+        if(userRepository.findById(userId).isPresent()){
+            throw new CustomException(ErrorCode.NOT_FOUND_USER_ID);
+        }
+    }
+
+    @Override
+    public User usePoint(long id, int amount) {
+        User user = userRepository.findById(id).orElseThrow(
+                ()-> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
+        if(user.getBalance() < amount){
+            throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
+        }
+        user.userBalance(amount);
         return user;
     }
 }

@@ -19,7 +19,6 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,7 +86,7 @@ public class ConcertFacadeTest {
         Concert concert = new Concert(concertId, "test");
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concert);
         for(int i = 1; i<= 5; i++){
-            concertSeatList.add(new ConcertSeat((long)i, i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat((long)i, i, 1000, false, concertSession.getId()));
         }
 
 
@@ -104,7 +103,7 @@ public class ConcertFacadeTest {
 
     @Test
     @DisplayName("예약 테스트")
-    public void getReservationTest(){
+    public void getReserveConcertTest(){
         long userId = 1L;
         Long concertId = 1L;
         Long sessionId = 1L;
@@ -113,16 +112,16 @@ public class ConcertFacadeTest {
         User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concert);
-        ConcertSeat concertSeat = new ConcertSeat(seatId, 1, 1000, false, concertSession);
-        Reservation reservation = new Reservation(reservationId, user, concertSession, concertSeat, concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
+        ConcertSeat concertSeat = new ConcertSeat(seatId, 1, 1000, false, concertSession.getId());
+        Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
 
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(concertSessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(concertSession);
         given(concertSeatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId)).willReturn(concertSeat);
-        given(userService.getUser(userId)).willReturn(Optional.of(user));
-        given(reservationService.addReservation(any(Reservation.class))).willReturn(reservation);
-
-        ReservationResponseDto response = concertFacade.reservation(concertId, sessionId, seatId, userId);
+        given(userService.getUser(userId)).willReturn(user);
+        given(reservationService.createReservation(any(Reservation.class))).willReturn(reservation);
+        given(concertService.getAvailableReservationSeats(concertId, sessionId, seatId)).willReturn(concertSeat);
+        ReservationResponseDto response = concertFacade.reserveConcert(concertId, sessionId, seatId, userId);
 
         assertEquals(response.getReservationId(), reservation.getId());
         assertEquals(response.getPrice(), concertSeat.getPrice());

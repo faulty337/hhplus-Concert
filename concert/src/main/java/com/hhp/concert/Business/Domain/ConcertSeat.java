@@ -21,14 +21,28 @@ public class ConcertSeat {
 
     private boolean available;
 
-    @ManyToOne
-    private ConcertSession concertSession;
+    private long concertSessionId;
 
-    public ConcertSeat(int seatNumber, int price, boolean available, ConcertSession concertSession) {
+    @Version
+    private int version;
+
+    public ConcertSeat(int seatNumber, int price, boolean available, Long concertSessionId) {
         this.seatNumber = seatNumber;
         this.price = price;
         this.available = available;
-        this.concertSession = concertSession;
+        this.concertSessionId = concertSessionId;
+    }
+
+    public ConcertSeat(Long id, int seatNumber, int price, boolean available, long concertSessionId) {
+        this.id = id;
+        this.seatNumber = seatNumber;
+        this.price = price;
+        this.available = available;
+        this.concertSessionId = concertSessionId;
+    }
+
+    public void reserveSeat(){
+        this.available = false;
     }
 }
 

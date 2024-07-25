@@ -20,7 +20,17 @@ public class ConcertSessionRepositoryImpl implements ConcertSessionRepository {
     }
 
     @Override
+    public Optional<ConcertSession> findByIdAndConcertId(Long id, Long concertId) {
+        return concertSessionJpaRepository.findByIdAndConcertId(id, concertId);
+    }
+
+    @Override
     public Optional<ConcertSession> findByIdAndConcertIdAndOpen(Long sessionId, Long concertId) {
         return concertSessionJpaRepository.findByIdAndConcertIdAndSessionTimeAfter(sessionId, concertId, LocalDateTime.now());
+    }
+
+    @Override
+    public Optional<ConcertSession> findById(Long concertSessionId) {
+        return concertSessionJpaRepository.findById(concertSessionId);
     }
 }

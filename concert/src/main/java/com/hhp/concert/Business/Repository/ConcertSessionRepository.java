@@ -9,7 +9,10 @@ public interface ConcertSessionRepository {
 
     List<ConcertSession> findAllByConcertId(Long concertId);
 
+    Optional<ConcertSession> findByIdAndConcertId(Long id, Long concertId);
+
     Optional<ConcertSession> findByIdAndConcertIdAndOpen(Long sessionId, Long concertId);
 
 
+    Optional<ConcertSession> findById(Long concertSessionId);
 }

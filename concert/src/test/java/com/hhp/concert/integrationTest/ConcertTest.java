@@ -129,7 +129,7 @@ public class ConcertTest {
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
 
         concertSeatJpaRepository.saveAll(concertSeatList);
@@ -152,7 +152,7 @@ public class ConcertTest {
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
 
         concertSeatJpaRepository.saveAll(concertSeatList);
@@ -174,7 +174,7 @@ public class ConcertTest {
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
 
         concertSeatJpaRepository.saveAll(concertSeatList);
@@ -198,10 +198,10 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -238,9 +238,9 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession.getId()));
         }
-        ConcertSeat concertSeat = new ConcertSeat(i+1, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(i+1, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -257,7 +257,7 @@ public class ConcertTest {
     }
 
     @Test
-    @DisplayName("예약 - 잘못된 userId 테스트")
+    @DisplayName("예약 - 잘못된 concertId 테스트")
     public void reservationNotFoundConcertIdTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
@@ -268,10 +268,10 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -299,10 +299,10 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -330,21 +330,21 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
         concertSeatJpaRepository.saveAll(concertSeatList);
-        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), i+1, user.getId());
+        ReservationRequestDto requestDto = new ReservationRequestDto(concert.getId(), concertSession.getId(), 0, user.getId());
         mockMvc.perform(post("/concert/reservation")
                         .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.msg").value(ErrorCode.NOT_AVAILABLE_SEAT.getMsg()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value(ErrorCode.NOT_FOUND_SEAT_ID.getMsg()))
                 .andDo(print())
                 .andReturn();
     }
