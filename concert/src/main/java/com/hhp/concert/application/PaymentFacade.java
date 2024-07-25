@@ -47,24 +47,20 @@ public class PaymentFacade {
         //예약 정보 확인
         Reservation reservation = reservationService.getReservationByUserId(user.getId(), reservationId);
         Concert concert = concertService.getConcertBySessionId(reservation.getConcertSessionId());
-
         ConcertSeat concertSeat = concertService.getSeat(concert.getId(), reservation.getConcertSessionId(), reservation.getConcertSeatId());
 
-        //잔액 확인
-        if(user.getBalance() < concertSeat.getPrice()){
-            throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
-        }
+
+        //잔액 차감
+        userService.usePoint(user.getId(), concertSeat.getPrice());
 
         //결제 정보 저장
         PaymentHistory paymentHistory = paymentService.addPaymentHistory(new PaymentHistory(concertSeat.getPrice(), user, reservation));
-        user.userBalance(paymentHistory.getAmount());
 
         //예약 상태 변환
         reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
         ConcertSession concertSession = concertService.getSession(reservation.getConcertSessionId());
 
         logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
-
 
         //처리열 삭제 및 대기열 업데이트
         queueService.removeProcessingByUserId(userId);

@@ -81,7 +81,9 @@ public class ConcurrencyTest {
             executorService.submit(() -> {
                 try {
                     paymentFacade.charge(userId, 1000);
-                } finally {
+                } catch(CustomException e) {
+                    logger.info(e.getMessage());
+                }finally {
                     latch.countDown();
                 }
             });

@@ -12,4 +12,6 @@ public interface UserService {
     public User chargePoint(Long userId, int point);
 
     public void checkUser(Long userId);
+
+    User usePoint(long id, int amount);
 }

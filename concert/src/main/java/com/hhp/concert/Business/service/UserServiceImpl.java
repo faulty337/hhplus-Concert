@@ -53,4 +53,16 @@ public class UserServiceImpl implements UserService{
             throw new CustomException(ErrorCode.NOT_FOUND_USER_ID);
         }
     }
+
+    @Override
+    public User usePoint(long id, int amount) {
+        User user = userRepository.findById(id).orElseThrow(
+                ()-> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
+        );
+        if(user.getBalance() < amount){
+            throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
+        }
+        user.userBalance(amount);
+        return user;
+    }
 }
