@@ -101,6 +101,7 @@ public class ConcurrencyTest {
 
 
     @Test
+    @DisplayName("예약 동시성 테스트")
     public void reservationConcurrencyTest() throws InterruptedException {
         int threadCount = 10;
         //given
@@ -119,13 +120,13 @@ public class ConcurrencyTest {
         long listSize = 5L;
         int seatNum = 1;
         for(;seatNum <= listSize; seatNum++){
-            concertSeatList.add(new ConcertSeat(seatNum, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat(seatNum, 1000, false, concertSession.getId()));
         }
         int seatNumber = seatNum;
         Long seatId = 33L;
         concertSeatJpaRepository.saveAll(concertSeatList);
 
-        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, 1000, true, concertSession));
+        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, 1000, true, concertSession.getId()));
 
 
 
@@ -139,7 +140,7 @@ public class ConcurrencyTest {
                 int userId = userIdCounter.getAndIncrement();
                 try {
                     concertFacade.reservation(concert.getId(), concertSession.getId(), concertSeat.getId(), (long) userId);
-                }catch(CustomException e) {
+                }catch(Exception e) {
                     logger.info(e.getMessage());
                 } finally {
                     latch.countDown();
@@ -172,11 +173,11 @@ public class ConcurrencyTest {
         long listSize = 5L;
         int seatNum = 1;
         for(;seatNum <= listSize; seatNum++){
-            concertSeatJpaRepository.save(new ConcertSeat(seatNum, 1000, false, concertSession));
+            concertSeatJpaRepository.save(new ConcertSeat(seatNum, 1000, false, concertSession.getId()));
         }
         int seatNumber = seatNum;
         Long seatId = 1241241L;
-        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, 1000, true, concertSession));
+        ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, 1000, true, concertSession.getId()));
 
         Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice()));
 

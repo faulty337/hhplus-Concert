@@ -102,7 +102,7 @@ public class PaymentFacadeTest {
 
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert);
 
-        ConcertSeat concertSeat = new ConcertSeat(seatId, 1, price, false, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatId, 1, price, false, concertSession.getId());
 
         Reservation reservation = new Reservation(user.getId(), concertSession.getId(), concertSeat.getId(), price);
 
@@ -161,7 +161,7 @@ public class PaymentFacadeTest {
 
         ConcertSession concertSession = new ConcertSession(LocalDateTime.now().plusDays(1), concert);
 
-        ConcertSeat concertSeat = new ConcertSeat(1, price, false, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(1, price, false, concertSession.getId());
 
         Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), price, Reservation.ReservationStatus.PENDING);
 

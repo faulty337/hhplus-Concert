@@ -129,7 +129,7 @@ public class ConcertTest {
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
 
         concertSeatJpaRepository.saveAll(concertSeatList);
@@ -152,7 +152,7 @@ public class ConcertTest {
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
 
         concertSeatJpaRepository.saveAll(concertSeatList);
@@ -174,7 +174,7 @@ public class ConcertTest {
 
         long listSize = 5L;
         for(int i = 1; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
 
         concertSeatJpaRepository.saveAll(concertSeatList);
@@ -198,10 +198,10 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -238,9 +238,9 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession.getId()));
         }
-        ConcertSeat concertSeat = new ConcertSeat(i+1, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(i+1, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -268,10 +268,10 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -299,10 +299,10 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 
@@ -330,10 +330,10 @@ public class ConcertTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession));
+            concertSeatList.add(new ConcertSeat(i, 1000, false, concertSession.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, concertSession.getId());
         concertSeatList.add(concertSeat);
 
 

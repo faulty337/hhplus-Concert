@@ -90,10 +90,10 @@ public class PaymentTest {
         long listSize = 5L;
         int i = 1;
         for(; i <= listSize; i++){
-            concertSeatList.add(new ConcertSeat( i, 1000, false, session));
+            concertSeatList.add(new ConcertSeat( i, 1000, false, session.getId()));
         }
         int seatNumber = i;
-        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, session);
+        ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, session.getId());
         concertSeatList.add(concertSeat);
         concertSeatJpaRepository.saveAll(concertSeatList);
         Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), session.getId(), concertSeat.getId(), concertSeat.getPrice()));

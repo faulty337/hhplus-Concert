@@ -44,7 +44,7 @@ public class ConcertSeatServiceTest {
         ConcertSession concertSession = new ConcertSession();
 
         for(int i = 1; i <= listSize; i++){
-          sessionList.add(new ConcertSeat((long)i, i, 1000, false, concertSession));
+          sessionList.add(new ConcertSeat((long)i, i, 1000, false, concertSession.getId()));
         }
 
         given(seatRepository.findAllBySessionId(sessionId)).willReturn(sessionList);
@@ -62,7 +62,7 @@ public class ConcertSeatServiceTest {
         Long seatId = 12414L;
         int seatNumber = 32;
 
-        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new ConcertSeat(seatId, seatNumber, 1000, true, new ConcertSession())));
+        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new ConcertSeat(seatId, seatNumber, 1000, true, sessionId)));
 
         ConcertSeat concertSeat = seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId);
         assertNotNull(concertSeat);
@@ -96,7 +96,7 @@ public class ConcertSeatServiceTest {
         Long seatId = 12414L;
         int seatNumber = 32;
 
-        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new ConcertSeat(seatId, seatNumber, 1000, false, new ConcertSession())));
+        given(seatRepository.findByIdAndSessionId(seatId, sessionId)).willReturn(Optional.of(new ConcertSeat(seatId, seatNumber, 1000, false, sessionId)));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             seatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId);
