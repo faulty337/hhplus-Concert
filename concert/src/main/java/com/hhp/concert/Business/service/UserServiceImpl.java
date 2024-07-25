@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
@@ -35,7 +33,7 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public User chargePoint(Long userId, int amount) {
         //유효성 검사
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findByIdWithLock(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
         if(amount < 1){

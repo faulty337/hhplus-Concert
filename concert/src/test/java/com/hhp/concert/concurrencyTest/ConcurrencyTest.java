@@ -16,6 +16,7 @@ import com.hhp.concert.application.PaymentFacade;
 import com.hhp.concert.util.exception.CustomException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,7 @@ public class ConcurrencyTest {
     }
 
     @Test
+    @DisplayName("충전 동시성 테스트")
     public void chargeConcurrencyTest() throws InterruptedException {
         User user = userJpaRepository.save(new User("", 0));
         Long userId = user.getId();
