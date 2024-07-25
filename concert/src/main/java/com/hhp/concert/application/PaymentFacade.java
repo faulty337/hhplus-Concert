@@ -41,13 +41,14 @@ public class PaymentFacade {
 
     @Transactional
     public PaymentResponseDto payment(long userId, long reservationId){
-        //토큰 유효성 검사 및 user 유효성 검사
+        // user 유효성 검사
         User user = userService.getUser(userId);
 
         //예약 정보 확인
         Reservation reservation = reservationService.getReservationByUserId(user.getId(), reservationId);
         Concert concert = concertService.getConcertBySessionId(reservation.getConcertSessionId());
         ConcertSeat concertSeat = concertService.getSeat(concert.getId(), reservation.getConcertSessionId(), reservation.getConcertSeatId());
+        ConcertSession concertSession = concertService.getSession(reservation.getConcertSessionId());
 
 
         //잔액 차감
@@ -57,8 +58,7 @@ public class PaymentFacade {
         PaymentHistory paymentHistory = paymentService.addPaymentHistory(new PaymentHistory(concertSeat.getPrice(), user, reservation));
 
         //예약 상태 변환
-        reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
-        ConcertSession concertSession = concertService.getSession(reservation.getConcertSessionId());
+        reservationService.confirmReservationStatus(reservationId);
 
         logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
 

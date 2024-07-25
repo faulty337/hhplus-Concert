@@ -139,7 +139,7 @@ public class ConcurrencyTest {
             executorService.submit(() -> {
                 int userId = userIdCounter.getAndIncrement();
                 try {
-                    concertFacade.reservation(concert.getId(), concertSession.getId(), concertSeat.getId(), (long) userId);
+                    concertFacade.reserveConcert(concert.getId(), concertSession.getId(), concertSeat.getId(), (long) userId);
                 }catch(Exception e) {
                     logger.info(e.getMessage());
                 } finally {

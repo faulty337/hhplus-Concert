@@ -7,4 +7,6 @@ public interface ReservationService {
 
 
     Reservation getReservationByUserId(long userId, long reservationId);
+
+    void confirmReservationStatus(long reservationId);
 }

@@ -33,4 +33,14 @@ public class ReservationServiceImpl implements ReservationService{
                 ()-> new CustomException(ErrorCode.NOT_FOUND_RESERVATION_ID)
         );
     }
+
+    @Override
+    @Transactional
+    public void confirmReservationStatus(long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(
+                ()-> new CustomException(ErrorCode.NOT_FOUND_RESERVATION_ID)
+        );
+        reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
+        reservationRepository.save(reservation);
+    }
 }
