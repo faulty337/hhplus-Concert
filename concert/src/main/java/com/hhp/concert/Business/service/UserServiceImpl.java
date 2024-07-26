@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public User chargePoint(Long userId, int amount) {
         //유효성 검사
-        User user = userRepository.findByIdWithLock(userId).orElseThrow(
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
         );
         if(amount < 1){

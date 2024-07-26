@@ -4,6 +4,7 @@ import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.Business.service.*;
+import com.hhp.concert.interfaces.Redis.RedisLock;
 import com.hhp.concert.util.exception.CustomException;
 import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class PaymentFacade {
     private static final Logger logger = LogManager.getLogger(PaymentFacade.class);
 
 
+    @RedisLock(key = "userId")
     public UserBalanceResponseDto charge(Long userId, int amount) {
         // 충전
         User user = userService.chargePoint(userId, amount);

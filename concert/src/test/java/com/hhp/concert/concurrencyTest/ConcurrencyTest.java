@@ -78,14 +78,13 @@ public class ConcurrencyTest {
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
-
         for (int i = 1; i <= threadCount; i++) {
             executorService.submit(() -> {
                 try {
                     paymentFacade.charge(userId, 1000);
-                } catch(CustomException e) {
+                } catch (Exception e) {
                     logger.info(e.getMessage());
-                }finally {
+                } finally {
                     latch.countDown();
                 }
             });
@@ -95,8 +94,6 @@ public class ConcurrencyTest {
 
         user = userJpaRepository.findById(user.getId()).get();
         assertEquals(threadCount * 1000, user.getBalance());
-
-
     }
 
 
