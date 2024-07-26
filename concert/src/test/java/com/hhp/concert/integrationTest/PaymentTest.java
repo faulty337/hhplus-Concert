@@ -4,6 +4,7 @@ package com.hhp.concert.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.*;
+import com.hhp.concert.Business.dto.ChargeRequestDto;
 import com.hhp.concert.Business.dto.PaymentRequestDto;
 import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
 import com.hhp.concert.Infrastructure.payment.PaymentHistoryJpaRepository;
@@ -32,9 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -67,6 +70,7 @@ public class PaymentTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private String validToken = "valid-jwt-token";
     @BeforeEach
     public void before() {
         reservationJpaRepository.deleteAll();
@@ -78,6 +82,25 @@ public class PaymentTest {
 
     }
 
+    @Test
+    @DisplayName("충전 - 성공 테스트")
+    public void chargeTest() throws Exception{
+        int balance = 100000;
+        User user = userJpaRepository.save(new User("", balance));
+        int amount = 3000;
+        ChargeRequestDto requestDto = new ChargeRequestDto(user.getId(), amount);
+        MvcResult mvcResult = mockMvc.perform(patch("/concert/charge")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(JwtUtil.AUTHORIZATION_HEADER, "Bearer " + validToken)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        user = userJpaRepository.findById(user.getId()).get();
+
+        assertEquals(balance + amount, user.getBalance());
+    }
 
     @Test
     @DisplayName("결제 - 성공 테스트")
@@ -101,7 +124,7 @@ public class PaymentTest {
         PaymentRequestDto requestDto = new PaymentRequestDto(user.getId(), reservation.getId());
 
 
-        String validToken = "valid-jwt-token";
+
 
         when(jwtUtil.validateToken(validToken)).thenReturn(true);
         when(jwtUtil.extractSign(validToken)).thenReturn(String.valueOf(user.getId()));
