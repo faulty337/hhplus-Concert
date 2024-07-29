@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "concert_session")
 public class ConcertSession {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

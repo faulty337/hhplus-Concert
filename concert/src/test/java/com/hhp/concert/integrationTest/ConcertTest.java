@@ -9,6 +9,7 @@ import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
 import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
 import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
 import com.hhp.concert.Infrastructure.user.UserJpaRepository;
+import com.hhp.concert.util.TestDatabaseManager;
 import com.hhp.concert.util.JwtUtil;
 import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class ConcertTest {
 
     private static final Logger log = LoggerFactory.getLogger(ConcertTest.class);
@@ -63,13 +66,14 @@ public class ConcertTest {
     private ReservationJpaRepository reservationJpaRepository;
 
     private final String validToken = "valid-jwt-token";
+
+    @Autowired
+    private TestDatabaseManager testDatabaseManager;
+
     @BeforeEach
     public void setUp(){
-        reservationJpaRepository.deleteAll();
-        concertSeatJpaRepository.deleteAll();
-        concertSessionJpaRepository.deleteAll();
-        concertJpaRepository.deleteAll();
 
+        testDatabaseManager.execute();
         String validToken = "valid-jwt-token";
 
         when(jwtUtil.validateToken(validToken)).thenReturn(true);

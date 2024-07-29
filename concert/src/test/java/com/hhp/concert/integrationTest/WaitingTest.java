@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Infrastructure.user.UserJpaRepository;
 import com.hhp.concert.Infrastructure.waitingQueue.WaitingQueueJpaRepository;
+import com.hhp.concert.util.TestDatabaseManager;
 import com.hhp.concert.util.JwtUtil;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class WaitingTest {
 
     @Autowired
@@ -41,10 +44,12 @@ public class WaitingTest {
     @Autowired
     private WaitingQueueJpaRepository waitingQueueJpaRepository;
 
+    @Autowired
+    private TestDatabaseManager testDatabaseManager;
+
     @BeforeEach
     public void setUp(){
-        userJpaRepository.deleteAll();
-        waitingQueueJpaRepository.deleteAll();
+        testDatabaseManager.execute();
     }
 
 //    @Test

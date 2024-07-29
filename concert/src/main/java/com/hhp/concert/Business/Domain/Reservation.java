@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "reservation")
 public class Reservation extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
