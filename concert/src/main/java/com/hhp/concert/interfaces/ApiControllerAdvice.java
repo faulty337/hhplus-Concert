@@ -1,4 +1,4 @@
-package com.hhp.concert;
+package com.hhp.concert.interfaces;
 
 import com.hhp.concert.util.exception.CustomException;
 import com.hhp.concert.util.exception.ErrorResponse;
