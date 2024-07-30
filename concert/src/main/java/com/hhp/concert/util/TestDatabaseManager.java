@@ -74,44 +74,23 @@ public class TestDatabaseManager implements InitializingBean {
     }
 
 
-    @Transactional
     public void init() {
         Faker faker = new Faker();
-        List<Concert> concerts = new ArrayList<>();
-        List<ConcertSession> sessions = new ArrayList<>();
         List<ConcertSeat> seats = new ArrayList<>();
-        List<User> users = new ArrayList<>();
 
         for (int i = 0; i < 100000; i++) {
-            Concert concert = new Concert(faker.rockBand().name());
-            concerts.add(concert);
-            if (concerts.size() % 50 == 0) {
-                concertJpaRepository.saveAll(concerts);
-                concerts.clear();
-                entityManager.flush();
-                entityManager.clear();
-            }
-        }
-        if (!concerts.isEmpty()) {
-            concertJpaRepository.saveAll(concerts);
-            entityManager.flush();
-            entityManager.clear();
-        }
+            Concert concert = concertJpaRepository.save(new Concert(faker.rockBand().name()));
 
-        for (int i = 0; i < 1000000; i++) {
-            User user = new User(faker.name().fullName(), 10000);
-            users.add(user);
-            if (users.size() % 50 == 0) {
-                userJpaRepository.saveAll(users);
-                users.clear();
-                entityManager.flush();
-                entityManager.clear();
+            for (int j = 0; j < 10; j++) {
+                ConcertSession session = concertSessionJpaRepository.save(new ConcertSession(faker.date().future(30, TimeUnit.DAYS).toLocalDateTime(), concert));
+                for (int k = 0; k < 50; k++) {
+                    ConcertSeat seat = new ConcertSeat(k + 1, 100 + k * 10, true, session.getId());
+                    seats.add(seat);
+                }
+                concertSeatJpaRepository.saveAll(seats);
             }
-        }
-        if (!users.isEmpty()) {
-            userJpaRepository.saveAll(users);
-            entityManager.flush();
-            entityManager.clear();
+
+
         }
     }
 }
