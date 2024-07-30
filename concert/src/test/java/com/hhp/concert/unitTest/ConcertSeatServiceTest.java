@@ -44,7 +44,7 @@ public class ConcertSeatServiceTest {
         ConcertSession concertSession = new ConcertSession();
 
         for(int i = 1; i <= listSize; i++){
-          sessionList.add(new ConcertSeat((long)i, i, 1000, false, concertSession.getId()));
+          sessionList.add(new ConcertSeat((long)i, i, 1000, false, sessionId));
         }
 
         given(seatRepository.findAllBySessionId(sessionId)).willReturn(sessionList);

@@ -52,7 +52,7 @@ public class PaymentFacade {
         ConcertSeat concertSeat = concertService.getSeat(concert.getId(), reservation.getConcertSessionId(), reservation.getConcertSeatId());
         ConcertSession concertSession = concertService.getSession(reservation.getConcertSessionId());
 
-
+        logger.info("balance : {} , amount : {}", user.getBalance(), concertSeat.getPrice());
         //잔액 차감
         userService.usePoint(user.getId(), concertSeat.getPrice());
 

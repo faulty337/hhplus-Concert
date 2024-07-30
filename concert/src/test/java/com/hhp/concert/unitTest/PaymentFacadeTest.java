@@ -154,22 +154,27 @@ public class PaymentFacadeTest {
         long userId = 1L;
         long reservationId = 1L;
         long concertId = 1L;
+        long sessionId = 123L;
         int price = 5000;
         String token = "valid-token";
         Concert concert = new Concert(concertId, "test");
         User user = new User(userId, "token", 1000);
 
-        ConcertSession concertSession = new ConcertSession(LocalDateTime.now().plusDays(1), concert);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert);
 
-        ConcertSeat concertSeat = new ConcertSeat(1, price, false, concertSession.getId());
+        ConcertSeat concertSeat = new ConcertSeat(1, price, false, 1L);
 
         Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), price, Reservation.ReservationStatus.PENDING);
+        PaymentHistory paymentHistory = new PaymentHistory(concertSeat.getPrice(), user, reservation);
 
         given(userService.getUser(userId)).willReturn(user);
         given(queueService.isProcessing(userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(concertService.getConcertBySessionId(concertSession.getId())).willReturn(concert);
         given(concertService.getSeat(concertId, concertSession.getId(), concertSeat.getId())).willReturn(concertSeat);
+        given(concertService.getSession(concertSession.getId())).willReturn(concertSession);
+        given(paymentService.addPaymentHistory(any(PaymentHistory.class))).willReturn(paymentHistory);
+        given(userService.usePoint(user.getId(), concertSeat.getPrice())).willThrow(new CustomException(ErrorCode.INSUFFICIENT_FUNDS));
 
         CustomException exception = assertThrows(CustomException.class, () -> {
             paymentFacade.payment(userId, reservationId);
