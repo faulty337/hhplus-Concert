@@ -33,14 +33,7 @@ public class WaitingFacade {
 
         }
 
-        Optional<WaitingQueue> waitingQueue = queueService.waitingQueueByUserId(userId);
-
-        //대기열 X 시 대기열 삽입
-        if(waitingQueue.isEmpty()){
-            queueService.addWaiting(new WaitingQueue(userId));
-        }
-
-        //번호 조회
+        //번호 조회 및 대기열 삽입
         Long waitingNumber = waitingService.getWaitingNumber(userId);
 
 

@@ -30,6 +30,8 @@ public class waitingServiceImpl implements waitingService {
 
     private final JwtService jwtService;
 
+    private final RedisRepository redisRepository;
+
     //최근 처리 대기열 첫번째 인덱스 저장
     private final AtomicLong count = new AtomicLong(1);
 
@@ -40,14 +42,13 @@ public class waitingServiceImpl implements waitingService {
     }
 
     public Long getWaitingNumber(Long userId){
-        WaitingQueue user = waitingQueueByUserId(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_ID)
-        );;
-        Optional<WaitingQueue> first = waitingRepository.getFirst();
 
-        Long firstNumber = user.getId();
-
-        return first.map(waitingQueue -> firstNumber - waitingQueue.getId()).orElse(0L);
+        Long waitingNumber = redisRepository.getSortedSetRank(QueueType.WAITING.getStr(), userId.toString());
+        if(waitingNumber == null){
+            redisRepository.addElementSortedSet(QueueType.WAITING.getStr(), userId.toString(), System.currentTimeMillis());
+            waitingNumber = redisRepository.getSortedSetRank(QueueType.WAITING.getStr(), userId.toString());
+        }
+        return waitingNumber;
     }
 
     @Override
