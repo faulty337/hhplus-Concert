@@ -44,6 +44,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'net.datafaker:datafaker:1.8.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	testImplementation 'it.ozimov:embedded-redis:0.7.2'
 }
 
 tasks.named('test') {
