@@ -107,7 +107,6 @@ public class PaymentFacadeTest {
 
         PaymentHistory paymentHistory = new PaymentHistory(price, user, reservation);
 
-        given(waitingService.isProcessing(userId)).willReturn(true);
         given(userService.getUser(userId)).willReturn(user);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(paymentService.addPaymentHistory(any(PaymentHistory.class))).willReturn(paymentHistory);
@@ -167,7 +166,6 @@ public class PaymentFacadeTest {
         PaymentHistory paymentHistory = new PaymentHistory(concertSeat.getPrice(), user, reservation);
 
         given(userService.getUser(userId)).willReturn(user);
-        given(waitingService.isProcessing(userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(concertService.getConcertBySessionId(concertSession.getId())).willReturn(concert);
         given(concertService.getSeat(concertId, concertSession.getId(), concertSeat.getId())).willReturn(concertSeat);

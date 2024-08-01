@@ -4,14 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-import com.hhp.concert.Business.Domain.ProcessQueue;
-import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.Repository.ProcessQueueRepository;
-import com.hhp.concert.Business.Repository.WaitingRepository;
+import com.hhp.concert.Business.Domain.User;
+import com.hhp.concert.Business.Repository.RedisRepository;
+import com.hhp.concert.Business.Repository.UserRepository;
 import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.waitingServiceImpl;
-import com.hhp.concert.util.exception.CustomException;
-import com.hhp.concert.util.exception.ErrorCode;
+import com.hhp.concert.util.enums.QueueType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,128 +18,96 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 class QueueServiceTest {
 
     @Mock
-    private WaitingRepository waitingRepository;
+    private RedisRepository redisRepository;
 
     @Mock
-    private ProcessQueueRepository processQueueRepository;
+    private UserRepository userRepository;
 
     @Mock
     private JwtService jwtService;
 
     @InjectMocks
-    private waitingServiceImpl queueService;
+    private waitingServiceImpl waitingService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        ReflectionTestUtils.setField(queueService, "processingSize", 2);
+        ReflectionTestUtils.setField(waitingService, "processingSize", 2);
     }
 
     @Test
     @DisplayName("waiting 조회 테스트")
     public void getWaitingQueueTest() {
-        Long waitingId = 1L;
         Long userId = 1L;
-        given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId)));
+        Long rank = 3L;
+        given(redisRepository.getSortedSetRank(any(String.class), any(String.class))).willReturn(rank);
 
-        Optional<WaitingQueue> returnData = queueService.waitingQueueByUserId(userId);
+        Long result = waitingService.getWaitingNumber(userId);
 
-        assertTrue(returnData.isPresent());
-        assertEquals(returnData.get().getId(), waitingId);
-        assertEquals(returnData.get().getUserId(), userId);
+        assertEquals(rank, result);
     }
-
     @Test
-    @DisplayName("waiting 조회 예외 테스트")
-    public void getWaitingQueueExceptionTest() {
+    @DisplayName("waiting 조회 저장 테스트")
+    public void getWaitingQueueSaveTest() {
         Long userId = 1L;
-        given(waitingRepository.findByUserId(userId)).willReturn(Optional.empty());
+        Long rank = 3L;
+        given(redisRepository.getSortedSetRank(QueueType.WAITING.getStr(), userId.toString())).willReturn(null);
 
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            queueService.getWaitingNumber(userId);
-        });
+        Long result = waitingService.getWaitingNumber(userId);
 
-        assertEquals(ErrorCode.NOT_FOUND_USER_ID.getMsg(), exception.getMsg());
+        verify(redisRepository, times(1)).addElementSortedSet(anyString(), anyString(), anyDouble());
+    }
+
+
+    @Test
+    void testUpdateQueue() {
+        when(redisRepository.getSortedSetSize(QueueType.PROCESSING.getStr())).thenReturn(5L);
+        when(redisRepository.getFirstElement(QueueType.PROCESSING.getStr())).thenReturn("token1", (String) null);
+        when(jwtService.isExpiredToken("token1")).thenReturn(false);
+        doNothing().when(redisRepository).removeElementSortedSet(any(), any());
+
+        waitingService.updateQueue();
+
+        verify(redisRepository, times(1)).getSortedSetSize(QueueType.PROCESSING.getStr());
+        verify(redisRepository, times(2)).getFirstElement(QueueType.PROCESSING.getStr());
+        verify(jwtService, times(1)).isExpiredToken("token1");
+        verify(redisRepository, times(1)).removeElementSortedSet(QueueType.PROCESSING.getStr(), "token1");
     }
 
     @Test
-    @DisplayName("대기 번호 조회 테스트")
-    public void getWaitingNumberTest() {
-        Long firstWaitingId = 32L;
-        Long firstUserId = 32L;
-        Long waitingId = 64L;
-        Long userId = 64L;
+    void testMoveToProcessingQueue() {
+        when(redisRepository.getFirstElement(QueueType.WAITING.getStr())).thenReturn("token1");
+        doNothing().when(redisRepository).removeElementSortedSet(any(), any());
+        doNothing().when(redisRepository).addElementSortedSet(any(), any(), anyDouble());
 
-        given(waitingRepository.getFirst()).willReturn(Optional.of(new WaitingQueue(firstWaitingId, firstUserId)));
-        given(waitingRepository.findByUserId(userId)).willReturn(Optional.of(new WaitingQueue(waitingId, userId)));
+        waitingService.moveToProcessingQueue();
 
-        Long waitingNumber = queueService.getWaitingNumber(userId);
-
-        assertEquals(waitingNumber, waitingId - firstWaitingId);
+        verify(redisRepository, times(1)).getFirstElement(QueueType.WAITING.getStr());
+        verify(redisRepository, times(1)).removeElementSortedSet(QueueType.WAITING.getStr(), "token1");
+        verify(redisRepository, times(1)).addElementSortedSet(anyString(), anyString(), anyDouble());
     }
 
     @Test
-    @DisplayName("스케줄러 테스트")
-    void testUpdateQueueTest() {
-        Long userId1 = 1L;
-        Long userId2 = 2L;
-        long userId3 = 3L;
-        ProcessQueue processQueue1 = new ProcessQueue(userId1, "validToken1");
-        ProcessQueue processQueue2 = new ProcessQueue(userId2, "invalidToken");
-        List<ProcessQueue> processQueueList = Arrays.asList(processQueue1, processQueue2);
+    void testMoveUserToProcessingQueue() {
+        Long userId = 1L;
+        String token = "token";
+        User user = new User(token, 19099);
 
-        given(processQueueRepository.findAll()).willReturn(processQueueList);
-        given(jwtService.validateToken("validToken1", userId1)).willReturn(true);
-        given(jwtService.validateToken("invalidToken", userId2)).willReturn(false);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(redisRepository.isElementInSortedSet(QueueType.PROCESSING.getStr(), token)).thenReturn(true);
+        when(redisRepository.getFirstElement(QueueType.WAITING.getStr())).thenReturn("waitingToken1");
 
-        WaitingQueue waitingQueue = new WaitingQueue(1L, userId3);
-        given(waitingRepository.count()).willReturn(1L);
-        given(waitingRepository.findById(1L)).willReturn(Optional.of(waitingQueue));
-        given(waitingRepository.findByUserId(userId2)).willReturn(Optional.empty());
-        given(jwtService.createProcessingToken(userId3)).willReturn("newToken");
+        waitingService.moveUserToProcessingQueue(userId);
 
-        queueService.updateQueue();
-
-        verify(processQueueRepository, times(1)).delete(processQueue2);
-        verify(processQueueRepository, times(1)).save(any(ProcessQueue.class));
-//        verify(waitingRepository, times(1)).delete(any(WaitingQueue.class));
-    }
-
-    @Test
-    @DisplayName("스케줄러 이동 테스트")
-    void testUpdateQueueMoveTest() {
-        Long userId1 = 1L;
-        Long userId2 = 2L;
-        long userId3 = 3L;
-//        ProcessQueue processQueue1 = new ProcessQueue(userId1, "validToken1");
-//        ProcessQueue processQueue2 = new ProcessQueue(userId2, "validToken1");
-        List<ProcessQueue> processQueueList = new ArrayList<>();
-
-        given(processQueueRepository.findAll()).willReturn(processQueueList);
-//        when(jwtService.validateToken("validToken1", userId1)).thenReturn(true);
-//        when(jwtService.validateToken("validToken1", userId2)).thenReturn(false);
-
-        WaitingQueue waitingQueue = new WaitingQueue(1L, userId2);
-        given(waitingRepository.count()).willReturn(2L);
-        given(waitingRepository.findById(userId1)).willReturn(Optional.of(new WaitingQueue(1L, userId1)));
-        given(waitingRepository.findById(userId2)).willReturn(Optional.of(new WaitingQueue(2L, userId2)));
-        given(waitingRepository.findByUserId(userId1)).willReturn(Optional.of(waitingQueue));
-        given(waitingRepository.findByUserId(userId2)).willReturn(Optional.of(waitingQueue));
-        given(jwtService.createProcessingToken(userId1)).willReturn("newToken");
-        given(jwtService.createProcessingToken(userId2)).willReturn("newToken");
-
-        queueService.updateQueue();
-
-//        verify(processQueueRepository, times(1)).delete(processQueue2);
-        verify(processQueueRepository, times(2)).save(any(ProcessQueue.class));
-        verify(waitingRepository, times(2)).delete(any(WaitingQueue.class));
+        verify(userRepository, times(1)).findById(userId);
+        verify(redisRepository, times(1)).isElementInSortedSet(QueueType.PROCESSING.getStr(), token);
+        verify(redisRepository, times(1)).getFirstElement(QueueType.WAITING.getStr());
+        verify(redisRepository, times(1)).removeElementSortedSet(QueueType.PROCESSING.getStr(), token);
+        verify(redisRepository, times(1)).addElementSortedSet(anyString(), anyString(), anyDouble());
     }
 }

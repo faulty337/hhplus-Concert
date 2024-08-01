@@ -3,7 +3,6 @@ package com.hhp.concert.integrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
-import com.hhp.concert.Infrastructure.DBRepository.waitingQueue.WaitingQueueJpaRepository;
 import com.hhp.concert.util.TestDatabaseManager;
 import com.hhp.concert.util.JwtUtil;
 import org.json.JSONObject;
@@ -42,9 +41,6 @@ public class WaitingTest {
     private UserJpaRepository userJpaRepository;
 
     @Autowired
-    private WaitingQueueJpaRepository waitingQueueJpaRepository;
-
-    @Autowired
     private TestDatabaseManager testDatabaseManager;
 
     @BeforeEach
@@ -52,37 +48,27 @@ public class WaitingTest {
         testDatabaseManager.execute();
     }
 
-//    @Test
-//    @DisplayName("새로운 토큰 발급 테스트")
-//    public void getTokenReissued() throws Exception {
-//        User user = userJpaRepository.save(new User(null, 0));
-//
-//        mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.token").exists())
-//                .andDo(print())
-//                .andReturn();
-//        user = userJpaRepository.findById(user.getId()).get();
-//        String userToken = user.getWaitingToken();
-//        MvcResult result = mockMvc.perform(get("/concert/waiting/token").param("userId", String.valueOf(user.getId())))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.token").exists())
-//                .andDo(print())
-//                .andReturn();
-//
-//        String jsonResponse = result.getResponse().getContentAsString();
-//        JSONObject jsonObject = new JSONObject(jsonResponse);
-//        String token = jsonObject.getString("token");
-//
-////         토큰 값을 사용하거나 출력
-//        System.out.println("Extracted Token: " + token);
-//
-//        int size = waitingQueueJpaRepository.findAll().size();
-//
-//        assertEquals(size, 1);
-//        assertEquals(userToken, token);
-//
-//    }
+    @Test
+    @DisplayName("새로운 토큰 발급 테스트")
+    public void getTokenReissued() throws Exception {
+        User user = userJpaRepository.save(new User(null, 0));
+
+        mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists())
+                .andDo(print())
+                .andReturn();
+
+        MvcResult result = mockMvc.perform(get("/concert/waiting/status").param("userId", String.valueOf(user.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists())
+                .andDo(print())
+                .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        JSONObject jsonObject = new JSONObject(jsonResponse);
+        String token = jsonObject.getString("token");
+    }
 //
 //    @Test
 //    @DisplayName("새로운 토큰 발급 테스트")

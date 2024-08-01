@@ -1,21 +1,15 @@
 package com.hhp.concert.Business.service;
 
-import com.hhp.concert.Business.Domain.ProcessQueue;
-import com.hhp.concert.Business.Domain.WaitingQueue;
-import com.hhp.concert.Business.Repository.ProcessQueueRepository;
+import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Business.Repository.RedisRepository;
-import com.hhp.concert.Business.Repository.WaitingRepository;
+import com.hhp.concert.Business.Repository.UserRepository;
 import com.hhp.concert.util.enums.QueueType;
 import com.hhp.concert.util.exception.CustomException;
-import org.springframework.beans.factory.annotation.Value;
 import com.hhp.concert.util.exception.ErrorCode;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
@@ -24,23 +18,12 @@ public class waitingServiceImpl implements waitingService {
     @Value("${control.size}")
     private long processingSize;
 
-    private final WaitingRepository waitingRepository;
-
-    private final ProcessQueueRepository processQueueRepository;
-
     private final JwtService jwtService;
 
     private final RedisRepository redisRepository;
 
-    //최근 처리 대기열 첫번째 인덱스 저장
-    private final AtomicLong count = new AtomicLong(1);
-
     private final UserRepository userRepository;
 
-    @Override
-    public Optional<WaitingQueue> waitingQueueByUserId(Long userId) {
-        return waitingRepository.findByUserId(userId);
-    }
 
     public Long getWaitingNumber(Long userId){
 
@@ -51,22 +34,6 @@ public class waitingServiceImpl implements waitingService {
         }
         return waitingNumber;
     }
-
-    @Override
-    public WaitingQueue addWaiting(WaitingQueue waitingQueue) {
-        return waitingRepository.save(waitingQueue);
-    }
-
-    @Override
-    public boolean isProcessing(long userId) {
-        return processQueueRepository.existByUserId(userId);
-    }
-
-    @Override
-    public void removeProcessing(ProcessQueue processQueue) {
-        processQueueRepository.delete(processQueue);
-    }
-
 
     //스케줄러 함수
     @Override
