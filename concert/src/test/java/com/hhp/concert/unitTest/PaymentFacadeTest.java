@@ -100,7 +100,7 @@ public class PaymentFacadeTest {
         Concert concert = new Concert(concertId, "test");
         User user = new User(userId, "token", 10000);
 
-        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concertId);
 
         ConcertSeat concertSeat = new ConcertSeat(seatId, 1, price, false, concertSession.getId());
 
@@ -160,7 +160,7 @@ public class PaymentFacadeTest {
         Concert concert = new Concert(concertId, "test");
         User user = new User(userId, "token", 1000);
 
-        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concertId);
 
         ConcertSeat concertSeat = new ConcertSeat(1, price, false, 1L);
 

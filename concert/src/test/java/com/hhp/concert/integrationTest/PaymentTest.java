@@ -108,7 +108,7 @@ public class PaymentTest {
     public void paymentTest() throws Exception{
         User user = userJpaRepository.save(new User("" , 10000));
         Concert concert = concertJpaRepository.save(new Concert("concertTitle"));
-        ConcertSession session  = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusHours(1), concert));
+        ConcertSession session  = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusHours(1), concert.getId()));
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
         long listSize = 5L;

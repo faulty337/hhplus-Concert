@@ -9,6 +9,7 @@ import com.hhp.concert.Business.dto.SeatInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class ConcertFacade {
 
     private static final Logger logger = LogManager.getLogger(ConcertFacade.class);
 
-
+//    @Cacheable(value = "getSessions", key="#concertId")
     public List<GetSessionDateResponseDto> getSessionDate(Long concertId){
         Concert concert = concertService.getConcert(concertId);
 

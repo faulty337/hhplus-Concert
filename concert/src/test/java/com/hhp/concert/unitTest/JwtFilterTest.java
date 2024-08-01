@@ -77,7 +77,7 @@ public class JwtFilterTest {
         String requestBody = objectMapper.writeValueAsString(new ReservationRequestDto(concertId, sessionId, seatNumber, userId));
         User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
-        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concert);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concertId);
         ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1, 1000, false, concertSession.getId());
         Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
 

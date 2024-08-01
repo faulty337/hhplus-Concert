@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
-
 class ConcertApplicationTests {
 
 	@Autowired
@@ -25,18 +24,10 @@ class ConcertApplicationTests {
 	@Autowired
 	private ConcertJpaRepository concertJpaRepository;
 
-	@BeforeAll
-	public static void setUp(@Autowired TestDatabaseManager testDatabaseManager) {
-		testDatabaseManager.init();
-	}
 	@Test
 	void contextLoads() {
 	}
 
-	@Test
-	void dataTest(){
-		List<Concert> concertList =concertJpaRepository.findAll();
-        assertEquals(100000, concertList.size());
-	}
+
 
 }

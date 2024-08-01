@@ -1,10 +1,8 @@
 package com.hhp.concert.util;
 
-import com.hhp.concert.Business.Domain.Concert;
-import com.hhp.concert.Business.Domain.ConcertSeat;
-import com.hhp.concert.Business.Domain.ConcertSession;
-import com.hhp.concert.Business.Domain.User;
+import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
+import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
 import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
 import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
 import com.hhp.concert.Infrastructure.user.UserJpaRepository;
@@ -16,9 +14,12 @@ import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TestDatabaseManager implements InitializingBean {
 
+    private static final Logger log = LoggerFactory.getLogger(TestDatabaseManager.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -41,8 +43,12 @@ public class TestDatabaseManager implements InitializingBean {
     private final ConcertSessionJpaRepository concertSessionJpaRepository;
 
     private final ConcertSeatJpaRepository concertSeatJpaRepository;
+    private final ReservationJpaRepository reservationJpaRepository;
 
     private final UserJpaRepository userJpaRepository;
+
+
+    private final JdbcTemplate jdbcTemplate;
 
     private final List<String> tables = new ArrayList<>();
 
@@ -74,23 +80,62 @@ public class TestDatabaseManager implements InitializingBean {
     }
 
 
+
+    @Transactional
     public void init() {
+        long startTime, endTime, duration;
+        startTime = System.currentTimeMillis();
         Faker faker = new Faker();
-        List<ConcertSeat> seats = new ArrayList<>();
-
-        for (int i = 0; i < 100000; i++) {
-            Concert concert = concertJpaRepository.save(new Concert(faker.rockBand().name()));
-
+        List<Concert> concertList = new ArrayList<>();
+        List<ConcertSeat> seatList = new ArrayList<>();
+        List<ConcertSession> sessionList = new ArrayList<>();
+        List<Reservation> reservationList = new ArrayList<>();
+        int batchSize = 1000;
+        for (int i = 0; i < 10000; i++) {
+            Concert concert = new Concert(faker.rockBand().name());
+            concertList.add(concert);
             for (int j = 0; j < 10; j++) {
-                ConcertSession session = concertSessionJpaRepository.save(new ConcertSession(faker.date().future(30, TimeUnit.DAYS).toLocalDateTime(), concert));
+                ConcertSession session = new ConcertSession(faker.date().future(30, TimeUnit.DAYS).toLocalDateTime(), 1L);
+                sessionList.add(session);
                 for (int k = 0; k < 50; k++) {
-                    ConcertSeat seat = new ConcertSeat(k + 1, 100 + k * 10, true, session.getId());
-                    seats.add(seat);
+                    ConcertSeat seat = new ConcertSeat(k, 10000, true, 1L);
+                    Reservation reservation = new Reservation(1L, 1L, 1L, 3000);
+                    seatList.add(seat);
+                    reservationList.add(reservation);
+                    if (seatList.size() % batchSize == 0) {
+                        concertSeatJpaRepository.saveAll(seatList);
+                        seatList.clear();
+                        entityManager.flush();
+                        entityManager.clear();
+                    }
+                    if (reservationList.size() % batchSize == 0) {
+                        reservationJpaRepository.saveAll(reservationList);
+                        reservationList.clear();
+                        entityManager.flush();
+                        entityManager.clear();
+                    }
                 }
-                concertSeatJpaRepository.saveAll(seats);
+                if (sessionList.size() % batchSize == 0) {
+                    concertSessionJpaRepository.saveAll(sessionList);
+                    sessionList.clear();
+                    entityManager.flush();
+                    entityManager.clear();
+                }
             }
-
-
+            if (concertList.size() % batchSize == 0) {
+                concertJpaRepository.saveAll(concertList);
+                concertList.clear();
+                entityManager.flush();
+                entityManager.clear();
+            }
         }
+        concertJpaRepository.saveAll(concertList);
+        concertSeatJpaRepository.saveAll(seatList);
+        concertSessionJpaRepository.saveAll(sessionList);
+        reservationJpaRepository.saveAll(reservationList);
+        endTime = System.currentTimeMillis();
+        duration = endTime - startTime;
+        log.info(" insert executed in {} ms", duration);
     }
+
 }

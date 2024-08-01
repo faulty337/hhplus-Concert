@@ -64,7 +64,7 @@ public class ConcertFacadeTest {
         Concert concert = new Concert(concertId, "test");
         List<ConcertSession> concertSessionList = new ArrayList<>();
         for(long i = 1; i <= listSize; i++){
-            concertSessionList.add(new ConcertSession(i, LocalDateTime.now().minusDays(i), concert));
+            concertSessionList.add(new ConcertSession(i, LocalDateTime.now().minusDays(i), concertId));
         }
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(concertSessionService.getSessionListByOpen(concertId)).willReturn(concertSessionList);
@@ -84,7 +84,7 @@ public class ConcertFacadeTest {
         int listSize = 5;
         List<ConcertSeat> concertSeatList = new ArrayList<>();
         Concert concert = new Concert(concertId, "test");
-        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concert);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concertId);
         for(int i = 1; i<= 5; i++){
             concertSeatList.add(new ConcertSeat((long)i, i, 1000, false, concertSession.getId()));
         }
@@ -111,7 +111,7 @@ public class ConcertFacadeTest {
         Long reservationId = 23L;
         User user = new User(userId, null, 1000);
         Concert concert = new Concert(concertId, "test");
-        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concert);
+        ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concertId);
         ConcertSeat concertSeat = new ConcertSeat(seatId, 1, 1000, false, concertSession.getId());
         Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
 

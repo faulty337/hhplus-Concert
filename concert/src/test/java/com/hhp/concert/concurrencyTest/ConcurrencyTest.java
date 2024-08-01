@@ -110,7 +110,7 @@ public class ConcurrencyTest {
         User user = userJpaRepository.save(new User("" ,100000));
 
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -167,7 +167,7 @@ public class ConcurrencyTest {
 
 
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         long listSize = 5L;
         int seatNum = 1;
