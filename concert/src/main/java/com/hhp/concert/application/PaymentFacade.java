@@ -63,8 +63,7 @@ public class PaymentFacade {
         logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
 
         //처리열 삭제 및 대기열 업데이트
-        waitingService.removeProcessingByUserId(userId);
-        waitingService.moveUserToProcessingQueue();
+        waitingService.moveUserToProcessingQueue(userId);
 
         return new PaymentResponseDto(concertSession.getId(), concertSession.getSessionTime(), concertSeat.getSeatNumber(), paymentHistory.getAmount());
     }

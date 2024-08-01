@@ -19,8 +19,10 @@ public interface waitingService {
     void updateQueue();
 
     void moveUserToProcessingQueue();
+    void moveToProcessingQueue();
 
     ProcessQueue addProcessingQueue(Long userId);
+    void moveUserToProcessingQueue(Long userId);
 
     void removeProcessingByUserId(Long userId);
 }

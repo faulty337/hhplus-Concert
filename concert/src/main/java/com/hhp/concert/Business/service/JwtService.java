@@ -11,4 +11,6 @@ public interface JwtService{
     Boolean isProcessing(String token, Long userId);
 
     Boolean validateToken(String token, Long userId);
+
+    public Boolean isExpiredToken(String token);
 }
