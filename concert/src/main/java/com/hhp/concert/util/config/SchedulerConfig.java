@@ -1,6 +1,6 @@
 package com.hhp.concert.util.config;
 
-import com.hhp.concert.Business.service.waitingService;
+import com.hhp.concert.Business.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 @RequiredArgsConstructor
 public class SchedulerConfig {
-    private final waitingService waitingService;
+    private final WaitingService waitingService;
 
     @Scheduled(fixedRate = 10000) // 10초마다 실행
     public void scheduleTokenService() {

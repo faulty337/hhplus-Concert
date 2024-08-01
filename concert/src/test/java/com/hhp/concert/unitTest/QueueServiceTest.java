@@ -8,7 +8,7 @@ import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Business.Repository.RedisRepository;
 import com.hhp.concert.Business.Repository.UserRepository;
 import com.hhp.concert.Business.service.JwtService;
-import com.hhp.concert.Business.service.waitingServiceImpl;
+import com.hhp.concert.Business.service.WaitingServiceImpl;
 import com.hhp.concert.util.enums.QueueType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ class QueueServiceTest {
     private JwtService jwtService;
 
     @InjectMocks
-    private waitingServiceImpl waitingService;
+    private WaitingServiceImpl waitingService;
 
     @BeforeEach
     public void setUp() {

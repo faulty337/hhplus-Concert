@@ -18,7 +18,7 @@ public class PaymentFacade {
     private final ReservationService reservationService;
     private final PaymentService paymentService;
     private final ConcertService concertService;
-    private final waitingService waitingService;
+    private final WaitingService waitingService;
 
     private static final Logger logger = LogManager.getLogger(PaymentFacade.class);
 

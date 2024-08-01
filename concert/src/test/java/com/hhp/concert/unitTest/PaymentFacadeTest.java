@@ -37,7 +37,7 @@ public class PaymentFacadeTest {
     private ConcertService concertService;
 
     @Mock
-    private waitingService waitingService;
+    private WaitingService waitingService;
 
     @InjectMocks
     private PaymentFacade paymentFacade;

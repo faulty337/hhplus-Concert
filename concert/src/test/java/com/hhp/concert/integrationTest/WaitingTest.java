@@ -43,6 +43,9 @@ public class WaitingTest {
     @Autowired
     private TestDatabaseManager testDatabaseManager;
 
+    @Autowired
+    private WaitingService waitingService;
+
     @BeforeEach
     public void setUp(){
         testDatabaseManager.execute();

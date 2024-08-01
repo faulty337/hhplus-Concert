@@ -127,15 +127,6 @@ public class ConcertTest {
     @Test
     @DisplayName("날짜 반환 - 잘못된 concertId 테스트")
     public void getSessionDateNotFoundConcertIdTest() throws Exception {
-//        Concert concert = concertJpaRepository.save(new Concert("test"));
-//        long listSize = 5L;
-//        List<ConcertSession> sessionList = new ArrayList<>();
-//        for(int i = 1; i <= listSize; i++){
-//            sessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert));
-//        }
-//        sessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert));
-//
-//        concertSessionJpaRepository.saveAll(sessionList);
 
         mockMvc.perform(get("/concert/{concertId}/session", 0L))
                 .andExpect(status().isNotFound())

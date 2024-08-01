@@ -3,7 +3,7 @@ package com.hhp.concert.application;
 import com.hhp.concert.Business.Domain.User;
 import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.UserService;
-import com.hhp.concert.Business.service.waitingService;
+import com.hhp.concert.Business.service.WaitingService;
 import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 import com.hhp.concert.util.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class WaitingFacade {
     private final JwtService jwtService;
-    private final waitingService waitingService;
+    private final WaitingService waitingService;
     private final UserService userService;
 
 
