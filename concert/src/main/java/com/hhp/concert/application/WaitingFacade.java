@@ -32,7 +32,11 @@ public class WaitingFacade {
         }catch (CustomException ignored){
 
         }
-
+        //처리열 비었을 경우 바로 실행
+        token = waitingService.enqueueToProcessingQueueIfAvailable(userId);
+        if(token != null){
+            return new GetWaitingTokenResponseDto(0, true, token);
+        }
         //번호 조회 및 대기열 삽입
         Long waitingNumber = waitingService.getWaitingNumber(userId);
 
