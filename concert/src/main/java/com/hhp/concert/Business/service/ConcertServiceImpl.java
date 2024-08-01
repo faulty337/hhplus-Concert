@@ -33,7 +33,7 @@ public class ConcertServiceImpl implements ConcertService{
                 ()->new CustomException(ErrorCode.NOT_FOUND_SESSION_ID)
         );
 
-        return concertRepository.findById(concertSession.getConcert().getId()).orElseThrow(
+        return concertRepository.findById(concertSession.getConcertId()).orElseThrow(
                 ()->new CustomException(ErrorCode.NOT_FOUND_SESSION_ID)
         );
     }

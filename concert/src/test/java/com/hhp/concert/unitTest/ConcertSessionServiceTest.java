@@ -43,7 +43,7 @@ public class ConcertSessionServiceTest {
         Concert concert = new Concert(concertId, "test");
         List<ConcertSession> concertSessionList = new ArrayList<>();
         for(long i = 1; i <= listSize; i++){
-            concertSessionList.add(new ConcertSession(i, LocalDateTime.now().minusDays(i), concert));
+            concertSessionList.add(new ConcertSession(i, LocalDateTime.now().minusDays(i), concertId));
         }
 
         given(concertSessionRepository.findAllByConcertId(concertId)).willReturn(concertSessionList);
@@ -61,13 +61,13 @@ public class ConcertSessionServiceTest {
 
         Concert concert = new Concert(concertId, "test");
 
-        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.of(new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concert)));
+        given(concertSessionRepository.findByIdAndConcertIdAndOpen(sessionId, concertId)).willReturn(Optional.of(new ConcertSession(sessionId, LocalDateTime.now().plusDays(1), concertId)));
 
 
         ConcertSession response = sessionService.getSessionByOpenAndConcertId(concertId, sessionId);
 
         assertEquals(response.getId(), sessionId);
-        assertEquals(response.getConcert().getId(), concertId);
+        assertEquals(response.getConcertId(), concertId);
 
     }
 

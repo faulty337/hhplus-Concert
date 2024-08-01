@@ -19,11 +19,10 @@ public class ConcertSession {
 
     private LocalDateTime sessionTime;
 
-    @ManyToOne
-    private Concert concert;
+    private Long concertId;
 
-    public ConcertSession(LocalDateTime sessionTime, Concert concert) {
+    public ConcertSession(LocalDateTime sessionTime, Long concertId) {
         this.sessionTime = sessionTime;
-        this.concert = concert;
+        this.concertId = concertId;
     }
 }

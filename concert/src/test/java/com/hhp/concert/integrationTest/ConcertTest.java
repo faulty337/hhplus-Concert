@@ -87,9 +87,9 @@ public class ConcertTest {
         long listSize = 5L;
         List<ConcertSession> concertSessionList = new ArrayList<>();
         for(int i = 1; i <= listSize; i++){
-            concertSessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert));
+            concertSessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert.getId()));
         }
-        concertSessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert));
+        concertSessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert.getId()));
 
         concertSessionJpaRepository.saveAll(concertSessionList);
 
@@ -127,7 +127,7 @@ public class ConcertTest {
     @DisplayName("좌석 반환 - 성공 테스트")
     public void getSessionSeatTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -150,7 +150,7 @@ public class ConcertTest {
     @DisplayName("좌석 반환 - 잘못된 concertId 테스트")
     public void getSessionSeatInvalidConcertIdTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -172,7 +172,7 @@ public class ConcertTest {
     @DisplayName("좌석 반환 - 잘못된 sessionId 테스트")
     public void getSessionSeatInvalidSessionIdTest() throws Exception {
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -195,7 +195,7 @@ public class ConcertTest {
     public void reservationTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -235,7 +235,7 @@ public class ConcertTest {
     public void reservationNotFoundUserTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -265,7 +265,7 @@ public class ConcertTest {
     public void reservationNotFoundConcertIdTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -296,7 +296,7 @@ public class ConcertTest {
     public void reservationNotFoundSessionIdTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
@@ -327,7 +327,7 @@ public class ConcertTest {
     public void reservationNotFoundSeatNumberTest() throws Exception {
         User user = userJpaRepository.save(new User("", 12312030));
         Concert concert = concertJpaRepository.save(new Concert("test"));
-        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert));
+        ConcertSession concertSession = concertSessionJpaRepository.save(new ConcertSession(LocalDateTime.now().plusDays(1), concert.getId()));
 
         List<ConcertSeat> concertSeatList = new ArrayList<>();
 
