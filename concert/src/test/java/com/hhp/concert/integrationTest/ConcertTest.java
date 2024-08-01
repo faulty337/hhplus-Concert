@@ -74,6 +74,7 @@ public class ConcertTest {
     public void setUp(){
 
         testDatabaseManager.execute();
+//        testDatabaseManager.init();
         String validToken = "valid-jwt-token";
 
         when(jwtUtil.validateToken(validToken)).thenReturn(true);
@@ -98,6 +99,28 @@ public class ConcertTest {
                 .andExpect(jsonPath("$.size()").value(listSize))
                 .andDo(print())
                 .andReturn();
+
+    }
+
+    @Test
+    @DisplayName("날짜 반환 - 실행 시간 테스트")
+    public void getSessionDateTimeTest() throws Exception {
+        Concert concert = concertJpaRepository.save(new Concert("test"));
+        long listSize = 5L;
+        List<ConcertSession> concertSessionList = new ArrayList<>();
+        for(int i = 1; i <= listSize; i++){
+            concertSessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert.getId()));
+        }
+        concertSessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert.getId()));
+
+        concertSessionJpaRepository.saveAll(concertSessionList);
+        for(int i = 0; i< 10; i++){
+            mockMvc.perform(get("/concert/{concertId}/session", concert.getId()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.size()").value(listSize))
+                    .andReturn();
+        }
+
 
     }
 
