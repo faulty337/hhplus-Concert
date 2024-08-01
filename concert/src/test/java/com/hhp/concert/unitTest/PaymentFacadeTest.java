@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
@@ -38,7 +37,7 @@ public class PaymentFacadeTest {
     private ConcertService concertService;
 
     @Mock
-    private QueueService queueService;
+    private waitingService waitingService;
 
     @InjectMocks
     private PaymentFacade paymentFacade;
@@ -108,7 +107,7 @@ public class PaymentFacadeTest {
 
         PaymentHistory paymentHistory = new PaymentHistory(price, user, reservation);
 
-        given(queueService.isProcessing(userId)).willReturn(true);
+        given(waitingService.isProcessing(userId)).willReturn(true);
         given(userService.getUser(userId)).willReturn(user);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(paymentService.addPaymentHistory(any(PaymentHistory.class))).willReturn(paymentHistory);
@@ -168,7 +167,7 @@ public class PaymentFacadeTest {
         PaymentHistory paymentHistory = new PaymentHistory(concertSeat.getPrice(), user, reservation);
 
         given(userService.getUser(userId)).willReturn(user);
-        given(queueService.isProcessing(userId)).willReturn(true);
+        given(waitingService.isProcessing(userId)).willReturn(true);
         given(reservationService.getReservationByUserId(userId, reservationId)).willReturn(reservation);
         given(concertService.getConcertBySessionId(concertSession.getId())).willReturn(concert);
         given(concertService.getSeat(concertId, concertSession.getId(), concertSeat.getId())).willReturn(concertSeat);

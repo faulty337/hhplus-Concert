@@ -6,7 +6,7 @@ import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.UserService;
 import com.hhp.concert.application.WaitingFacade;
-import com.hhp.concert.Business.service.QueueService;
+import com.hhp.concert.Business.service.waitingService;
 import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WaitingFacadeTest {
 
     @Mock
-    private QueueService queueService;
+    private waitingService waitingService;
 
     @Mock
     private UserService userService;
@@ -48,9 +48,9 @@ public class WaitingFacadeTest {
         String token = "token";
         Long waitingNumber = 5L;
         given(userService.getUser(userId)).willReturn(new User(userId, token, 1000));
-        given(queueService.waitingQueueByUserId(userId)).willReturn(Optional.of(new WaitingQueue(userId)));
-        given(queueService.addWaiting(any(WaitingQueue.class))).willReturn(new WaitingQueue(userId));
-        given(queueService.getWaitingNumber(userId)).willReturn(waitingNumber);
+        given(waitingService.waitingQueueByUserId(userId)).willReturn(Optional.of(new WaitingQueue(userId)));
+        given(waitingService.addWaiting(any(WaitingQueue.class))).willReturn(new WaitingQueue(userId));
+        given(waitingService.getWaitingNumber(userId)).willReturn(waitingNumber);
 
         GetWaitingTokenResponseDto response = waitingFacade.getWaitingInfo(userId);
 

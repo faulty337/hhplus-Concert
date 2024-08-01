@@ -1,20 +1,15 @@
 package com.hhp.concert.concurrencyTest;
 
 import com.hhp.concert.Business.Domain.*;
-import com.hhp.concert.Business.Repository.ReservationRepository;
-import com.hhp.concert.Business.dto.ReservationResponseDto;
-import com.hhp.concert.Business.service.*;
-import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
-import com.hhp.concert.Infrastructure.payment.PaymentHistoryJpaRepository;
-import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
-import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
-import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
-import com.hhp.concert.Infrastructure.user.UserJpaRepository;
-import com.hhp.concert.Infrastructure.waitingQueue.WaitingQueueJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.concert.ConcertJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.payment.PaymentHistoryJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.reservation.ReservationJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.seat.ConcertSeatJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.session.ConcertSessionJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
 import com.hhp.concert.application.ConcertFacade;
 import com.hhp.concert.application.PaymentFacade;
 import com.hhp.concert.util.exception.CustomException;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest

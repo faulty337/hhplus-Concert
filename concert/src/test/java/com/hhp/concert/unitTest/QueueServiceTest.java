@@ -9,7 +9,7 @@ import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Business.Repository.ProcessQueueRepository;
 import com.hhp.concert.Business.Repository.WaitingRepository;
 import com.hhp.concert.Business.service.JwtService;
-import com.hhp.concert.Business.service.QueueServiceImpl;
+import com.hhp.concert.Business.service.waitingServiceImpl;
 import com.hhp.concert.util.exception.CustomException;
 import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ class QueueServiceTest {
     private JwtService jwtService;
 
     @InjectMocks
-    private QueueServiceImpl queueService;
+    private waitingServiceImpl queueService;
 
     @BeforeEach
     public void setUp() {

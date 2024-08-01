@@ -1,12 +1,11 @@
 package com.hhp.concert.util;
 
 import com.hhp.concert.Business.Domain.*;
-import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
-import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
-import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
-import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
-import com.hhp.concert.Infrastructure.user.UserJpaRepository;
-import jakarta.annotation.PostConstruct;
+import com.hhp.concert.Infrastructure.DBRepository.concert.ConcertJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.reservation.ReservationJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.seat.ConcertSeatJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.session.ConcertSessionJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,14 +16,11 @@ import net.datafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

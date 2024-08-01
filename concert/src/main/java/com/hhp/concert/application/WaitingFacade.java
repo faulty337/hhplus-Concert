@@ -1,24 +1,20 @@
 package com.hhp.concert.application;
 
 import com.hhp.concert.Business.Domain.User;
-import com.hhp.concert.Business.Domain.WaitingQueue;
 import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.UserService;
-import com.hhp.concert.Business.service.QueueService;
+import com.hhp.concert.Business.service.waitingService;
 import com.hhp.concert.Business.dto.GetWaitingTokenResponseDto;
 import com.hhp.concert.util.exception.CustomException;
-import com.hhp.concert.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class WaitingFacade {
     private final JwtService jwtService;
-    private final QueueService queueService;
+    private final waitingService waitingService;
     private final UserService userService;
 
 
@@ -45,7 +41,7 @@ public class WaitingFacade {
         }
 
         //번호 조회
-        Long waitingNumber = queueService.getWaitingNumber(user.getId());
+        Long waitingNumber = waitingService.getWaitingNumber(userId);
 
 
         return new GetWaitingTokenResponseDto(waitingNumber, false, "");
