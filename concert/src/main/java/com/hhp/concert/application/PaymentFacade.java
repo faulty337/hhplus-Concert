@@ -4,9 +4,7 @@ import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Business.dto.PaymentResponseDto;
 import com.hhp.concert.Business.dto.UserBalanceResponseDto;
 import com.hhp.concert.Business.service.*;
-import com.hhp.concert.interfaces.Redis.RedisLock;
-import com.hhp.concert.util.exception.CustomException;
-import com.hhp.concert.util.exception.ErrorCode;
+import com.hhp.concert.Interfaces.Redis.RedisLock;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +18,7 @@ public class PaymentFacade {
     private final ReservationService reservationService;
     private final PaymentService paymentService;
     private final ConcertService concertService;
-    private final QueueService queueService;
+    private final WaitingService waitingService;
 
     private static final Logger logger = LogManager.getLogger(PaymentFacade.class);
 
@@ -65,8 +63,7 @@ public class PaymentFacade {
         logger.info("Payment : User ID: {}, Amount : {},", userId, reservation.getReservationPrice());
 
         //처리열 삭제 및 대기열 업데이트
-        queueService.removeProcessingByUserId(userId);
-        queueService.moveUserToProcessingQueue();
+        waitingService.moveUserToProcessingQueue(userId);
 
         return new PaymentResponseDto(concertSession.getId(), concertSession.getSessionTime(), concertSeat.getSeatNumber(), paymentHistory.getAmount());
     }

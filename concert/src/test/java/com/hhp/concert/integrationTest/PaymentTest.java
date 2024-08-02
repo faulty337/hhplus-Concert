@@ -6,14 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Business.dto.ChargeRequestDto;
 import com.hhp.concert.Business.dto.PaymentRequestDto;
-import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
-import com.hhp.concert.Infrastructure.payment.PaymentHistoryJpaRepository;
-import com.hhp.concert.Infrastructure.processQueue.ProcessQueueJpaRepository;
-import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
-import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
-import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
-import com.hhp.concert.Infrastructure.user.UserJpaRepository;
-import com.hhp.concert.Infrastructure.waitingQueue.WaitingQueueJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.concert.ConcertJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.payment.PaymentHistoryJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.reservation.ReservationJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.seat.ConcertSeatJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.session.ConcertSessionJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
 import com.hhp.concert.util.TestDatabaseManager;
 import com.hhp.concert.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,10 +50,6 @@ public class PaymentTest {
     private MockMvc mvc;
     @Autowired
     private UserJpaRepository userJpaRepository;
-    @Autowired
-    private WaitingQueueJpaRepository waitingQueueJpaRepository;
-    @Autowired
-    private ProcessQueueJpaRepository processQueueJpaRepository;
     @Autowired
     private ReservationJpaRepository reservationJpaRepository;
     @Autowired

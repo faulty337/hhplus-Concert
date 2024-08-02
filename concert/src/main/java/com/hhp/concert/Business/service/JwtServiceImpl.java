@@ -47,5 +47,10 @@ public class JwtServiceImpl implements JwtService{
         return result;
     }
 
+    @Override
+    public Boolean isExpiredToken(String token){
+        return jwtUtil.validateToken(token);
+    }
+
 
 }

@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Business.dto.ReservationRequestDto;
 import com.hhp.concert.Business.dto.ReservationResponseDto;
-import com.hhp.concert.Infrastructure.concert.ConcertJpaRepository;
-import com.hhp.concert.Infrastructure.reservation.ReservationJpaRepository;
-import com.hhp.concert.Infrastructure.seat.ConcertSeatJpaRepository;
-import com.hhp.concert.Infrastructure.session.ConcertSessionJpaRepository;
-import com.hhp.concert.Infrastructure.user.UserJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.concert.ConcertJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.reservation.ReservationJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.seat.ConcertSeatJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.session.ConcertSessionJpaRepository;
+import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
 import com.hhp.concert.util.TestDatabaseManager;
 import com.hhp.concert.util.JwtUtil;
 import com.hhp.concert.util.exception.ErrorCode;
@@ -127,15 +127,6 @@ public class ConcertTest {
     @Test
     @DisplayName("날짜 반환 - 잘못된 concertId 테스트")
     public void getSessionDateNotFoundConcertIdTest() throws Exception {
-//        Concert concert = concertJpaRepository.save(new Concert("test"));
-//        long listSize = 5L;
-//        List<ConcertSession> sessionList = new ArrayList<>();
-//        for(int i = 1; i <= listSize; i++){
-//            sessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert));
-//        }
-//        sessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert));
-//
-//        concertSessionJpaRepository.saveAll(sessionList);
 
         mockMvc.perform(get("/concert/{concertId}/session", 0L))
                 .andExpect(status().isNotFound())

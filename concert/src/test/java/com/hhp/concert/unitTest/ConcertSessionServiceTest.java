@@ -3,7 +3,7 @@ package com.hhp.concert.unitTest;
 import com.hhp.concert.Business.Domain.ConcertSession;
 import com.hhp.concert.Business.service.ConcertSessionServiceImpl;
 import com.hhp.concert.Business.Domain.Concert;
-import com.hhp.concert.Infrastructure.session.ConcertSessionRepositoryImpl;
+import com.hhp.concert.Infrastructure.DBRepository.session.ConcertSessionRepositoryImpl;
 import com.hhp.concert.util.exception.CustomException;
 import com.hhp.concert.util.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
