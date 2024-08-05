@@ -6,6 +6,7 @@ import com.hhp.concert.Business.Repository.RedisRepository;
 import com.hhp.concert.Business.service.JwtService;
 import com.hhp.concert.Business.service.WaitingService;
 import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
+import com.hhp.concert.util.EmbeddedRedisConfig;
 import com.hhp.concert.util.TestDatabaseManager;
 import com.hhp.concert.util.JwtUtil;
 import com.hhp.concert.util.enums.QueueType;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import redis.embedded.RedisServer;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -32,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class WaitingTest {
+
+    @Autowired
+    private EmbeddedRedisConfig redisConfig;
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,6 +63,7 @@ public class WaitingTest {
     public void setUp(){
         testDatabaseManager.execute();
         ReflectionTestUtils.setField(waitingService, "processingSize", 2L); // 필드 값 설정
+        redisConfig.initializeRedis();
     }
 
 

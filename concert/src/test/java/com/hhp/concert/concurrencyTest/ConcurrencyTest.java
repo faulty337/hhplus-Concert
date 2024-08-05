@@ -9,6 +9,7 @@ import com.hhp.concert.Infrastructure.DBRepository.session.ConcertSessionJpaRepo
 import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
 import com.hhp.concert.application.ConcertFacade;
 import com.hhp.concert.application.PaymentFacade;
+import com.hhp.concert.util.EmbeddedRedisConfig;
 import com.hhp.concert.util.exception.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class ConcurrencyTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ConcurrencyTest.class);
@@ -52,6 +55,8 @@ public class ConcurrencyTest {
     private ConcertFacade concertFacade;
     @Autowired
     private PaymentFacade paymentFacade;
+    @Autowired
+    private EmbeddedRedisConfig redisConfig;
 
     @BeforeEach
     public void setUp() {
@@ -60,6 +65,7 @@ public class ConcurrencyTest {
         concertSessionJpaRepository.deleteAll();
         concertJpaRepository.deleteAll();
         userJpaRepository.deleteAll();
+        redisConfig.initializeRedis();
     }
 
     @Test

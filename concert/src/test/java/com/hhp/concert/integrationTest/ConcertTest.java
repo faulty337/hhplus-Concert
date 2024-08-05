@@ -9,6 +9,7 @@ import com.hhp.concert.Infrastructure.DBRepository.reservation.ReservationJpaRep
 import com.hhp.concert.Infrastructure.DBRepository.seat.ConcertSeatJpaRepository;
 import com.hhp.concert.Infrastructure.DBRepository.session.ConcertSessionJpaRepository;
 import com.hhp.concert.Infrastructure.DBRepository.user.UserJpaRepository;
+import com.hhp.concert.util.EmbeddedRedisConfig;
 import com.hhp.concert.util.TestDatabaseManager;
 import com.hhp.concert.util.JwtUtil;
 import com.hhp.concert.util.exception.ErrorCode;
@@ -53,6 +54,9 @@ public class ConcertTest {
     private ConcertSessionJpaRepository concertSessionJpaRepository;
     @Autowired
     private ConcertSeatJpaRepository concertSeatJpaRepository;
+
+    @Autowired
+    private EmbeddedRedisConfig redisConfig;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -79,6 +83,7 @@ public class ConcertTest {
 
         when(jwtUtil.validateToken(validToken)).thenReturn(true);
         when(jwtUtil.extractSign(validToken)).thenReturn(String.valueOf(1L));
+        redisConfig.initializeRedis();
     }
 
     @Test
