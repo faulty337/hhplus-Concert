@@ -1,8 +1,7 @@
-package com.hhp.concert.Interfaces.Redis;
+package com.hhp.concert.Infrastructure.RedisRepository;
 
 import com.hhp.concert.Business.Repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
