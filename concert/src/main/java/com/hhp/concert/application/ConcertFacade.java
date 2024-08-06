@@ -26,7 +26,7 @@ public class ConcertFacade {
 
     private static final Logger logger = LogManager.getLogger(ConcertFacade.class);
 
-//    @Cacheable(value = "getSessions", key="#concertId")
+    @Cacheable(value = "getSessions", key="#concertId")
     public List<GetSessionDateResponseDto> getSessionDate(Long concertId){
         Concert concert = concertService.getConcert(concertId);
 

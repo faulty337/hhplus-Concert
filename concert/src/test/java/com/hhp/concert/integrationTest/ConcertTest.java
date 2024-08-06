@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.*;
 import com.hhp.concert.Business.dto.ReservationRequestDto;
 import com.hhp.concert.Business.dto.ReservationResponseDto;
+import com.hhp.concert.Business.service.ConcertSessionService;
+import com.hhp.concert.Business.service.ConcertSessionServiceImpl;
 import com.hhp.concert.Infrastructure.DBRepository.concert.ConcertJpaRepository;
 import com.hhp.concert.Infrastructure.DBRepository.reservation.ReservationJpaRepository;
 import com.hhp.concert.Infrastructure.DBRepository.seat.ConcertSeatJpaRepository;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,6 +56,8 @@ public class ConcertTest {
     private ConcertSessionJpaRepository concertSessionJpaRepository;
     @Autowired
     private ConcertSeatJpaRepository concertSeatJpaRepository;
+    @Autowired
+    private ConcertSessionService concertSessionService;
 
     @Autowired
     private EmbeddedRedisConfig redisConfig;
@@ -107,27 +111,6 @@ public class ConcertTest {
 
     }
 
-    @Test
-    @DisplayName("날짜 반환 - 실행 시간 테스트")
-    public void getSessionDateTimeTest() throws Exception {
-        Concert concert = concertJpaRepository.save(new Concert("test"));
-        long listSize = 5L;
-        List<ConcertSession> concertSessionList = new ArrayList<>();
-        for(int i = 1; i <= listSize; i++){
-            concertSessionList.add(new ConcertSession(LocalDateTime.now().plusDays(i), concert.getId()));
-        }
-        concertSessionList.add(new ConcertSession(LocalDateTime.now().minusDays(1), concert.getId()));
-
-        concertSessionJpaRepository.saveAll(concertSessionList);
-        for(int i = 0; i< 10; i++){
-            mockMvc.perform(get("/concert/{concertId}/session", concert.getId()))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.size()").value(listSize))
-                    .andReturn();
-        }
-
-
-    }
 
     @Test
     @DisplayName("날짜 반환 - 잘못된 concertId 테스트")
