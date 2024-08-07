@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "concert_session")
+@Table(name = "concert_session", indexes = {
+        @Index(name = "idx_concert_id", columnList = "concertId")
+})
 public class ConcertSession {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

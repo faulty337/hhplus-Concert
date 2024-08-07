@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "concert_seat")
+@Table(name = "concert_seat", indexes = {
+        @Index(name = "idx_concert_session_id", columnList = "concertSessionId")
+})
 public class ConcertSeat {
 
     @Id
