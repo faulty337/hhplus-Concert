@@ -113,6 +113,7 @@ reservationJpaRepository.findByIdAndUserId()
             @Index(name = "idx_concert_session_id", columnList = "concertSessionId")
         })
     ```
+
 2. SQL 추가 방법
     ```java
         CREATE TABLE concert_seat (
@@ -127,6 +128,12 @@ reservationJpaRepository.findByIdAndUserId()
         CREATE INDEX idx_concert_session_id
         ON concert_seat (concert_session_id);
     ```
+
+**ConcertSession**
+- concertSession에서 추가한 Index는 ConcertId하나 뿐이다.
+- 쿼리에서 조회는 ConcertId와 sessionTime을 이용한 Read이다. 하지만 SessionTime은 카디널리티가 높고 Concert마다 많더라도 50개 정도의 ConcertSession가 생기는데 이 데이터에 Full Table Scan이 일어나더라도 큰 딜레이가 없을것이라 예상되기에 따로 넣지 않았다.
+
+
 
 #### 추가 결과
 Index 추가 전
