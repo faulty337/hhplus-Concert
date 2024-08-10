@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class CustomEventListener {
     private static final Logger log = LoggerFactory.getLogger(CustomEventListener.class);
 
     @Async
-    @EventListener
+    @TransactionalEventListener
     public void handleCustomEvent(DataPlatformSendEvent event) throws InterruptedException {
         log.info("handleCustomEvent");
         Thread.sleep(10000);
