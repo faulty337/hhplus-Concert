@@ -1,4 +1,4 @@
-package com.hhp.concert.util.config;
+package com.hhp.concert.Interfaces;
 
 import com.hhp.concert.Business.service.WaitingService;
 import lombok.RequiredArgsConstructor;

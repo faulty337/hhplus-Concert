@@ -1,4 +1,4 @@
-package com.hhp.concert.util.config;
+package com.hhp.concert.Interfaces.Redis;
 
 
 import org.springframework.beans.factory.annotation.Value;
