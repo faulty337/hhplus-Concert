@@ -10,10 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class ConcertFacade {
     private final ConcertSeatService concertSeatService;
     private final UserService userService;
     private final ReservationService reservationService;
-
+    private final ApplicationEventPublisher applicationEventPublisher;
     private static final Logger logger = LogManager.getLogger(ConcertFacade.class);
 
     @Cacheable(value = "getSessions", key="#concertId")
@@ -55,6 +57,10 @@ public class ConcertFacade {
 
         //예약 저장
         Reservation reservation = reservationService.createReservation(new Reservation(user.getId(), sessionId, concertSeat.getId(), concertSeat.getPrice()));
+
+        applicationEventPublisher.publishEvent(new DataPlatformSendEvent<Map<String, Long>>(
+                Map.of("ConcertId", concertId, "ConcertSeatId", concertSeat.getId(), "ConcertSeatNumber", (long) concertSeat.getSeatNumber())
+        ));
 
 
         return new ReservationResponseDto(reservation.getId(), reservation.getReservationPrice());
