@@ -1,6 +1,7 @@
 package com.hhp.concert.Interfaces.event;
 
-import com.hhp.concert.Business.Domain.DataPlatformSendEvent;
+import com.hhp.concert.Business.Domain.event.DataPlatformSendEvent;
+import com.hhp.concert.Infrastructure.kafka.ReservationKafkaMessageProducer;
 import com.hhp.concert.util.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CustomEventListener {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final ReservationKafkaMessageProducer producer;
 
     private static final Logger log = LoggerFactory.getLogger(CustomEventListener.class);
 
@@ -27,6 +28,6 @@ public class CustomEventListener {
     public void handleCustomEvent(DataPlatformSendEvent event) {
 
         log.info("kafka send");
-        kafkaTemplate.send("concert-reserve-data", "event");
+        producer.send("concert-reserve-data", "event");
     }
 }
