@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ReservationKafkaMessageProducer {
-    private static final Logger log = LoggerFactory.getLogger(ReservationKafkaMessageProducer.class);
+public class ReservationMessageProducer {
+    private static final Logger log = LoggerFactory.getLogger(ReservationMessageProducer.class);
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+
     public void send(String topic,ReservationEvent message) {
-        log.info("sending payloa={} to topic={}", message, topic);
         kafkaTemplate.send(topic, message);
     }
 }
