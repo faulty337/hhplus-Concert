@@ -103,7 +103,7 @@ public class PaymentFacadeTest {
 
         ConcertSeat concertSeat = new ConcertSeat(seatId, 1, price, false, concertSession.getId());
 
-        Reservation reservation = new Reservation(user.getId(), concertSession.getId(), concertSeat.getId(), price);
+        Reservation reservation = new Reservation(user.getId(), concert.getId(), concertSession.getId(), concertSeat.getId(), price);
 
         PaymentHistory paymentHistory = new PaymentHistory(price, user, reservation);
 
@@ -162,7 +162,7 @@ public class PaymentFacadeTest {
 
         ConcertSeat concertSeat = new ConcertSeat(1, price, false, 1L);
 
-        Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), price, Reservation.ReservationStatus.PENDING);
+        Reservation reservation = new Reservation(reservationId, concert.getId(), user.getId(), concertSession.getId(), concertSeat.getId(), price, Reservation.ReservationStatus.PENDING);
         PaymentHistory paymentHistory = new PaymentHistory(concertSeat.getPrice(), user, reservation);
 
         given(userService.getUser(userId)).willReturn(user);

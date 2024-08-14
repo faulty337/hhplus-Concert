@@ -68,7 +68,7 @@ public class QueryTest {
     public void testReservationQueryExecutionTime(){
         long startTime, endTime, duration;
         long userId = 213L;
-        Reservation reservation = reservationJpaRepository.save(new Reservation(userId, 2L, 2L, 3000));
+        Reservation reservation = reservationJpaRepository.save(new Reservation(userId, 3L, 2L, 2L, 3000));
         startTime = System.currentTimeMillis();
 
         Reservation result = reservationJpaRepository.findById(reservation.getId()).get();

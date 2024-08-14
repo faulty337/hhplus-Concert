@@ -1,7 +1,10 @@
 package com.hhp.concert.Business.service;
 
+import com.hhp.concert.Business.Domain.Concert;
 import com.hhp.concert.Business.Domain.ConcertSeat;
 import com.hhp.concert.Business.Domain.Reservation;
+import com.hhp.concert.Business.Domain.event.ReservationEvent;
+import com.hhp.concert.Business.Repository.ConcertRepository;
 import com.hhp.concert.Business.Repository.ConcertSeatRepository;
 import com.hhp.concert.Business.Repository.ConcertSessionRepository;
 import com.hhp.concert.Business.Repository.ReservationRepository;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationServiceImpl implements ReservationService{
     private final ReservationRepository reservationRepository;
     private final ConcertSeatRepository concertSeatRepository;
+    private final ConcertRepository concertRepository;
 
     @Override
     public Reservation createReservation(Reservation reservation) {
@@ -42,5 +46,20 @@ public class ReservationServiceImpl implements ReservationService{
         );
         reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
         reservationRepository.save(reservation);
+    }
+
+    @Override
+    public ReservationEvent createEvent(Long id) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_RESERVATION_ID)
+        );
+        ConcertSeat concertSeat = concertSeatRepository.findById(reservation.getConcertSeatId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_SEAT_ID)
+        );
+        Concert concert = concertRepository.findById(reservation.getConcertId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_CONCERT_ID)
+        );
+
+        return new ReservationEvent(concert.getId(), concert.getTitle(), concertSeat.getId(), concertSeat.getSeatNumber());
     }
 }
