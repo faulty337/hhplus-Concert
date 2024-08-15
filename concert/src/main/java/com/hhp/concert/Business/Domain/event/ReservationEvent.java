@@ -6,24 +6,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationEvent{
-    long concertId;
-    String concertTitle;
-    long seatId;
-    int seatNumber;
-    @Setter
-    long outboxId;
+    private UUID eventId;
+    private long concertId;
+    private String concertTitle;
+    private long seatId;
+    private int seatNumber;
 
     public ReservationEvent(long concertId, String concertTitle, long seatId, int seatNumber) {
         this.concertId = concertId;
         this.concertTitle = concertTitle;
         this.seatId = seatId;
         this.seatNumber = seatNumber;
+        this.eventId = UUID.randomUUID();
     }
 
     @JsonCreator
@@ -35,5 +36,6 @@ public class ReservationEvent{
         this.concertTitle = concertTitle;
         this.seatId = seatId;
         this.seatNumber = seatNumber;
+        this.eventId = UUID.randomUUID();
     }
 }

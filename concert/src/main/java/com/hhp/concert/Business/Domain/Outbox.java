@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @Table(name = "outbox", indexes = {
-        @Index(name = "idx_status", columnList = "status")
+        @Index(name = "idx_status", columnList = "status"),
+        @Index(name = "idx_eventId", columnList = "eventId")
 })
 public class Outbox extends BaseEntity{
     @Id
@@ -22,6 +24,9 @@ public class Outbox extends BaseEntity{
 
     private String topic;
 
+    @Column(unique = true)
+    private UUID eventId;
+
     private String payload;
 
     private LocalDateTime updatedAt;
@@ -32,10 +37,11 @@ public class Outbox extends BaseEntity{
         FAILED
     }
 
-    public Outbox(String topic, String payload) {
+    public Outbox(String topic, String payload, UUID eventId) {
         this.status = OutboxStatus.INIT;
         this.topic = topic;
         this.payload = payload;
+        this.eventId = eventId;
     }
 
     public void updateFailedStatus() {

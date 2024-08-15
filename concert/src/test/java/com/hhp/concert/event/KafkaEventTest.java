@@ -49,14 +49,13 @@ class KafkaEventTest {
 
         ReservationEvent reservationEvent = new ReservationEvent(1L, "title", 1L, 1);
 
-        Outbox outbox = outboxService.initOutbox(topic, reservationEvent);
-        reservationEvent.setOutboxId(outbox.getId());
+        Outbox outbox = outboxService.initOutbox(topic, reservationEvent, reservationEvent.getEventId());
 
         producer.send(topic, reservationEvent);
 
         consumer.getLatch().await(10, TimeUnit.SECONDS);
 
-        assertEquals(Outbox.OutboxStatus.PUBLISH, Objects.requireNonNull(outboxRepository.findById(outbox.getId()).orElse(null)).getStatus());
+        assertEquals(Outbox.OutboxStatus.PUBLISH, Objects.requireNonNull(outboxRepository.findByEventId(reservationEvent.getEventId()).orElse(null)).getStatus());
 
     }
 
@@ -68,13 +67,13 @@ class KafkaEventTest {
 
         ReservationEvent reservationEvent = new ReservationEvent(1L, "title", 1L, 1);
 
-        Outbox outbox = outboxService.initOutbox(topic, reservationEvent);
+        Outbox outbox = outboxService.initOutbox(topic, reservationEvent, reservationEvent.getEventId());
 
         outboxService.retryOutboxEvents();
 
         consumer.getLatch().await(10, TimeUnit.SECONDS);
 
-        assertEquals(Outbox.OutboxStatus.PUBLISH, Objects.requireNonNull(outboxRepository.findById(outbox.getId()).orElse(null)).getStatus());
+        assertEquals(Outbox.OutboxStatus.PUBLISH, Objects.requireNonNull(outboxRepository.findByEventId(reservationEvent.getEventId()).orElse(null)).getStatus());
     }
 
     @Test
@@ -84,14 +83,14 @@ class KafkaEventTest {
 
         ReservationEvent reservationEvent = new ReservationEvent(1L, "title", 1L, 1);
 
-        Outbox outbox = outboxService.initOutbox(topic, reservationEvent);
+        Outbox outbox = outboxService.initOutbox(topic, reservationEvent, reservationEvent.getEventId());
 
         outbox.setCreatedAt(LocalDateTime.now().minusDays(6));
         outboxRepository.save(outbox);
 
         outboxService.retryOutboxEvents();
 
-        assertEquals(Outbox.OutboxStatus.FAILED, Objects.requireNonNull(outboxRepository.findById(outbox.getId()).orElse(null)).getStatus());
+        assertEquals(Outbox.OutboxStatus.FAILED, Objects.requireNonNull(outboxRepository.findByEventId(reservationEvent.getEventId()).orElse(null)).getStatus());
     }
 
 }

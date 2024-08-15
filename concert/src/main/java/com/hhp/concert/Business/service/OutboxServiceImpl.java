@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +26,14 @@ public class OutboxServiceImpl implements OutboxService{
 
     @Override
     @Transactional
-    public Outbox initOutbox(String topic, Object event) {
+    public Outbox initOutbox(String topic, Object event, UUID eventId) {
         Outbox outbox;
         try {
             String message = objectMapper.writeValueAsString(event);
-            return outboxRepository.save(new Outbox(topic, message));
+            return outboxRepository.save(new Outbox(topic, message, eventId));
         }catch (JsonProcessingException e){
             log.error(e.getMessage());
-            outbox = new Outbox(topic, e.getMessage());
+            outbox = new Outbox(topic, e.getMessage(), eventId);
             outbox.updateFailedStatus();
             return outboxRepository.save(outbox);
         }
@@ -41,8 +42,8 @@ public class OutboxServiceImpl implements OutboxService{
 
     @Override
     @Transactional
-    public void updatePublishedOutbox(Long outboxId) {
-        Outbox outbox = outboxRepository.findById(outboxId).orElse(null);
+    public void updatePublishedOutbox(UUID outboxId) {
+        Outbox outbox = outboxRepository.findByEventId(outboxId).orElse(null);
         if (outbox != null) {
             outbox.updatePublishStatus();
         }
@@ -64,7 +65,6 @@ public class OutboxServiceImpl implements OutboxService{
             }
             try{
                 ReservationEvent reservationEvent = objectMapper.readValue(outbox.getPayload(), ReservationEvent.class);
-                reservationEvent.setOutboxId(outbox.getId());
                 producer.send(outbox.getTopic(), reservationEvent);
             }catch (Exception e){
                 log.error("RetryOutboxEvents Exception : {}", e.getMessage());

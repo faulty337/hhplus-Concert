@@ -21,9 +21,9 @@ public class OutboxEventListener {
     private final OutboxService outboxService;
 
     @KafkaListener(topics = "concert-reserve-data")
-    public void consume(ReservationEvent event) {
-        log.info("consumed event: {}", event.toString());
-        outboxService.updatePublishedOutbox(event.getOutboxId());
+    public void reservationOutboxConsume(ReservationEvent event) {
+
+        outboxService.updatePublishedOutbox(event.getEventId());
     }
 
 

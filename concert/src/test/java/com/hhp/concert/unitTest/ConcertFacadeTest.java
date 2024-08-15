@@ -119,7 +119,7 @@ public class ConcertFacadeTest {
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concertId);
         ConcertSeat concertSeat = new ConcertSeat(seatId, 1, 1000, false, concertSession.getId());
         Reservation reservation = new Reservation(reservationId, concertId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
-        ReservationEvent reservationEvent = new ReservationEvent(concertId, "", seatId, 1, 1L);
+        ReservationEvent reservationEvent = new ReservationEvent(concertId, "", seatId, 1);
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(concertSessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(concertSession);
         given(concertSeatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId)).willReturn(concertSeat);

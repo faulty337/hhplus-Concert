@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,8 +21,8 @@ public class OutboxRepositoryImpl implements OutboxRepository {
     }
 
     @Override
-    public Optional<Outbox> findById(Long id) {
-        return outboxJpaRepository.findById(id);
+    public Optional<Outbox> findByEventId(UUID eventId) {
+        return outboxJpaRepository.findByEventId(eventId);
     }
 
     @Override

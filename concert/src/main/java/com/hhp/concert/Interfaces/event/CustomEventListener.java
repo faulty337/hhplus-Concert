@@ -24,17 +24,12 @@ public class CustomEventListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void reservationDataSand(ReservationEvent event) {
-        Outbox outbox = outboxService.initOutbox("concert-reserve-data", event);
-        event.setOutboxId(outbox.getId());
         producer.send("concert-reserve-data", event);
     }
 
-
-    //비동기 이벤트 분리 시 outbox에 대한 Id를 위에 send에 넣을 수 없음
-//    @Async
-//    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-//    public void initOutbox(ReservationEvent event) {
-//        Outbox outbox = outboxService.initOutbox("concert-reserve-data", event);
-//    }
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void reservationInitOutbox(ReservationEvent event) {
+        outboxService.initOutbox("concert-reserve-data", event, event.getEventId());
+    }
 
 }
