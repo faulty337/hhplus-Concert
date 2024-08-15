@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "outbox", indexes = {
+        @Index(name = "idx_status", columnList = "status")
+})
 public class Outbox extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
