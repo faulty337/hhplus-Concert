@@ -178,7 +178,7 @@ public class ConcurrencyTest {
         Long seatId = 1241241L;
         ConcertSeat concertSeat = concertSeatJpaRepository.save(new ConcertSeat(seatId, seatNumber, seatPrice, true, concertSession.getId()));
 
-        Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice()));
+        Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), concert.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice()));
 
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);

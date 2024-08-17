@@ -1,6 +1,7 @@
 package com.hhp.concert.application;
 
 import com.hhp.concert.Business.Domain.*;
+import com.hhp.concert.Business.Domain.event.ReservationEvent;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
@@ -56,11 +57,10 @@ public class ConcertFacade {
                 user.getId(), concertId, sessionId, seatId, concertSeat.getPrice());
 
         //예약 저장
-        Reservation reservation = reservationService.createReservation(new Reservation(user.getId(), sessionId, concertSeat.getId(), concertSeat.getPrice()));
+        Reservation reservation = reservationService.createReservation(new Reservation(user.getId(), concertId, sessionId, concertSeat.getId(), concertSeat.getPrice()));
 
-        applicationEventPublisher.publishEvent(new DataPlatformSendEvent<Map<String, Long>>(
-                Map.of("ConcertId", concertId, "ConcertSeatId", concertSeat.getId(), "ConcertSeatNumber", (long) concertSeat.getSeatNumber())
-        ));
+        ReservationEvent reservationEvent = reservationService.createEvent(reservation.getId());
+        applicationEventPublisher.publishEvent(reservationEvent);
 
 
         return new ReservationResponseDto(reservation.getId(), reservation.getReservationPrice());

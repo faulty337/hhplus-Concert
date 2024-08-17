@@ -95,7 +95,7 @@ public class TestDatabaseManager implements InitializingBean {
                 sessionList.add(session);
                 for (int k = 0; k < 50; k++) {
                     ConcertSeat seat = new ConcertSeat(k, 10000, true, 1L);
-                    Reservation reservation = new Reservation(1L, 1L, 1L, 3000);
+                    Reservation reservation = new Reservation(1L, 1L, 1L, 1L, 3000);
                     seatList.add(seat);
                     reservationList.add(reservation);
                     if (seatList.size() % batchSize == 0) {

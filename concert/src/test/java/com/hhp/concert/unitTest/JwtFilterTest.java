@@ -79,7 +79,7 @@ public class JwtFilterTest {
         Concert concert = new Concert(concertId, "test");
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concertId);
         ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1, 1000, false, concertSession.getId());
-        Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
+        Reservation reservation = new Reservation(reservationId, user.getId(), concertId, concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
 
         when(concertService.getConcert(concertId)).thenReturn(concert);
         when(concertSessionService.getSessionByOpenAndConcertId(concertId, sessionId)).thenReturn(concertSession);

@@ -18,6 +18,8 @@ public class Reservation extends BaseEntity{
 
     private Long userId;
 
+    private Long concertId;
+
     private Long concertSessionId;
 
     private Long concertSeatId;
@@ -31,17 +33,19 @@ public class Reservation extends BaseEntity{
     @Version
     private long version;
 
-    public Reservation(Long id, Long userId, Long concertSessionId, Long concertSeatId, int reservationPrice, ReservationStatus status) {
+    public Reservation(Long id, Long userId, Long concertId, Long concertSessionId, Long concertSeatId, int reservationPrice, ReservationStatus status) {
         this.id = id;
         this.userId = userId;
+        this.concertId = concertId;
         this.concertSessionId = concertSessionId;
         this.concertSeatId = concertSeatId;
         this.reservationPrice = reservationPrice;
         this.status = status;
     }
 
-    public Reservation(Long userId, Long concertSessionId, Long concertSeatId, int price) {
+    public Reservation(Long userId, Long concertId,  Long concertSessionId, Long concertSeatId, int price) {
         this.userId = userId;
+        this.concertId = concertId;
         this.concertSessionId = concertSessionId;
         this.concertSeatId = concertSeatId;
         this.reservationPrice = price;

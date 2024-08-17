@@ -1,6 +1,7 @@
 package com.hhp.concert.unitTest;
 
 import com.hhp.concert.Business.Domain.*;
+import com.hhp.concert.Business.Domain.event.ReservationEvent;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.Business.dto.GetSessionDateResponseDto;
 import com.hhp.concert.Business.dto.GetSessionSeatResponseDto;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 
 
 import java.time.LocalDateTime;
@@ -47,6 +49,9 @@ public class ConcertFacadeTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
 
 
@@ -113,14 +118,16 @@ public class ConcertFacadeTest {
         Concert concert = new Concert(concertId, "test");
         ConcertSession concertSession = new ConcertSession(sessionId, LocalDateTime.now(), concertId);
         ConcertSeat concertSeat = new ConcertSeat(seatId, 1, 1000, false, concertSession.getId());
-        Reservation reservation = new Reservation(reservationId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
-
+        Reservation reservation = new Reservation(reservationId, concertId, user.getId(), concertSession.getId(), concertSeat.getId(), concertSeat.getPrice(), Reservation.ReservationStatus.PENDING);
+        ReservationEvent reservationEvent = new ReservationEvent(concertId, "", seatId, 1);
         given(concertService.getConcert(concertId)).willReturn(concert);
         given(concertSessionService.getSessionByOpenAndConcertId(concertId, sessionId)).willReturn(concertSession);
         given(concertSeatService.getSeatsForConcertSessionAndAvailable(sessionId, seatId)).willReturn(concertSeat);
         given(userService.getUser(userId)).willReturn(user);
         given(reservationService.createReservation(any(Reservation.class))).willReturn(reservation);
         given(concertService.getAvailableReservationSeats(concertId, sessionId, seatId)).willReturn(concertSeat);
+        given(reservationService.createEvent(reservationId)).willReturn(reservationEvent);
+//        given(applicationEventPublisher.publishEvent(reservationEvent));
         ReservationResponseDto response = concertFacade.reserveConcert(concertId, sessionId, seatId, userId);
 
         assertEquals(response.getReservationId(), reservation.getId());

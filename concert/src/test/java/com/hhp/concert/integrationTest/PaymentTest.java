@@ -114,7 +114,7 @@ public class PaymentTest {
         ConcertSeat concertSeat = new ConcertSeat(seatNumber, 1000, true, session.getId());
         concertSeatList.add(concertSeat);
         concertSeatJpaRepository.saveAll(concertSeatList);
-        Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), session.getId(), concertSeat.getId(), concertSeat.getPrice()));
+        Reservation reservation = reservationJpaRepository.save(new Reservation(user.getId(), concert.getId(), session.getId(), concertSeat.getId(), concertSeat.getPrice()));
 
         PaymentRequestDto requestDto = new PaymentRequestDto(user.getId(), reservation.getId());
 
