@@ -55,7 +55,6 @@ public class OutboxServiceImpl implements OutboxService{
     public void retryOutboxEvents() {
         List<Outbox> outboxList = outboxRepository.findAllByStatus(Outbox.OutboxStatus.INIT);
         for (Outbox outbox : outboxList) {
-            log.info("outbox createdAt : {}", outbox.getCreatedAt());
             //이후 실패한 메시지에 대해 Failed에 대한 조회가 필요하다면 상태에 대한 업데이트 필요
             //상태를 Failed로 바꾸는 것이기에 위 findAllByStatus에서 상태 조회에 대한 부담은 크게 없음
             if(outbox.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(5))) {

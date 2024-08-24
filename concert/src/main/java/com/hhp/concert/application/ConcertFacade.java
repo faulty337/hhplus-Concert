@@ -43,7 +43,7 @@ public class ConcertFacade {
         ConcertSession concertSession = concertSessionService.getSessionByOpenAndConcertId(concert.getId(), sessionId);
         List<ConcertSeat> concertSeatList = concertSeatService.getSessionBySeatList(concertSession.getId());
 
-        return new GetSessionSeatResponseDto(concertSession.getSessionTime(), concertSeatList.stream().map(seat -> new SeatInfoDto(seat.getSeatNumber(), seat.isAvailable(), seat.getPrice())).toList());
+        return new GetSessionSeatResponseDto(concertSession.getSessionTime(), concertSeatList.stream().map(seat -> new SeatInfoDto(seat.getId(), seat.getSeatNumber(), seat.isAvailable(), seat.getPrice())).toList());
     }
 
     @Transactional

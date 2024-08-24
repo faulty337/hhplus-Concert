@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SeatInfoDto {
+    private long seatId;
     private int seatNumber;
     private boolean isAvailable;
     private int price;
