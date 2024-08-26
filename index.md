@@ -132,6 +132,7 @@ reservationJpaRepository.findByIdAndUserId()
 **ConcertSession**
 - concertSession에서 추가한 Index는 ConcertId하나 뿐이다.
 - 쿼리에서 조회는 ConcertId와 sessionTime을 이용한 Read이다. 하지만 SessionTime은 카디널리티가 높고 Concert마다 많더라도 50개 정도의 ConcertSession가 생기는데 이 데이터에 Full Table Scan이 일어나더라도 큰 딜레이가 없을것이라 예상되기에 따로 넣지 않았다.
+- 수정) Session 정보는 수시로 추가되는 정보가 아니기에 삽입, 수정의 요청이 거의 없다. 즉, Index 테이블에 대한 부하가 크기 않으므로, ConcertId와 SessionTime 두개로 Index를 걸어도 괜찮다.
 
 
 
