@@ -6,11 +6,7 @@ services:
     ports:
       - "2181:2181"
     restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "echo ruok | nc 127.0.0.1 2181 | grep imok"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+
   kafka:
     image: wurstmeister/kafka
     container_name: kafka
@@ -26,7 +22,3 @@ services:
     restart: always
     depends_on:
       - zookeeper
-    healthcheck:
-      test: ["CMD", "kafka-topics.sh", "--zookeeper", "zookeeper:2181", "--list"]
-      interval: 30s
-      timeout: 10s
