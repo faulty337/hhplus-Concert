@@ -47,6 +47,7 @@ dependencies {
 	testImplementation 'it.ozimov:embedded-redis:0.7.2'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {
