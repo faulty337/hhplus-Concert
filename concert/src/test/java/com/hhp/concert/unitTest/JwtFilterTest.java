@@ -2,6 +2,7 @@ package com.hhp.concert.unitTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhp.concert.Business.Domain.*;
+import com.hhp.concert.Business.Domain.event.ReservationEvent;
 import com.hhp.concert.Business.dto.ReservationRequestDto;
 import com.hhp.concert.Business.service.*;
 import com.hhp.concert.util.JwtUtil;
@@ -86,6 +87,7 @@ public class JwtFilterTest {
         when(concertSeatService.getSeatsForConcertSessionAndAvailable(sessionId, seatNumber)).thenReturn(concertSeat);
         when(userService.getUser(userId)).thenReturn(user);
         when(reservationService.createReservation(any(Reservation.class))).thenReturn(reservation);
+        when(reservationService.createEvent(any(Long.class))).thenReturn(new ReservationEvent());
         given(concertService.getAvailableReservationSeats(concertId, sessionId, concertSeat.getId())).willReturn(concertSeat);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/concert/reservation")

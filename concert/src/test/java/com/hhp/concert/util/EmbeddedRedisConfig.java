@@ -14,6 +14,7 @@ import redis.embedded.RedisServer;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Objects;
 
 @Profile("test")
 @Configuration
@@ -25,37 +26,48 @@ public class EmbeddedRedisConfig {
     private RedisTemplate<String, Object> redisTemplate;
 
     public EmbeddedRedisConfig(@Value("${spring.data.redis.port}") int port) throws IOException {
-        log.info("Starting embedded redis server on port {}", port);
-        this.redisServer = new RedisServer(port);
+        if (isPortInUse(port)) {
+            log.warn("Port {} is already in use. Skipping embedded Redis server startup.", port);
+        } else {
+            log.info("Starting embedded redis server on port {}", port);
+            this.redisServer = new RedisServer(port);
+        }
     }
 
     @PostConstruct
     public void startRedis() {
-        this.redisServer.start();
+        if (redisServer != null) {
+            redisServer.start();
+            log.info("Embedded redis server started");
+        }
     }
 
     @PreDestroy
     public void stopRedis() {
-        log.info("Stopping embedded redis server");
-        if (this.redisServer.isActive()) {
-            this.redisServer.stop();
+        if (redisServer != null && redisServer.isActive()) {
+            redisServer.stop();
             log.info("Embedded redis server stopped");
-        } else {
-            log.warn("Embedded redis server was not active");
         }
     }
 
     public void initializeRedis() {
         try {
-            // 모든 데이터 삭제
             redisTemplate.getConnectionFactory().getConnection().flushAll();
             log.info("Flushed all Redis data");
 
-            // 예시 초기화 로직
             redisTemplate.opsForValue().set("testKey", "testValue");
             log.info("Initialized Redis with test data");
         } catch (Exception e) {
             log.error("Failed to initialize Redis", e);
+        }
+    }
+
+    private boolean isPortInUse(int port) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            serverSocket.setReuseAddress(true);
+            return false;
+        } catch (IOException e) {
+            return true;
         }
     }
 }
