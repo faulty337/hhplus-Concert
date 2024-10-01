@@ -1,0 +1,29 @@
+services:
+  k6:
+    container_name: k6
+    image: grafana/k6:latest
+    ports:
+      - "6565:6565"
+    environment:
+      - K6_OUT=influxdb=http://influxdb:8086/k6
+    volumes:
+      - ./script:/scripts
+    command: run /scripts/script.js
+    networks:
+      - monitoring-network
+
+  cleanup: #redis 초기화용
+    image: redis:latest
+    container_name: redis-cli
+    depends_on:
+      - k6
+    entrypoint: [ "redis-cli", "-h", "redis-server", "FLUSHALL" ]
+    networks:
+      - redis-network
+
+networks:
+  monitoring-network:
+    external: true
+
+  redis-network:
+    external: true

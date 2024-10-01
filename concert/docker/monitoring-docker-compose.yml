@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   influxdb:
     container_name: influxdb
@@ -6,7 +8,8 @@ services:
       - "8086:8086"
     environment:
       - INFLUXDB_DB=k6
-
+    networks:
+      - monitoring-network
   grafana:
     container_name: grafana
     image: grafana/grafana:9.3.8
@@ -19,13 +22,10 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning/
     command: run /scripts/script.js
+    networks:
+      - monitoring-network
 
-  k6:
-    container_name: k6
-    image: grafana/k6:latest
-    ports:
-      - "6565:6565"
-    environment:
-      - K6_OUT=influxdb=http://influxdb:8086/k6
-    volumes:
-      - ./examples:/scripts
+networks:
+  monitoring-network:
+    name: monitoring-network
+    driver: bridge

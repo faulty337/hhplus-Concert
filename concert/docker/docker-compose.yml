@@ -1,11 +1,22 @@
-version: "3"
+version: '3.8'
+
 services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - redis-network
+
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
     ports:
       - "2181:2181"
     restart: always
+    networks:
+      - kafka-network
 
   kafka:
     image: wurstmeister/kafka
@@ -22,3 +33,12 @@ services:
     restart: always
     depends_on:
       - zookeeper
+    networks:
+      - kafka-network
+networks:
+  redis-network:
+    name: redis-network
+    driver: bridge
+  kafka-network:
+    name: kafka-network
+    driver: bridge
