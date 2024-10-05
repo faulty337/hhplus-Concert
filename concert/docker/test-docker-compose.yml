@@ -1,7 +1,15 @@
 services:
+  cleanup: #redis 초기화용
+    image: redis:latest
+    container_name: redis-cli
+    entrypoint: [ "redis-cli", "-h", "redis", "FLUSHALL" ]
+    networks:
+      - redis-network
   k6:
     container_name: k6
     image: grafana/k6:latest
+    depends_on:
+      - cleanup
     ports:
       - "6565:6565"
     environment:
@@ -12,14 +20,7 @@ services:
     networks:
       - monitoring-network
 
-  cleanup: #redis 초기화용
-    image: redis:latest
-    container_name: redis-cli
-    depends_on:
-      - k6
-    entrypoint: [ "redis-cli", "-h", "redis-server", "FLUSHALL" ]
-    networks:
-      - redis-network
+
 
 networks:
   monitoring-network:

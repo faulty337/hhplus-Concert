@@ -1,6 +1,14 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
+import { Trend } from 'k6/metrics';
 import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
+
+const waitingTime = new Trend('waiting_time', true);
+const sessionTime = new Trend('session_time', true);
+const seatTime = new Trend('seat_time', true);
+const reservationTime = new Trend('reservation_time', true);
+const paymentTime = new Trend('payment_time', true);
+const balanceTime = new Trend('balance_time', true);
 
 export let options = {
     vus: 100,
@@ -11,7 +19,6 @@ export let options = {
 };
 
 const BASE_URL = 'http://host.docker.internal:8080';
-
 
 function getRandomAvailableSeat(seats) {
     let availableSeats = seats.filter(seat => seat.available);
@@ -24,26 +31,29 @@ function getRandomAvailableSeat(seats) {
 }
 
 export default function () {
-    // 1. 콘서트 세션 정보를 가져오기
     let concertId = randomIntBetween(1, 10);
     let userId = randomIntBetween(1, 10);
 
-    let waitingResponse = http.get(`${BASE_URL}/concert/waiting/status?userId=${userId}`)
+    // 1. 콘서트 대기 정보 가져오기
+    let waitingResponse = http.get(`${BASE_URL}/concert/waiting/status?userId=${userId}`);
+    waitingTime.add(waitingResponse.timings.duration);
     check(waitingResponse, { 'getSessionDate status was 200': (r) => r.status === 200 });
     let waitinginfo = JSON.parse(waitingResponse.body);
-    while(!waitinginfo.processing){
-        waitingResponse = http.get(`${BASE_URL}/concert/waiting/status?userId=${userId}`)
+    while (!waitinginfo.processing) {
+        waitingResponse = http.get(`${BASE_URL}/concert/waiting/status?userId=${userId}`);
         waitinginfo = JSON.parse(waitingResponse.body);
-        sleep(1000)
+        sleep(1);
     }
 
-    let token = waitinginfo.token
+    let token = waitinginfo.token;
 
+    // 2. 세션 정보 가져오기
     let sessionResponse = http.get(`${BASE_URL}/concert/${concertId}/session`);
+    sessionTime.add(sessionResponse.timings.duration);
     check(sessionResponse, { 'getSessionDate status was 200': (r) => r.status === 200 });
 
     let sessions = JSON.parse(sessionResponse.body);
-    let sessionId
+    let sessionId;
     if (sessions.length > 0) {
         let randomIndex = Math.floor(Math.random() * sessions.length);
         sessionId = sessions[randomIndex].sessionId;
@@ -52,58 +62,51 @@ export default function () {
         return;
     }
 
-    // 2. 특정 세션의 좌석 정보 조회
+    // 3. 좌석 정보 가져오기
     let seatResponse = http.get(`${BASE_URL}/concert/${concertId}/seat?sessionId=${sessionId}`);
+    seatTime.add(seatResponse.timings.duration); // seatTime에 기록
     check(seatResponse, { 'getSessionSeat status was 200': (r) => r.status === 200 });
 
     let seats = JSON.parse(seatResponse.body).seatList;
-
     let seatId = getRandomAvailableSeat(seats);
 
-    // 3. 예약 요청
+    // 4. 예약 요청
     let reservationPayload = JSON.stringify({
         concertId: concertId,
         sessionId: sessionId,
         seatId: seatId,
-        userId: userId
+        userId: userId,
     });
 
     let reservationResponse = http.post(`${BASE_URL}/concert/reservation`, reservationPayload, {
         headers: {
             'Content-Type': 'application/json',
-            'AuthorizationWaiting': `Bearer ${token}`
+            'AuthorizationWaiting': `Bearer ${token}`,
         },
     });
-
-    let reservationSuccess = check(reservationResponse, { 'reserveConcert status was 200': (r) => r.status === 200 });
-    if (!reservationSuccess) {
-        console.log('reservation request body', reservationPayload)
-        console.log(`Reservation failed for user ${userId} with response: ${reservationResponse.body}`);
-    }
+    reservationTime.add(reservationResponse.timings.duration);
+    check(reservationResponse, { 'reserveConcert status was 200': (r) => r.status === 200 });
     let reservationId = JSON.parse(reservationResponse.body).reservationId;
 
-    // 4. 결제 요청
+    // 5. 결제 요청
     let paymentPayload = JSON.stringify({
         userId: userId,
-        reservationId: reservationId
+        reservationId: reservationId,
     });
 
     let paymentResponse = http.post(`${BASE_URL}/concert/payment`, paymentPayload, {
         headers: {
             'Content-Type': 'application/json',
-            'AuthorizationWaiting': `Bearer ${token}`
+            'AuthorizationWaiting': `Bearer ${token}`,
         },
-
     });
-    let paymentSuccess = check(paymentResponse, { 'concertPayment status was 200': (r) => r.status === 200 });
-    if (!paymentSuccess) {
-        console.log('payment request body', paymentPayload)
-        console.log(`Payment failed for user ${userId} with response: ${paymentResponse.body}`);
-    }
+    paymentTime.add(paymentResponse.timings.duration);
+    check(paymentResponse, { 'concertPayment status was 200': (r) => r.status === 200 });
 
-    // 5. 잔액 확인 요청
+    // 6. 잔액 확인 요청
     let balanceResponse = http.get(`${BASE_URL}/concert/balance?userId=${userId}`);
+    balanceTime.add(balanceResponse.timings.duration);
     check(balanceResponse, { 'getBalance status was 200': (r) => r.status === 200 });
 
-    sleep(1); // 각 가상 사용자마다 1초씩 쉬면서 작업 간의 간격을 둠
+    sleep(1);
 }
